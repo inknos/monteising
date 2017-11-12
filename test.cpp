@@ -17,12 +17,9 @@ void test(){
 
 
 
-  uni.printLattice();
-  cout << endl;
-  bi.printLattice();
-  cout << endl;
-  tri.printLattice();
-  cout << endl;
+  cout << uni << endl;
+  cout << bi  << endl;
+  cout << tri << endl;
 
   cout << uni.energy() << endl;
   cout << bi.energy() << endl;
