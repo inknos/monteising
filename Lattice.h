@@ -12,6 +12,7 @@ class Lattice {
   unsigned int dim;
   unsigned int q;
   unsigned int N;
+  unsigned int num_spin;
   bool * lattice;
 
  public:
@@ -23,6 +24,8 @@ class Lattice {
     
   ~Lattice();
   
+  Lattice& operator=(const Lattice& obj);
+  
   int getDim();
 
   int getN();
@@ -31,8 +34,11 @@ class Lattice {
 
   int getQ();
   
+  int getNumSpin();
+  
   void printLattice();
-    
+  
+  double energy(bool pauli=false);
 
 };
 
