@@ -13,10 +13,18 @@ Lattice::Lattice() : q(2), N(1), dim(1) {
 }
 
 Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q) :
-  N(_N) , dim(_dim), q(_q) {
+  N(_N) , dim(_dim) , q(_q) {
   lattice = new bool[ (int) pow(N, dim) ];
   for(uint i = 0; i < (uint) pow(N, dim); i++){
     lattice[i] = gRandom->Rndm() > 0.5 ? 0 : 1;
+  }
+}
+
+Lattice::Lattice(const Lattice &obj) :
+N(obj.N) , dim(obj.dim) , q(obj.q) {
+  lattice = new bool[obj.dim];
+  for(uint i = 0; i < obj.dim ; i++){
+    lattice[i] = obj.lattice[i];
   }
 }
 

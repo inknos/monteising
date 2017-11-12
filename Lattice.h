@@ -19,8 +19,10 @@ class Lattice {
 
   Lattice(const unsigned int& _N, const unsigned int& _dim, unsigned const int& _q);
 
+  Lattice(const Lattice &obj);
+    
   ~Lattice();
-
+  
   int getDim();
 
   int getN();
@@ -30,6 +32,7 @@ class Lattice {
   int getQ();
   
   void printLattice();
+    
 
 };
 
