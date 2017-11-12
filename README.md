@@ -1,2 +1,2 @@
 # monteising
-montevarlo simulation of the ising model in root
+montecarlo simulation of the ising model in root
