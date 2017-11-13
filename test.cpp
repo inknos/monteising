@@ -16,7 +16,6 @@ void test(){
   Lattice tri(3,3,6);
 
 
-
   cout << uni << endl;
   cout << bi  << endl;
   cout << tri << endl;
