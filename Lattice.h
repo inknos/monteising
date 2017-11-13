@@ -9,10 +9,10 @@
 
 class Lattice {
  private:
-  unsigned int dim;       // dimension of the lattice
-  unsigned int q;         // 
-  unsigned int N;         // number of spins in one dimension
-  unsigned int num_spin;  // pow(N, dim) total number of spins
+  const unsigned int dim;       // dimension of the lattice
+  const unsigned int q;         // 
+  const unsigned int N;         // number of spins in one dimension
+  const unsigned int num_spin;  // pow(N, dim) total number of spins
   bool * lattice;         // [num_spin] lattice
 
  public:
@@ -31,21 +31,21 @@ class Lattice {
   friend std::ostream &operator<<(std::ostream &out, const Lattice &lat);
 
   /* Getters */
-  int getDim();
+  int getDim() const;
 
-  int getN();
+  int getN() const;
 
-  int getSpin(unsigned int i);
+  int getSpin(const unsigned int & i) const;
 
-  int getQ();
+  int getQ() const;
 
-  int getNumSpin();
+  int getNumSpin() const;
 
   /* Print - deprecated*/
   //void printLattice();
 
   /* Physical functions */
-  int energy(bool pauli=false);
+  int energy(bool pauli=false) const;
 
   ClassDef(Lattice,1)
 };

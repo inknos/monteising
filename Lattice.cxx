@@ -51,19 +51,19 @@ std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
   return out;
 }
 
-int Lattice::getDim(){ return dim; }
+int Lattice::getDim() const { return dim; }
 
-int Lattice::getN(){ return N; }
+int Lattice::getN() const{ return N; }
 
-int Lattice::getSpin(uint i){
+int Lattice::getSpin(const uint & i) const{
   //if(i < 0) return i;
   if(i > dim) return i;
   return lattice[i];
 }
 
-int Lattice::getQ(){ return q; }
+int Lattice::getQ() const { return q; }
 
-int Lattice::getNumSpin(){ return num_spin; }
+int Lattice::getNumSpin() const { return num_spin; }
 
 /*
 void Lattice::printLattice(){
@@ -77,18 +77,18 @@ void Lattice::printLattice(){
 }
 */
 
-int Lattice::energy(bool){
+int Lattice::energy(bool) const {
   int E_tmp = 0;
-  uint pow_tmp;
+  uint pow_tmp1;
   uint pow_tmp2;
   uint i_tmp;
   for(uint i = 0; i < num_spin; i++){
     for(uint d = 0; d < dim; d++){
-      pow_tmp = (uint) pow(N, d);
+      pow_tmp1 = (uint) pow(N, d);
       pow_tmp2= (uint) pow(N, d + 1);
       i_tmp = (int) (i / pow_tmp2);
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i + pow_tmp)            % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i - pow_tmp + num_spin) % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
+      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i + pow_tmp1)            % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
+      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i - pow_tmp1 + num_spin) % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
     }
   }
   E_tmp *= 0.5;
