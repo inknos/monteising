@@ -45,7 +45,7 @@ class Lattice {
   //void printLattice();
 
   /* Physical functions */
-  int energy(bool pauli=false) const;
+  int energy(bool pauli=false, int thread = 0) const;
 
   ClassDef(Lattice,1)
 };
