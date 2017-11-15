@@ -24,15 +24,9 @@ void test(){
 
   ofstream file;
 
-  file.open ("dati.csv", ofstream::out | ofstream::trunc);
-  file << uni << endl;
-  file << bi  << endl;
-  file << tri << endl;
-  file << uni.energy() << endl;
-  file << bi.energy() << endl;
-  file << tri.energy() << endl;
-  file << gRandom->GetSeed() << endl;
-  file.close();
+  uni.printLattice();
+  bi.printLattice();
+  tri.printLattice();
   
   cout << uni << endl;
   cout << bi << endl;

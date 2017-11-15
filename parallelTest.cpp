@@ -14,6 +14,9 @@ void parallelTest(){
   cin >> nn;
   cout << "Threads: ";
   cin >> tt;
+  cout << endl;
+  cout << endl;
+
   TStopwatch timer;
   Lattice a(nn,1,2);
   Lattice b(nn,2,4);
@@ -27,36 +30,42 @@ void parallelTest(){
   cout << a.energy() << endl;
   timer.Stop();
   timer.Print();
+  cout << endl;
   
   cout << "2-D, " << nn << " entries, seq.\n";
   timer.Start();
   cout << b.energy() << endl;
   timer.Stop();
   timer.Print();
+  cout << endl;
 
   cout << "3-D, " << nn << " entries, seq.\n";
   timer.Start();
   cout << c.energy() << endl;
   timer.Stop();
   timer.Print();
+  cout << endl;
 
   cout << "1-D, " << nn << " entries, "<< tt << " threads\n";
   timer.Start();
   cout << aP.energyParallel(tt)<< endl;
   timer.Stop();
   timer.Print();
+  cout << endl;
 
   cout << "2-D, " << nn << " entries, " << tt << " threads\n";
   timer.Start();
   cout << bP.energyParallel(tt) << endl;
   timer.Stop();
   timer.Print();
-  cout << "3-D, " << nn << " entries, "<< tt << " threads\n";
+  cout << endl;
 
+  cout << "3-D, " << nn << " entries, "<< tt << " threads\n";
   timer.Start();
   cout << cP.energyParallel(tt) << endl;
   timer.Stop(); 
   timer.Print();
+  cout << endl;
 
   cout << "seed" << gRandom->GetSeed() << endl;
 }

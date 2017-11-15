@@ -4,6 +4,8 @@
 
 #include <math.h>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 #include <omp.h>
 
@@ -45,8 +47,7 @@ Lattice& Lattice::operator=(const Lattice& obj){
 
 std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
   for(uint i = 0; i < lat.num_spin; i++){
-    if(lat.lattice[i]) out << 1 << ", " << std::flush;
-    else out << -1 << ", " << std::flush;
+    out << lat.lattice[i] << " " << std::flush;
     for(uint j = 1; j < lat.dim; j++){
       if( (i + 1 ) % (uint) pow(lat.N, lat.dim - j) == 0 ) out << std::endl << std::flush;
     }
@@ -68,17 +69,21 @@ int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
 
-/*
-  void Lattice::printLattice(){
-  for(uint i = 0; i < num_spin; i++){
-  std::cout << lattice[i] << " " << std::flush;
-  //if( (i + 1 ) % N == 0) std::cout << std::endl << std::flush;
-  for(uint j = 1; j < dim; j++){
-  if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) std::cout << std::endl << std::flush;
+
+void Lattice::printLattice(){
+  std::ofstream file;
+  file.open("dati.csv", std::ofstream::out | std::ofstream::trunc);
+  file << N  << ", " << dim << ", " << "\n";
+  for(uint i = 0; i < num_spin; i++){   
+    if(lattice[i]) file << 1 << ", " << std::flush;
+    else file << -1 << ", " << std::flush;
+    for(uint j = 1; j < dim; j++){
+      if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) file << std::endl << std::flush;
+    }
   }
-  }
-  }
-*/
+  file.close();
+}
+
 
 int Lattice::energy() const {
   int E_tmp = 0;
@@ -94,8 +99,7 @@ int Lattice::energy() const {
       lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
     }
   }
-  E_tmp *= 0.5;
-  return E_tmp;
+  return E_tmp * 0.5;
 }
 
 int Lattice::energyParallel(int nt = 4) const {
@@ -106,14 +110,17 @@ int Lattice::energyParallel(int nt = 4) const {
   uint pow_tmp2(0);
   uint i_tmp(0);
 
-#pragma omp parallel num_threads(nt)
   uint num_spin_t = num_spin;
-#pragma omp for private(pow_tmp1, pow_tmp2, i_tmp, d)
-  for(i = 0; i < num_spin; i++){
-    uint e = 0;
-    for(d = 0; d < dim; d++){
-      pow_tmp1 = (uint) pow(N, d);
-      pow_tmp2= (uint) pow(N, d + 1);
+  uint dim_t = dim;
+  uint N_t = N;
+  uint e = 0;
+
+#pragma omp parallel for private(pow_tmp1, pow_tmp2, i_tmp, d) shared(E_tmp) firstprivate(num_spin_t, dim_t, N_t, e)
+  for(i = 0; i < num_spin_t; i++){
+    e = 0;
+    for(d = 0; d < dim_t; d++){
+      pow_tmp1 = (uint) pow(N_t, d);
+      pow_tmp2= (uint) pow(N_t, d + 1);
       i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
       lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
       lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;

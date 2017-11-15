@@ -41,8 +41,7 @@ class Lattice {
 
   int getNumSpin() const;
 
-  /* Print - deprecated*/
-  //void printLattice();
+  void printLattice();
 
   /* Physical functions */
   int energy() const;
