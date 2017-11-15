@@ -5,6 +5,8 @@
 #include <math.h>
 #include <iostream>
 
+#include <omp.h>
+
 typedef unsigned int uint;
 
 ClassImp(Lattice)
@@ -66,18 +68,18 @@ int Lattice::getQ() const { return q; }
 int Lattice::getNumSpin() const { return num_spin; }
 
 /*
-void Lattice::printLattice(){
+  void Lattice::printLattice(){
   for(uint i = 0; i < num_spin; i++){
-    std::cout << lattice[i] << " " << std::flush;
-    //if( (i + 1 ) % N == 0) std::cout << std::endl << std::flush;
-    for(uint j = 1; j < dim; j++){
-      if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) std::cout << std::endl << std::flush;
-    }
+  std::cout << lattice[i] << " " << std::flush;
+  //if( (i + 1 ) % N == 0) std::cout << std::endl << std::flush;
+  for(uint j = 1; j < dim; j++){
+  if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) std::cout << std::endl << std::flush;
   }
-}
+  }
+  }
 */
 
-int Lattice::energy(bool) const {
+int Lattice::energy() const {
   int E_tmp = 0;
   uint pow_tmp1;
   uint pow_tmp2;
@@ -93,4 +95,31 @@ int Lattice::energy(bool) const {
   }
   E_tmp *= 0.5;
   return E_tmp;
+}
+
+int Lattice::energyParallel(int nt = 4) const {
+  int E_tmp = 0;
+  uint i(0);
+  uint d(0);
+  uint pow_tmp1(0);
+  uint pow_tmp2(0);
+  uint i_tmp(0);
+
+#pragma omp parallel num_threads(nt)
+  uint num_spin_t = num_spin;
+#pragma omp for private(pow_tmp1, pow_tmp2, i_tmp, d)
+  for(i = 0; i < num_spin; i++){
+    uint e = 0;
+    for(d = 0; d < dim; d++){
+      pow_tmp1 = (uint) pow(N, d);
+      pow_tmp2= (uint) pow(N, d + 1);
+      i_tmp = (int) (i / pow_tmp2);
+      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i + pow_tmp1)            % pow_tmp2 ) %num_spin] ? e -= 1 : e += 1;
+      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i - pow_tmp1 + num_spin) % pow_tmp2 ) %num_spin] ? e -= 1 : e += 1;
+    }
+    E_tmp += e;
+    // if collapse no code here
+  }
+  return E_tmp * 0.5;
+
 }

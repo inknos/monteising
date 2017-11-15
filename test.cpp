@@ -13,6 +13,8 @@
 using namespace std;
 
 void test(){
+  gRandom -> SetSeed(4357);
+  
   TStopwatch timer;
   Lattice uni(5,1,2);
   Lattice bi(3,2,4);
