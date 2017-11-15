@@ -22,35 +22,41 @@ void parallelTest(){
   Lattice bP(nn,2,4);
   Lattice cP(nn,3,6);
 
+  cout << "1-D, " << nn << " entries, seq.\n";
   timer.Start();
   cout << a.energy() << endl;
   timer.Stop();
-  cout << "1-D, " << nn << " entries, seq.\n";
   timer.Print();
+  
+  cout << "2-D, " << nn << " entries, seq.\n";
   timer.Start();
   cout << b.energy() << endl;
   timer.Stop();
-  cout << "2-D, " << nn << " entries, seq.\n";
   timer.Print();
+
+  cout << "3-D, " << nn << " entries, seq.\n";
   timer.Start();
   cout << c.energy() << endl;
   timer.Stop();
-  cout << "3-D, " << nn << " entries, seq.\n";
   timer.Print();
+
+  cout << "1-D, " << nn << " entries, "<< tt << " threads\n";
   timer.Start();
   cout << aP.energyParallel(tt)<< endl;
   timer.Stop();
-  cout << "1-D, " << nn << " entries, "<< tt << " threads\n";
   timer.Print();
+
+  cout << "2-D, " << nn << " entries, " << tt << " threads\n";
   timer.Start();
   cout << bP.energyParallel(tt) << endl;
   timer.Stop();
-  cout << "2-D, " << nn << " entries, " << tt << " threads\n";
   timer.Print();
+  cout << "3-D, " << nn << " entries, "<< tt << " threads\n";
+
   timer.Start();
   cout << cP.energyParallel(tt) << endl;
   timer.Stop(); 
-  cout << "3-D, " << nn << " entries, "<< tt << " threads\n";
   timer.Print();
+
   cout << "seed" << gRandom->GetSeed() << endl;
 }
