@@ -6,6 +6,8 @@
 //
 
 #include <iostream>
+#include <fstream>
+
 #include "Lattice.h"
 #include "TRandom3.h"
 #include "TStopwatch.h"
@@ -13,32 +15,34 @@
 using namespace std;
 
 void test(){
-  gRandom -> SetSeed(4357);
+  gRandom -> SetSeed(357);
   
   TStopwatch timer;
-  Lattice uni(5,1,2);
-  Lattice bi(3,2,4);
-  Lattice tri(3,3,6);
-  Lattice uui(5,1,2);
-  Lattice bbi(3,2,4);
-  Lattice ttri(100,3,6);
+  Lattice uni(10,1,2);
+  Lattice bi(10,2,4);
+  Lattice tri(10,3,6);
 
+  ofstream file;
+
+  file.open ("dati.csv", ofstream::out | ofstream::trunc);
+  file << uni << endl;
+  file << bi  << endl;
+  file << tri << endl;
+  file << uni.energy() << endl;
+  file << bi.energy() << endl;
+  file << tri.energy() << endl;
+  file << gRandom->GetSeed() << endl;
+  file.close();
+  
   cout << uni << endl;
-  cout << uui << endl;
   cout << bi << endl;
-  cout << bbi  << endl;
-  cout << "tre\n";
   cout << tri << endl;
-  cout << "tre bis\n";
-  //cout << ttri<< endl;
+
   
   timer.Start();
   cout << uni.energy() << endl;
-  cout << uui.energy() << endl;
   cout << bi.energy() << endl;
-  cout << bbi.energy()<< endl;
   cout << tri.energy() << endl;
-  cout <<ttri.energy() << endl;
   timer.Stop();
   
   cout << "seed" << gRandom->GetSeed() << endl;

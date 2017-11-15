@@ -45,7 +45,8 @@ Lattice& Lattice::operator=(const Lattice& obj){
 
 std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
   for(uint i = 0; i < lat.num_spin; i++){
-    out << lat.lattice[i] << " " << std::flush;
+    if(lat.lattice[i]) out << 1 << ", " << std::flush;
+    else out << -1 << ", " << std::flush;
     for(uint j = 1; j < lat.dim; j++){
       if( (i + 1 ) % (uint) pow(lat.N, lat.dim - j) == 0 ) out << std::endl << std::flush;
     }
@@ -88,9 +89,9 @@ int Lattice::energy() const {
     for(uint d = 0; d < dim; d++){
       pow_tmp1 = (uint) pow(N, d);
       pow_tmp2= (uint) pow(N, d + 1);
-      i_tmp = (int) (i / pow_tmp2);
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i + pow_tmp1)            % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i - pow_tmp1 + num_spin) % pow_tmp2 ) %num_spin] ? E_tmp -= 1 : E_tmp += 1;
+      i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
+      lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
     }
   }
   E_tmp *= 0.5;
@@ -113,9 +114,9 @@ int Lattice::energyParallel(int nt = 4) const {
     for(d = 0; d < dim; d++){
       pow_tmp1 = (uint) pow(N, d);
       pow_tmp2= (uint) pow(N, d + 1);
-      i_tmp = (int) (i / pow_tmp2);
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i + pow_tmp1)            % pow_tmp2 ) %num_spin] ? e -= 1 : e += 1;
-      lattice[i] ^ lattice[(int) ( i_tmp * pow_tmp2 + (i - pow_tmp1 + num_spin) % pow_tmp2 ) %num_spin] ? e -= 1 : e += 1;
+      i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
+      lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
+      lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;
     }
     E_tmp += e;
     // if collapse no code here
