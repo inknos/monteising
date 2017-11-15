@@ -24,9 +24,9 @@ void test(){
 
   ofstream file;
 
-  uni.printLattice();
-  bi.printLattice();
-  tri.printLattice();
+  uni.printLattice("uno.csv");
+  bi.printLattice("due.csv");
+  tri.printLattice("tre.csv");
   
   cout << uni << endl;
   cout << bi << endl;

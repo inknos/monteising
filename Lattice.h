@@ -41,7 +41,9 @@ class Lattice {
 
   int getNumSpin() const;
 
-  void printLattice();
+  void FlipSpin(int);
+  
+  void printLattice(const char *);
 
   /* Physical functions */
   int energy() const;

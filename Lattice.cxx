@@ -69,10 +69,15 @@ int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
 
+void Lattice::FlipSpin(int n){
+  if(n < 0 || n > num_spin) return false;
+  lattice[n] = !lattice[n];
+  return true;
+}
 
-void Lattice::printLattice(){
+void Lattice::printLattice(const char* name){
   std::ofstream file;
-  file.open("dati.csv", std::ofstream::out | std::ofstream::trunc);
+  file.open(name, std::ofstream::out | std::ofstream::trunc);
   file << N  << ", " << dim << ", " << "\n";
   for(uint i = 0; i < num_spin; i++){   
     if(lattice[i]) file << 1 << ", " << std::flush;
@@ -94,9 +99,15 @@ int Lattice::energy() const {
     for(uint d = 0; d < dim; d++){
       pow_tmp1 = (uint) pow(N, d);
       pow_tmp2= (uint) pow(N, d + 1);
-      i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
-      lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
-      lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      if(d == dim - 1){ // optimization for iteration on the highest dimension
+        lattice[i] ^ lattice[ (int) ( (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+        lattice[i] ^ lattice[ (int) ( (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      }
+      else{
+        i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
+        lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+        lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      }
     }
   }
   return E_tmp * 0.5;
