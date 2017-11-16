@@ -76,6 +76,7 @@ int Lattice::getNumSpin() const { return num_spin; }
 
 bool Lattice::flipSpin(uint n){
   if(n > num_spin) return false;
+  std::cout << "I'm fliping" << std::endl << std::flush;
   lattice[n] = !lattice[n];
   return true;
 }
@@ -195,11 +196,14 @@ void Lattice::cooling(){
   double T = gRandom -> Rndm() * 1e-5 + 0.5;
   uint spin = (uint) gRandom -> Rndm() * num_spin;
   int tmp_spin = dE(spin);
+  std::cout << "tmp_spin = " << tmp_spin << std::endl << std::flush;
   if( tmp_spin < 0 ){
+    std::cout << "first if true \n" << std::flush;
     flipSpin(spin);
   }
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / T)){
+      std::cout << "second if true \n" << std::flush;
       flipSpin(spin);
     }
   }
