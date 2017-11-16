@@ -97,8 +97,12 @@ int Lattice::energy() const {
   uint i_tmp;
   for(uint i = 0; i < num_spin; i++){
     for(uint d = 0; d < dim; d++){
-      pow_tmp1 = (uint) pow(N, d);
-      pow_tmp2= (uint) pow(N, d + 1);
+      if(d == 0){
+        pow_tmp1 = 1;
+        pow_tmp2 = N;
+      }
+      pow_tmp1 = pow_tmp2;
+      pow_tmp2 = (uint) pow(N, d + 1);
       if(d == dim - 1){ // optimization for iteration on the highest dimension
         lattice[i] ^ lattice[ (int) ( (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
         lattice[i] ^ lattice[ (int) ( (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
