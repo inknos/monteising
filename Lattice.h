@@ -2,12 +2,14 @@
 #define LATTICE_H
 
 #include "TRandom3.h"
+#include "TString.h"
+#include "TObject.h"
 
 #include <math.h>
 #include <iostream>
 
 
-class Lattice {
+class Lattice : public TObject{
  private:
   const unsigned int dim;       // dimension of the lattice
   const unsigned int q;         //
@@ -37,7 +39,7 @@ class Lattice {
 
   int getN() const;
 
-  int getSpin(const unsigned int & i) const;
+  bool getSpin(const unsigned int & i) const;
 
   int getQ() const;
 
@@ -45,7 +47,9 @@ class Lattice {
 
   bool flipSpin(unsigned int);
 
-  void printLattice(const char *);
+  void printLatticeCSV(const TString&) const;
+
+  void printLatticeROOT(const TString&) const;
 
   /* Physical functions */
   int energy() const;
@@ -54,7 +58,7 @@ class Lattice {
 
   void cooling();
 
-  int dE(int);
+  int dE(unsigned int);
 
   ClassDef(Lattice,1)
     };

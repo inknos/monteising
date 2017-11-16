@@ -1,5 +1,9 @@
 #include "TRandom3.h"
 #include "TMath.h"
+#include "TFile.h"
+#include "TString.h"
+#include "TTree.h"
+#include "TBranch.h"
 
 #include "Lattice.h"
 
@@ -15,13 +19,13 @@ typedef unsigned int uint;
 
 ClassImp(Lattice)
 
-Lattice::Lattice() : q(2), N(1), dim(1) , num_spin(1){
+Lattice::Lattice() : TObject(), q(2), N(1), dim(1) , num_spin(1){
   lattice = new bool[1];
   lattice[0] = gRandom->Rndm() > 0.5 ? 0 : 1;
 }
 
 Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q = 2) :
-  N(_N) , dim(_dim) , q(_q) , num_spin(pow(_N, _dim)){
+  TObject(), N(_N) , dim(_dim) , q(_q) , num_spin(pow(_N, _dim)){
   lattice = new bool[ num_spin ];
   for(uint i = 0; i < num_spin; i++){
     lattice[i] = gRandom->Rndm() > 0.5 ? 0 : 1;
@@ -30,7 +34,7 @@ Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q = 2) :
 
 /* Copy-constructor */
 Lattice::Lattice(const Lattice &obj) :
-  N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
+  TObject(), N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
   lattice = new bool[obj.num_spin];
   for(uint i = 0; i < obj.num_spin; i++){
     lattice[i] = obj.lattice[i];
@@ -72,7 +76,7 @@ int Lattice::getDim() const { return dim; }
 
 int Lattice::getN() const{ return N; }
 
-int Lattice::getSpin(const uint & i) const{
+bool Lattice::getSpin(const uint & i) const{
   //if(i < 0) return i;
   if(i > num_spin) return i;
   return lattice[i];
@@ -89,11 +93,11 @@ bool Lattice::flipSpin(uint n){
   return true;
 }
 
-void Lattice::printLattice(const char* name){
+void Lattice::printLatticeCSV(const TString& name) const {
   std::ofstream file;
-  file.open(name, std::ofstream::out | std::ofstream::trunc);
-  file << N  << ", " << dim << ", " << "\n";
-  for(uint i = 0; i < num_spin; i++){   
+  file.open(name + TString(".csv"), std::ofstream::out | std::ofstream::trunc);
+  file <<"#," << "N:" << N  << ", " << "dim:" << dim << ", " << "\n";
+  for(uint i = 0; i < num_spin; i++){
     if(lattice[i]) file << 1 << ", " << std::flush;
     else file << -1 << ", " << std::flush;
     for(uint j = 1; j < dim; j++){
@@ -103,6 +107,12 @@ void Lattice::printLattice(const char* name){
   file.close();
 }
 
+void Lattice::printLatticeROOT(const TString& name) const {
+  TFile f(name + TString(".root"), "RECREATE");
+  this -> Write("lat");
+  f.Write();
+  f.Close();
+}
 
 int Lattice::energy() const {
   int E_tmp = 0;
@@ -137,7 +147,7 @@ int Lattice::energy() const {
 }
 
 /*
-int Lattice::energyParallel(int nt = 4) const {
+  int Lattice::energyParallel(int nt = 4) const {
   int E_tmp = 0;
   uint i(0);
   uint d(0);
@@ -150,27 +160,27 @@ int Lattice::energyParallel(int nt = 4) const {
   uint N_t = N;
   uint e = 0;
 
-#pragma omp parallel for private(pow_tmp1, pow_tmp2, i_tmp, d) shared(E_tmp) firstprivate(num_spin_t, dim_t, N_t, e)
+  #pragma omp parallel for private(pow_tmp1, pow_tmp2, i_tmp, d) shared(E_tmp) firstprivate(num_spin_t, dim_t, N_t, e)
   for(i = 0; i < num_spin_t; i++){
-    e = 0;
-    for(d = 0; d < dim_t; d++){
-      pow_tmp1 = (uint) pow(N_t, d);
-      pow_tmp2= (uint) pow(N_t, d + 1);
-      i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
-      lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
-      lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;
-    }
-    E_tmp += e;
-    // if collapse no code here
+  e = 0;
+  for(d = 0; d < dim_t; d++){
+  pow_tmp1 = (uint) pow(N_t, d);
+  pow_tmp2= (uint) pow(N_t, d + 1);
+  i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
+  lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
+  lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;
+  }
+  E_tmp += e;
+  // if collapse no code here
   }
   return E_tmp * 0.5;
-}
+  }
 */
 
 
-int Lattice::dE(int spin){
+int Lattice::dE(uint spin){
   int dE_tmp = 0;
-  if(spin < 0 || spin > num_spin){ return 0; }
+  if(spin > num_spin){ return 0; }
   uint pow_tmp1;
   uint pow_tmp2;
   uint i_tmp;
@@ -217,23 +227,3 @@ void Lattice::cooling(){
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

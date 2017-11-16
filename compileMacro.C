@@ -6,12 +6,15 @@ void compileMacro(TString myopt="fast"){
   else {
     opt = "kg";
   }
-  
+
   //
   //gSystem->Load("libgomp");
   //TString cmd( gSystem->GetMakeSharedLib() );
   //cmd.ReplaceAll("g++","g++ -fopenmp");
-  //gSystem->SetMakeSharedLib(cmd); 
+  //gSystem->SetMakeSharedLib(cmd);
+
   gSystem->CompileMacro("./Lattice.cxx",opt.Data());  // load class MHasSHA256
+  //gInterpreter->GenerateDictionary("vector<Track&gt","Track.h;vector");
+  //gInterpreter->GenerateDictionary("Lattice","Lattice.h");
   //
 }
