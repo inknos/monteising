@@ -31,8 +31,8 @@ Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q = 2) :
 /* Copy-constructor */
 Lattice::Lattice(const Lattice &obj) :
   N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
-  lattice = new bool[obj.dim];
-  for(uint i = 0; i < obj.dim ; i++){
+  lattice = new bool[obj.num_spin];
+  for(uint i = 0; i < obj.num_spin; i++){
     lattice[i] = obj.lattice[i];
   }
 }
@@ -59,6 +59,14 @@ std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
   return out;
 }
 
+bool Lattice::operator==(const Lattice& obj){
+  if(N != obj.N || dim != obj.dim) return false;
+  for(uint i = 0; i < num_spin; i++){
+    if(lattice[i] != obj.lattice[i]) return false;
+  }
+  return true;
+}
+
 /* Getters */
 int Lattice::getDim() const { return dim; }
 
@@ -76,7 +84,7 @@ int Lattice::getNumSpin() const { return num_spin; }
 
 bool Lattice::flipSpin(uint n){
   if(n > num_spin) return false;
-  std::cout << "I'm fliping" << std::endl << std::flush;
+  //std::cout << "I'm fliping" << std::endl << std::flush;
   lattice[n] = !lattice[n];
   return true;
 }
@@ -162,6 +170,7 @@ int Lattice::energyParallel(int nt = 4) const {
 
 int Lattice::dE(int spin){
   int dE_tmp = 0;
+  if(spin < 0 || spin > num_spin){ return 0; }
   uint pow_tmp1;
   uint pow_tmp2;
   uint i_tmp;
@@ -194,16 +203,16 @@ int Lattice::dE(int spin){
 /* Cooling */
 void Lattice::cooling(){
   double T = gRandom -> Rndm() * 1e-5 + 0.5;
-  uint spin = (uint) gRandom -> Rndm() * num_spin;
+  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
   int tmp_spin = dE(spin);
-  std::cout << "tmp_spin = " << tmp_spin << std::endl << std::flush;
+  //std::cout << "tmp_spin = " << tmp_spin << std::endl << std::flush;
   if( tmp_spin < 0 ){
-    std::cout << "first if true \n" << std::flush;
+    //std::cout << "first if true \n" << std::flush;
     flipSpin(spin);
   }
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / T)){
-      std::cout << "second if true \n" << std::flush;
+      //std::cout << "second if true \n" << std::flush;
       flipSpin(spin);
     }
   }
