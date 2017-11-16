@@ -41,7 +41,7 @@ class Lattice {
 
   int getNumSpin() const;
 
-  bool FlipSpin(unsigned int);
+  bool flipSpin(unsigned int);
   
   void printLattice(const char *);
 
@@ -51,6 +51,8 @@ class Lattice {
   int energyParallel(int) const;
   
   void cooling();
+  
+  int dE(int);
   
   ClassDef(Lattice,1)
 };

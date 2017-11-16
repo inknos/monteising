@@ -1,4 +1,5 @@
 #include "TRandom3.h"
+#include "TMath.h"
 
 #include "Lattice.h"
 
@@ -7,7 +8,8 @@
 #include <fstream>
 #include <string>
 
-#include <omp.h>
+
+//#include <omp.h>
 
 typedef unsigned int uint;
 
@@ -26,6 +28,7 @@ Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q = 2) :
   }
 }
 
+/* Copy-constructor */
 Lattice::Lattice(const Lattice &obj) :
   N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
   lattice = new bool[obj.dim];
@@ -38,6 +41,7 @@ Lattice::~Lattice(){
   delete []lattice;
 }
 
+/* Overload */
 Lattice& Lattice::operator=(const Lattice& obj){
   if(&obj == this) return *this;
   this -> ~Lattice();
@@ -55,13 +59,14 @@ std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
   return out;
 }
 
+/* Getters */
 int Lattice::getDim() const { return dim; }
 
 int Lattice::getN() const{ return N; }
 
 int Lattice::getSpin(const uint & i) const{
   //if(i < 0) return i;
-  if(i > dim) return i;
+  if(i > num_spin) return i;
   return lattice[i];
 }
 
@@ -69,7 +74,7 @@ int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
 
-bool Lattice::FlipSpin(uint n){
+bool Lattice::flipSpin(uint n){
   if(n > num_spin) return false;
   lattice[n] = !lattice[n];
   return true;
@@ -119,9 +124,10 @@ int Lattice::energy() const {
       //
     }
   }
-  return E_tmp * 0.5;
+  return - E_tmp * 0.5;
 }
 
+/*
 int Lattice::energyParallel(int nt = 4) const {
   int E_tmp = 0;
   uint i(0);
@@ -149,5 +155,72 @@ int Lattice::energyParallel(int nt = 4) const {
     // if collapse no code here
   }
   return E_tmp * 0.5;
-
 }
+*/
+
+
+int Lattice::dE(int spin){
+  int dE_tmp = 0;
+  uint pow_tmp1;
+  uint pow_tmp2;
+  uint i_tmp;
+  for(uint d = 0; d < dim; d++){
+    //
+    if(d == 0){ // skips first cycle pow and prevents one pow in every future cycle
+      pow_tmp1 = 1;
+      pow_tmp2 = N;
+    }
+    else{
+      pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
+      pow_tmp2 = (uint) pow(N, d + 1); // one single pow for each loop
+    }
+    //
+    if(d == dim - 1){ // last loop => biggest torus => no need to control position
+      lattice[spin] ^ lattice[ (int) ( (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[spin] ^ lattice[ (int) ( (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+    }
+    else{
+      i_tmp = ( (int) (spin / pow_tmp2) ) * pow_tmp2;
+      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+    }
+    //
+  }
+  return dE_tmp * 2;
+}
+
+
+/* Cooling */
+void Lattice::cooling(){
+  double T = gRandom -> Rndm() * 1e-5 + 0.5;
+  uint spin = (uint) gRandom -> Rndm() * num_spin;
+  int tmp_spin = dE(spin);
+  if( tmp_spin < 0 ){
+    flipSpin(spin);
+  }
+  else{
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / T)){
+      flipSpin(spin);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
