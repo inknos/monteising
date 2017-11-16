@@ -49,6 +49,8 @@ class Lattice {
 
   int energyParallel(int) const;
   
+  void cooling();
+  
   ClassDef(Lattice,1)
 };
 
