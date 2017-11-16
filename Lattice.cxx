@@ -107,9 +107,9 @@ void Lattice::printLatticeCSV(const TString& name) const {
   file.close();
 }
 
-void Lattice::printLatticeROOT(const TString& name) const {
+void Lattice::printLatticeROOT(const TString& name, const TString& ln = "lat") const {
   TFile f(name + TString(".root"), "RECREATE");
-  this -> Write("lat");
+  this -> Write(ln);
   f.Write();
   f.Close();
 }

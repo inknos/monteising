@@ -49,7 +49,7 @@ class Lattice : public TObject{
 
   void printLatticeCSV(const TString&) const;
 
-  void printLatticeROOT(const TString&) const;
+  void printLatticeROOT(const TString&, const TString&) const;
 
   /* Physical functions */
   int energy() const;
