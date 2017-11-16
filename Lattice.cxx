@@ -69,8 +69,8 @@ int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
 
-void Lattice::FlipSpin(int n){
-  if(n < 0 || n > num_spin) return false;
+bool Lattice::FlipSpin(uint n){
+  if(n > num_spin) return false;
   lattice[n] = !lattice[n];
   return true;
 }
@@ -97,13 +97,17 @@ int Lattice::energy() const {
   uint i_tmp;
   for(uint i = 0; i < num_spin; i++){
     for(uint d = 0; d < dim; d++){
-      if(d == 0){
+      //
+      if(d == 0){ // skips first cycle pow and prevents one pow in every future cycle
         pow_tmp1 = 1;
         pow_tmp2 = N;
       }
-      pow_tmp1 = pow_tmp2;
-      pow_tmp2 = (uint) pow(N, d + 1);
-      if(d == dim - 1){ // optimization for iteration on the highest dimension
+      else{
+        pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
+        pow_tmp2 = (uint) pow(N, d + 1); // one single pow for each loop
+      }
+      //
+      if(d == dim - 1){ // last loop => biggest torus => no need to control position
         lattice[i] ^ lattice[ (int) ( (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
         lattice[i] ^ lattice[ (int) ( (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
       }
@@ -112,6 +116,7 @@ int Lattice::energy() const {
         lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
         lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
       }
+      //
     }
   }
   return E_tmp * 0.5;

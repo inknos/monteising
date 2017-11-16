@@ -41,7 +41,7 @@ class Lattice {
 
   int getNumSpin() const;
 
-  void FlipSpin(int);
+  bool FlipSpin(unsigned int);
   
   void printLattice(const char *);
 
