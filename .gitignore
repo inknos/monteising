@@ -104,3 +104,4 @@ lib/*
 #ignore executables
 bin/*
 
+.DS_Store
