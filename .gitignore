@@ -96,3 +96,11 @@ flycheck_*.el
 
 # directory configuration
 .dir-locals.el
+
+# ignore build and lib dir
+build
+lib/*
+
+#ignore executables
+bin/*
+

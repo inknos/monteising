@@ -8,13 +8,35 @@
 #include "DrawLattice.h"
 #include "Lattice.h"
 
+#define COLOR_ZEROS kBlue
+#define COLOR_ONES  kRed
+
+#define MARKER_STYLE_2D 21
+
+#define MARKER_STYLE_3D 20
+#define MARKER_SIZE_3D 0.6
+
 ClassImp(DrawLattice)
 
 typedef unsigned int uint;
 
 DrawLattice::DrawLattice() : lattice(), N(1), dim(1), num_spin(1),
-			     fname(""), lname(""), cname("Default Canvas"),
-			     ctitle("cv"), gname("Default Ising") {} 
+			     fname(""), lname(""), cname("cv"),
+			     ctitle("Default Canvas"), gname("gr"), gtitle("Ising") {} 
+
+DrawLattice::DrawLattice(const Lattice& lat) :
+  lattice(lat), N(lat.getN()), dim(lat.getDim()), num_spin(lat.getNumSpin()),
+  fname(""), lname(""), cname("cv"), ctitle("default canvas"), gname("gr"), gtitle("Ising") {}
+
+DrawLattice::DrawLattice(const TFile& fi, const TString& nf) :
+  file(fi), lname(fn), cname("cv"), ctitle("default canvas"),
+  gname("gr"), gtitle("Ising") {
+  fname = file.GetName();
+  lattice = * (Lattice *) file.Get(lname);
+  setN();
+  setDim();
+  setNumSpin();
+}
 
 /* Public Functions */
 Lattice DrawLattice::getLattice() const { return lattice; }
@@ -56,10 +78,10 @@ void DrawLattice::draw2D(){
     lattice.getSpin(i) ? ones++ : zeros++;
   }
 
-  TCanvas* c1 = new TCanvas("c1","Ising Canvas",200,10,700,500);
+  TCanvas* c1 = new TCanvas(cname,ctitle,200,10,700,500);
 
   TMultiGraph *mg = new TMultiGraph();
-   mg->SetTitle("Ising");
+   mg->SetTitle(gtitle);
   
   TGraph * g0 = new TGraph(zeros);
   for(uint i = 0; i < num_spin; i++){
@@ -71,11 +93,9 @@ void DrawLattice::draw2D(){
       index++;
     }
   }
-  g0->SetMarkerStyle(21);
-  g0->SetMarkerColor(kBlue);
-  //g0->GetXaxis()->SetRangeUser(0., 100.);
-  //g0->GetYaxis()->SetRangeUser(0., 100.);
-
+  g0->SetMarkerStyle(MARKER_STYLE_2D);
+  g0->SetMarkerColor(COLOR_ZEROS);
+  
   index = 0;
   TGraph * g1 = new TGraph(ones);
   for(uint i = 0; i < num_spin; i++){
@@ -87,11 +107,9 @@ void DrawLattice::draw2D(){
       index++;
     }
   }
-  g1->SetMarkerStyle(21);
-  g1->SetMarkerColor(kRed);
-  //g1->GetXaxis()->SetRangeUser(0., 100.);
-  //g1->GetYaxis()->SetRangeUser(0., 100.);
-
+  g1->SetMarkerStyle(MARKER_STYLE_2D);
+  g1->SetMarkerColor(COLOR_ONES);
+  
   mg->Add(g0);
   mg->Add(g1);
   mg->Draw("AP");
@@ -101,7 +119,7 @@ void DrawLattice::draw3D(){
   int index = 0;
   int po = (int) pow(N, 2);
 
-  TCanvas* c1 = new TCanvas("c1","Ising Canvas",200,10,700,500);
+  TCanvas* c1 = new TCanvas(cname, ctitle,200,10,700,500);
 
   TGraph2D * g0 = new TGraph2D();
   for(uint i = 0; i < num_spin; i++){
@@ -114,11 +132,10 @@ void DrawLattice::draw3D(){
       index++;
     }
   }
-  g0->SetMarkerStyle(20);
-  g0->SetMarkerSize(0.6);
-  g0->SetMarkerColor(kBlue);
+  g0->SetMarkerStyle(MARKER_STYLE_3D);
+  g0->SetMarkerSize(MARKER_SIZE_3D);
+  g0->SetMarkerColor(COLOR_ZEROS);
   g0->Draw("AP");
-
 
   index = 0;
   TGraph2D * g1 = new TGraph2D();
@@ -132,9 +149,9 @@ void DrawLattice::draw3D(){
       index++;
     }
   }
-  g1->SetMarkerStyle(20);
-  g1->SetMarkerSize(0.6);
-  g1->SetMarkerColor(kRed);
+  g1->SetMarkerStyle(MARKER_STYLE_3D);
+  g1->SetMarkerSize(MARKER_SIZE_3D);
+  g1->SetMarkerColor(COLOR_ONES);
   g1->Draw("AP same");
 }
 

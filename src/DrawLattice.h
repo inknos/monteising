@@ -43,9 +43,9 @@ class DrawLattice {
  public:
   DrawLattice();
 
-  DrawLattice(Lattice);
+  DrawLattice(const Lattice&);
 
-  DrawLattice(TFile);
+  DrawLattice(const TFile&, const TString&);
   
   Lattice getLattice() const;
 
