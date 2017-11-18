@@ -209,20 +209,20 @@ int Lattice::dE(const uint& spin, const bool& p = false) const {
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
-    if(p){ lattice[i] ? E_tmp += H : E_tmp -= H; }
+    //if(p){ lattice[spin] ? E_tmp += H : E_tmp -= H; }
     //
   }
   return dE_tmp * 2;
 }
 
-float Lattice::magnetization(){
+float Lattice::magnetization() const {
   float M_temp = 0;
-  for(int i = 0; i < num_spin; i ++) lattice[i] ? M_temp += 1; M_temp -=1;
+  for(uint i = 0; i < num_spin; i ++) lattice[i] ? M_temp += 1: M_temp -=1;
   return M_temp / num_spin;
 }
 
 /* Cooling */
-void Lattice::cooling(const unsigned float& t = 0.5){
+void Lattice::cooling(const float& t = 0.5){
   double T = gRandom -> Rndm() * 1e-5 + t;
   uint spin = (uint) ( gRandom -> Rndm() * num_spin );
   int tmp_spin = dE(spin);

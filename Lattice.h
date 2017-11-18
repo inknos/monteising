@@ -61,7 +61,7 @@ class Lattice : public TObject{
   float magnetization() const ;
   
   /* numerical function cooling */
-  void cooling(const unsigned float&);
+  void cooling(const float&);
 
   
 

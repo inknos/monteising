@@ -2,11 +2,17 @@
 
 ## ToC
 - [Overview](#overview)
+- [Run](#run)
 - [Lattice Class](#lattice-class)
 - [DrawLattice Class](#drawlattice-class)
 - [Multidimensional Neighbours Interactions and Counting](#multidimensional-neighbour-interactions-and-counting)
 
 ## Overview
+
+## Run
+
+To run open `root` and run `.x compileMacro.C`. You can try
+the axamples loading with `.L`.
 
 ## Lattice Class
 
@@ -39,8 +45,8 @@ meaning respectively integer division and power (power comes before
 all the other operations).
 
 ```
-i // N**(d + 1)) * N**(d + 1) + (i + N**d             ) % N**(d + 1)
-i // N**(d + 1)) * N**(d + 1) + (i - N**d + N**(d + 1)) % N**(d + 1)
+(i // N**(d + 1))*N**(d + 1) + (i + N**d             ) % N**(d + 1)
+(i // N**(d + 1))*N**(d + 1) + (i - N**d + N**(d + 1)) % N**(d + 1)
 ```
 We can loop on `i` and `d` to obtain all the neighbours. The process
 can be executed in parallel and be reduced with `if` statements on
