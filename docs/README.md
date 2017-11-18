@@ -22,9 +22,7 @@ The class can build a multi dimensional square lattice of spins.
 
 The class can draw 2D or 3D lattice from the class Lattice.
 
-![Cooling 2D 1][cooling2D-1]
-
-![Cooling 2D 2][cooling2D-2]
+![Cooling 2D 1][cooling2D-1] ![Cooling 2D 2][cooling2D-2]
 
 ## Multidimensional Neighbour Interactions and Counting
 
