@@ -27,6 +27,7 @@ The class can draw 2D or 3D lattice from the class Lattice.
 
 ![Cooling 2D 1][cooling2D-1] ![Cooling 2D 2][cooling2D-2]
 ![Cooling 2D 3][cooling2D-3] ![Cooling 2D 4][cooling2D-4]
+
 1000000 spin 2D model at $T \approx 0.5$. Each frame is the flipping
 of 1000 spins. First video goes from 0 to 20000th iterations, then
 each gif continues with the next 20000. Notice that periodic
