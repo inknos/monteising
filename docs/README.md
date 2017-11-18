@@ -7,5 +7,5 @@ Multimimensional neighbour counting:
 
 ![2D model][2Dmodel]
 
-[1Dmodel]: https://github.com/inknos/monteising/blob/master/docs/img/1D.gif "1D Model"
-[2Dmodel]: https://github.com/inknos/monteising/blob/master/docs/img/2D.gif "2D Model"
+[1Dmodel]: https://github.com/inknos/monteising/blob/master/docs/img/1D.png "1D Model"
+[2Dmodel]: https://github.com/inknos/monteising/blob/master/docs/img/2D.png "2D Model"
