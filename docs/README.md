@@ -2,17 +2,19 @@
 # MonteIsing
 
 ## ToC
--[Overview](Overview)
--[Lattice Class](Lattice)
--[DrawLattice Class](DrawLattice)
--[Multidimensional Neighbours Interactions and Counting](MultiDim)
+-[Overview](#Overview)
+-[Lattice Class](#Lattice)
+-[DrawLattice Class](#DrawLattice)
+-[Multidimensional Neighbours Interactions and Counting](#MultiDim)
 
 <div id='Lattice'>
 ## Lattice Class
+
 The class can build a multi dimensional square lattice of spins.
 
 <div id='DrawLattice'>
 ## DrawLattice Class
+
 The class can draw 2D or 3D lattice from the class Lattice.
 
 <div id='MultiDim'>
