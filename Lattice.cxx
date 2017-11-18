@@ -12,6 +12,9 @@
 #include <fstream>
 #include <string>
 
+#define H 1
+#define K 1
+#define J 1
 
 //#include <omp.h>
 
@@ -86,7 +89,7 @@ int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
 
-bool Lattice::flipSpin(uint n){
+bool Lattice::flipSpin(const uint& n){
   if(n > num_spin) return false;
   //std::cout << "I'm fliping" << std::endl << std::flush;
   lattice[n] = !lattice[n];
@@ -114,7 +117,7 @@ void Lattice::printLatticeROOT(const TString& name, const TString& ln = "lat") c
   f.Close();
 }
 
-int Lattice::energy() const {
+int Lattice::energy(const bool& p = false) const {
   int E_tmp = 0;
   uint pow_tmp1;
   uint pow_tmp2;
@@ -140,6 +143,8 @@ int Lattice::energy() const {
         lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
         lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
       }
+      /* Pauli term */
+      if(p){ lattice[i] ? E_tmp += H : E_tmp -= H; }
       //
     }
   }
@@ -178,7 +183,7 @@ int Lattice::energy() const {
 */
 
 
-int Lattice::dE(uint spin){
+int Lattice::dE(const uint& spin, const bool& p = false) const {
   int dE_tmp = 0;
   if(spin > num_spin){ return 0; }
   uint pow_tmp1;
@@ -204,25 +209,28 @@ int Lattice::dE(uint spin){
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
+    if(p){ lattice[i] ? E_tmp += H : E_tmp -= H; }
     //
   }
   return dE_tmp * 2;
 }
 
+float Lattice::magnetization(){
+  float M_temp = 0;
+  for(int i = 0; i < num_spin; i ++) lattice[i] ? M_temp += 1; M_temp -=1;
+  return M_temp / num_spin;
+}
 
 /* Cooling */
-void Lattice::cooling(){
-  double T = gRandom -> Rndm() * 1e-5 + 0.5;
+void Lattice::cooling(const unsigned float& t = 0.5){
+  double T = gRandom -> Rndm() * 1e-5 + t;
   uint spin = (uint) ( gRandom -> Rndm() * num_spin );
   int tmp_spin = dE(spin);
-  //std::cout << "tmp_spin = " << tmp_spin << std::endl << std::flush;
   if( tmp_spin < 0 ){
-    //std::cout << "first if true \n" << std::flush;
     flipSpin(spin);
   }
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / T)){
-      //std::cout << "second if true \n" << std::flush;
       flipSpin(spin);
     }
   }

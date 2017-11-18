@@ -45,20 +45,25 @@ class Lattice : public TObject{
 
   int getNumSpin() const;
 
-  bool flipSpin(unsigned int);
+  bool flipSpin(const unsigned int&);
 
   void printLatticeCSV(const TString&) const;
 
   void printLatticeROOT(const TString&, const TString&) const;
 
   /* Physical functions */
-  int energy() const;
+  int energy(const bool&) const;
 
   int energyParallel(int) const;
+  
+  int dE(const unsigned int&, const bool&) const;
 
-  void cooling();
+  float magnetization() const ;
+  
+  /* numerical function cooling */
+  void cooling(const unsigned float&);
 
-  int dE(unsigned int);
+  
 
   ClassDef(Lattice,1)
     };
