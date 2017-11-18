@@ -1,20 +1,22 @@
 # MonteIsing
 
 ## ToC
--[Overview](#Overview)
--[Lattice Class](#Lattice)
--[DrawLattice Class](#DrawLattice)
--[Multidimensional Neighbours Interactions and Counting](#MultiDim)
+- [Overview](#Overview)
+- [Lattice Class](#Lattice)
+- [DrawLattice Class](#DrawLattice)
+- [Multidimensional Neighbours Interactions and Counting](#MultiDim)
 
-## Lattice Class
+## Overview [#Overview]
+
+## Lattice Class [#Lattice]
 
 The class can build a multi dimensional square lattice of spins.
 
-## DrawLattice Class
+## DrawLattice Class [#DrawLattice]
 
 The class can draw 2D or 3D lattice from the class Lattice.
 
-## Multimimensional Neighbour Interactions and Counting
+## Multimimensional Neighbour Interactions and Counting [#MultiDim]
 
 Since the lattice is a mono dimensional `bool *` we need a method to
 count the neighbours of each spin.
