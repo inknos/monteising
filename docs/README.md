@@ -3,8 +3,8 @@
 ## ToC
 - [Overview](#overview)
 - [Lattice Class](#lattice-class)
-- [DrawLattice Class](#lrawlattice-class)
-- [Multidimensional Neighbours Interactions and Counting](#multidimensional-neighbours-interactions-and-counting)
+- [DrawLattice Class](#drawlattice-class)
+- [Multidimensional Neighbours Interactions and Counting](#multidimensional-neighbour-interactions-and-counting)
 
 ## Overview
 
@@ -16,7 +16,7 @@ The class can build a multi dimensional square lattice of spins.
 
 The class can draw 2D or 3D lattice from the class Lattice.
 
-## Multimimensional Neighbour Interactions and Counting
+## Multidiimensional Neighbour Interactions and Counting
 
 Since the lattice is a mono dimensional `bool *` we need a method to
 count the neighbours of each spin.
