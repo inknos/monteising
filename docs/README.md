@@ -22,6 +22,10 @@ The class can build a multi dimensional square lattice of spins.
 
 The class can draw 2D or 3D lattice from the class Lattice.
 
+![Cooling 2D 1][cooling2D-1]
+
+![Cooling 2D 2][cooling2D-2]
+
 ## Multidimensional Neighbour Interactions and Counting
 
 Since the lattice is a mono dimensional `bool *` we need a method to
@@ -58,3 +62,5 @@ a single power for each dimension > 1.
 
 [1Dmodel]: img/1D.png "1D Model"
 [2Dmodel]: img/2D.png "2D Model"
+[cooling2D-1]: img/1.gif "Cooling of 2D Lattice"
+[cooling2D-2]: img/2.gif "Cooling of 2D Lattice"
