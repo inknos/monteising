@@ -18,12 +18,19 @@ the axamples loading with `.L`.
 
 The class can build a multi dimensional square lattice of spins.
 
+$H = \sum_{\langle i, j\rangle}^{}J_{ij} \sigma_i \sigma_j + \mu \sum_{i=1}^{N} \sigma_i$
+with $J_{ij} = 1$ and $mu = 1$
+
 ## DrawLattice Class
 
 The class can draw 2D or 3D lattice from the class Lattice.
 
 ![Cooling 2D 1][cooling2D-1] ![Cooling 2D 2][cooling2D-2]
 ![Cooling 2D 3][cooling2D-3] ![Cooling 2D 4][cooling2D-4]
+1000000 spin 2D model at $T \approx 0.5$. Each frame is the flipping
+of 1000 spins. First video goes from 0 to 20000th iterations, then
+each gif continues with the next 20000. Notice that periodic
+boundary conditions during the islands formation.
 
 ## Multidimensional Neighbour Interactions and Counting
 
