@@ -16,7 +16,7 @@ class Lattice : public TObject{
   const unsigned int N;         // number of spins in one dimension
   const unsigned int num_spin;  // pow(N, dim) total number of spins
   bool * lattice;               // [num_spin] lattice
-  static double T = 0;              // Temperature
+  static double T;              // Temperature
 
  public:
   /* Public Constructors */
@@ -46,10 +46,9 @@ class Lattice : public TObject{
 
   int getNumSpin() const;
 
-  static double getT() const;
+  static double getT();
+  
   void setT(double);
-
-
 
   bool flipSpin(const unsigned int&);
 
@@ -71,7 +70,7 @@ class Lattice : public TObject{
   float magnetization() const ;
   
   /* numerical function cooling */
-  void cooling(const float&);
+  void cooling();
 
   
 

@@ -9,7 +9,7 @@ class Analysis{
 
 
 	public :
-		
+			
 
 
 

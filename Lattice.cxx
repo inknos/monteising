@@ -15,12 +15,18 @@
 #define H 1
 #define K 1
 #define J 1
+#define NOISE 1e-5
+
 
 //#include <omp.h>
 
 typedef unsigned int uint;
 
 ClassImp(Lattice)
+
+//setting the Temperature
+double Lattice::T = 0;
+
 
 Lattice::Lattice() : TObject(), q(2), N(1), dim(1) , num_spin(1){
   lattice = new bool[1];
@@ -88,6 +94,10 @@ bool Lattice::getSpin(const uint & i) const{
 int Lattice::getQ() const { return q; }
 
 int Lattice::getNumSpin() const { return num_spin; }
+
+double Lattice::getT() { return Lattice::T; }
+  
+void Lattice::setT(double _T){ Lattice::T = _T; }
 
 bool Lattice::flipSpin(const uint& n){
   if(n > num_spin) return false;
@@ -290,15 +300,15 @@ float Lattice::magnetization() const {
 }
 
 /* Cooling */
-void Lattice::cooling(const float& t = 0.5){
-  double T = gRandom -> Rndm() * 1e-5 + t;
+void Lattice::cooling(){
+  double _T = gRandom -> Rndm() * NOISE + Lattice::T;
   uint spin = (uint) ( gRandom -> Rndm() * num_spin );
   int tmp_spin = dE(spin);
   if( tmp_spin < 0 ){
     flipSpin(spin);
   }
   else{
-    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / T)){
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
       flipSpin(spin);
     }
   }
