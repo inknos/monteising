@@ -12,14 +12,6 @@
 #include <fstream>
 #include <string>
 
-
-
-
-
-
-
-
-
 #define H 1
 #define K 1
 #define J 1
@@ -167,11 +159,11 @@ int Lattice::energy2(const bool& p = false) const {
   for(uint d = 0; d < dim; d++) {
     for(uint i = 0; i < num_spin; i++) {
       if(d == dim - 1) {
-	lattice[i] ^ lattice[ (int) ( (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+        lattice[i] ^ lattice[ (int) ( (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
       }
       else{
-	i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
-	lattice[i] ^ lattice[ (int) (i_tmp + (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+        i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
+        lattice[i] ^ lattice[ (int) (i_tmp + (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
       }
     }
     if(d == dim - 1) continue;
@@ -228,8 +220,6 @@ int Lattice::energyFede() const{
   return -E_tmp;
 }
 
-
-
 /*
   int Lattice::energyParallel(int nt = 4) const {
   int E_tmp = 0;
@@ -260,7 +250,6 @@ int Lattice::energyFede() const{
   return E_tmp * 0.5;
   }
 */
-
 
 int Lattice::dE(const uint& spin, const bool& p = false) const {
   int dE_tmp = 0;
