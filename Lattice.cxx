@@ -178,7 +178,7 @@ int Lattice::energy2(const bool& p = false) const {
     pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
     pow_tmp2 = (uint) pow(N, d + 2); // one single pow for each loop
   }
-  return - E_tmp; //* 0.5;
+  return - E_tmp;
 }
 
 int Lattice::energyFede() const{
