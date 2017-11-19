@@ -21,7 +21,7 @@ The class can build a multi dimensional square lattice of spins.
 
 $$ H = - \sum_{\langle i, j\rangle}^{}J_{ij} \sigma_i \sigma_j - \mu \sum_{i=1}^{N} \sigma_i $$
 
-$$ J_{ij} = 1 $$ and $$ mu = 1 $$
+$$ J_{ij} = 1 \text{ and } \mu = 1 $$
 
 ## DrawLattice Class
 
