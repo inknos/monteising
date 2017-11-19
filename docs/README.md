@@ -5,6 +5,7 @@
 - [Run](#run)
 - [Lattice Class](#lattice-class)
 - [DrawLattice Class](#drawlattice-class)
+- [Structure of the Lattice](#structure-of-the-lattice)
 - [Multidimensional Neighbours Interactions and Counting](#multidimensional-neighbour-interactions-and-counting)
 
 ## Overview
@@ -40,11 +41,11 @@ dimensional array, which means that we have to choose a convention.
 The lattice is periodical, so we can imagine a torus for
 a 2D lattice...
 
-![torus][torus]
+![Torus][torus]
 
 ...and so on...
 
-![torus4D][torus4D]
+![Torus 4D][torus4D]
 
 Imagine the vector of spins wrapped on itself as many times as
 the dimension of the problem.
@@ -96,5 +97,5 @@ a single power for each dimension > 1.
 [cooling2D-3]: img/3-25.gif "Cooling of 2D Lattice"
 [cooling2D-4]: img/4-25.gif "Cooling of 2D Lattice"
 [3dlat]: img/structure.png "3D lattice structure"
-[torus] img/torus.png "Torus"
-[torus4D] img/torus4d.png "Torus in 4D"
+[torus]: img/torus.png "Torus"
+[torus4D]: img/torus4d.png "Torus in 4D"
