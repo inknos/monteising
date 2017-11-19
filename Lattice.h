@@ -54,6 +54,8 @@ class Lattice : public TObject{
   /* Physical functions */
   int energy(const bool&) const;
 
+  int energy2(const bool&) const;
+
   int energyFede() const ;
 
   int energyParallel(int) const;
