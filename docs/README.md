@@ -33,6 +33,28 @@ of 1000 spins. First video goes from 0 to 20000th iterations, then
 each gif continues with the next 20000. Notice that periodic
 boundary conditions during the islands formation.
 
+## Structure of the Lattice
+
+The lattice is a multidimensional grid. We store it in a one
+dimensional array, which means that we have to choose a convention.
+The lattice is periodical, so we can imagine a torus for
+a 2D lattice...
+
+![torus][torus]
+
+...and so on...
+
+![torus4D][torus4D]
+
+Imagine the vector of spins wrapped on itself as many times as
+the dimension of the problem.
+Here, a 3D representation:
+
+![3D Lattice][3dlat]
+
+It's necessary to remember these assumptions when measuring quantities
+such as energy on the lattice.
+
 ## Multidimensional Neighbour Interactions and Counting
 
 Since the lattice is a mono dimensional `bool *` we need a method to
@@ -48,7 +70,7 @@ bi dimensional lattice.
 Reduntant terms were omitted: `(i // N) * N` is zero when in max
 dimension, also, `(i + 1) % N` `(i - 1 -N) % N` may be reduntant.
 
-We can easily seee a pattern. We use `i` as the index of the
+We can easily see a pattern. We use `i` as the index of the
 spin in the lattice, `d` is a particular dimension where we
 want to find the neighbours.
 For a simple notation we used `//` and `**` in a python-ish style
@@ -73,3 +95,6 @@ a single power for each dimension > 1.
 [cooling2D-2]: img/2-25.gif "Cooling of 2D Lattice"
 [cooling2D-3]: img/3-25.gif "Cooling of 2D Lattice"
 [cooling2D-4]: img/4-25.gif "Cooling of 2D Lattice"
+[3dlat]: img/structure.png "3D lattice structure"
+[torus] img/torus.png "Torus"
+[torus4D] img/torus4d.png "Torus in 4D"
