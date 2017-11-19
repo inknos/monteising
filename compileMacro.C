@@ -17,6 +17,5 @@ void compileMacro(TString myopt="fast"){
   //gInterpreter->GenerateDictionary("vector<Track&gt","Track.h;vector");
   //gInterpreter->GenerateDictionary("Lattice","Lattice.h");
   gSystem->CompileMacro("./DrawLattice.cxx", opt.Data());
-  gSystem->CompileMacro("./Metropolis.cxx", opt.Data());
   //
 }

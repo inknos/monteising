@@ -1,33 +1,16 @@
-#ifndef ANALYSIS_H
-#define ANALYSIS_H
+#ifndef ANALYSIS_LATTICE_H
+#define ANALYSIS_LATTICE_H
 
 #include "Lattice.h"
 #include "TString.h"
 #include "TFile.h"
 
-class Analysis{
+class AnalysisLattice{
+ public :
 
+ private :
 
-	public :
-			
-
-
-
-	private :
-
-
-
-
-	ClassDef(Analysis , 1)
-
-
-
-};
-
-
-
-
-
-
+  ClassDef(AnalysisLattice, 1)
+  };
 
 #endif
