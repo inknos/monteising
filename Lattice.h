@@ -15,7 +15,8 @@ class Lattice : public TObject{
   const unsigned int q;         //
   const unsigned int N;         // number of spins in one dimension
   const unsigned int num_spin;  // pow(N, dim) total number of spins
-  bool * lattice;         // [num_spin] lattice
+  bool * lattice;               // [num_spin] lattice
+  static double T = 0;              // Temperature
 
  public:
   /* Public Constructors */
@@ -44,6 +45,11 @@ class Lattice : public TObject{
   int getQ() const;
 
   int getNumSpin() const;
+
+  static double getT() const;
+  void setT(double);
+
+
 
   bool flipSpin(const unsigned int&);
 
