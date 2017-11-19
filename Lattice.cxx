@@ -33,8 +33,8 @@ Lattice::Lattice() : TObject(), q(2), N(1), dim(1) , num_spin(1){
   lattice[0] = gRandom->Rndm() > 0.5 ? 0 : 1;
 }
 
-Lattice::Lattice(const uint& _N, const uint& _dim, const uint& _q = 2) :
-  TObject(), N(_N) , dim(_dim) , q(_q) , num_spin(pow(_N, _dim)){
+Lattice::Lattice(const uint& _N, const uint& _dim) :
+  TObject(), N(_N) , dim(_dim), q(0) , num_spin(pow(_N, _dim)){
   lattice = new bool[ num_spin ];
   for(uint i = 0; i < num_spin; i++){
     lattice[i] = gRandom->Rndm() > 0.5 ? 0 : 1;

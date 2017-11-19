@@ -22,16 +22,16 @@ class Lattice : public TObject{
   /* Public Constructors */
   Lattice();
 
-  Lattice(const unsigned int& _N, const unsigned int& _dim, unsigned const int& _q);
+  Lattice(const unsigned int&, const unsigned int&);
 
-  Lattice(const Lattice &obj);
+  Lattice(const Lattice&);
 
   ~Lattice();
 
   /* Public Operators */
-  Lattice& operator=(const Lattice& obj);
-
-  friend std::ostream &operator<<(std::ostream &out, const Lattice &lat);
+  Lattice& operator=(const Lattice&);
+  
+  friend std::ostream &operator<<(std::ostream&, const Lattice&);
 
   bool operator==(const Lattice&);
 
