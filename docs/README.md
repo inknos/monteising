@@ -98,4 +98,4 @@ a single power for each dimension > 1.
 [cooling2D-4]: img/4-25.gif "Cooling of 2D Lattice"
 [3dlat]: img/structure.png "3D lattice structure"
 [torus]: img/torus.png "Torus"
-[torus4D]: img/torus4D.png "Torus in 4D"
+[torus4D]: img/torus4D.jpg "Torus in 4D"
