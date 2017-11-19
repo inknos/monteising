@@ -12,14 +12,6 @@
 #include <fstream>
 #include <string>
 
-
-
-
-
-
-
-
-
 #define H 1
 #define K 1
 #define J 1
@@ -159,54 +151,74 @@ int Lattice::energy(const bool& p = false) const {
   return - E_tmp * 0.5;
 }
 
-int Lattice::energyFede() const{
-	int E_tmp = 0;
-	int N2 = pow(N,2);
-	int r1 , q1 , r2 , q2; //resto e quoziente della divisione per N^1 e e N^2
-	int a0, a1, a2;
-	
-	switch(dim){
-		case 1 : {
-				for(uint i = 0; i < num_spin; i++){
-					a0 = (i+1)%N;
-					lattice[i] ^ lattice[a0] ? E_tmp -= 1 : E_tmp += 1;				
-				}	
-				break;
-		}
-		case 2 : {
-				for(uint i = 0; i < num_spin; i++){
-					q1 = i/N;
-					r1 = i%N;
-					a0 = (r1+1)%N;
-					a1 = (q1+1)%N;
-
-					lattice[i] ^ lattice[q1*N + a0] ? E_tmp -= 1 : E_tmp += 1;
-					lattice[i] ^ lattice[a1*N + r1] ? E_tmp -=1 : E_tmp += 1;
-				}				
-				break;
-		}
-		case 3 : {						
-				for(uint i = 0; i < num_spin; i++){
-					q2 = i/N2;
-					r2 = i%N2;
-					q1 = r2/N;
-					r1 = r2%N;
-
-					a0 = (r1+1)%N;
-					a1 = (q1+1)%N;
-					a2 = (q2+1)%N;
-
-					lattice[i] ^ lattice[q2*N2 + q1*N + a0 ] ? E_tmp -= 1 : E_tmp += 1;
-					lattice[i] ^ lattice[q2*N2+ a1*N + r1] ? E_tmp -=1 : E_tmp += 1;				
-					lattice[i] ^ lattice[a2*N2 +r2] ? E_tmp -=1 : E_tmp += 1;
-				}	
-				break;
-		}
-	}
-	return -E_tmp;
+int Lattice::energy2(const bool& p = false) const {
+  int E_tmp = 0;
+  uint pow_tmp1 = 1;
+  uint pow_tmp2 = N;
+  uint i_tmp;
+  for(uint d = 0; d < dim; d++) {
+    for(uint i = 0; i < num_spin; i++) {
+      if(d == dim - 1) {
+        lattice[i] ^ lattice[ (int) ( (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      }
+      else{
+        i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
+        lattice[i] ^ lattice[ (int) (i_tmp + (i + pow_tmp1) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
+      }
+    }
+    if(d == dim - 1) continue;
+    pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
+    pow_tmp2 = (uint) pow(N, d + 2); // one single pow for each loop
+  }
+  return - E_tmp;
 }
 
+int Lattice::energyFede() const{
+  int E_tmp = 0;
+  int N2 = pow(N,2);
+  int r1 , q1 , r2 , q2; //resto e quoziente della divisione per N^1 e e N^2
+  int a0, a1, a2;
 
+  switch(dim){
+  case 1 : {
+    for(uint i = 0; i < num_spin; i++){
+      a0 = (i+1)%N;
+      lattice[i] ^ lattice[a0] ? E_tmp -= 1 : E_tmp += 1;
+    }
+    break;
+  }
+  case 2 : {
+    for(uint i = 0; i < num_spin; i++){
+      q1 = i/N;
+      r1 = i%N;
+      a0 = (r1+1)%N;
+      a1 = (q1+1)%N;
+
+      lattice[i] ^ lattice[q1*N + a0] ? E_tmp -= 1 : E_tmp += 1;
+      lattice[i] ^ lattice[a1*N + r1] ? E_tmp -=1 : E_tmp += 1;
+    }
+    break;
+  }
+  case 3 : {
+    for(uint i = 0; i < num_spin; i++){
+      q2 = i/N2;
+      r2 = i%N2;
+      q1 = r2/N;
+      r1 = r2%N;
+
+      a0 = (r1+1)%N;
+      a1 = (q1+1)%N;
+      a2 = (q2+1)%N;
+
+      lattice[i] ^ lattice[q2*N2 + q1*N + a0 ] ? E_tmp -= 1 : E_tmp += 1;
+      lattice[i] ^ lattice[q2*N2+ a1*N + r1] ? E_tmp -=1 : E_tmp += 1;
+      lattice[i] ^ lattice[a2*N2 +r2] ? E_tmp -=1 : E_tmp += 1;
+    }
+    break;
+  }
+  }
+  return -E_tmp;
+}
 
 /*
   int Lattice::energyParallel(int nt = 4) const {
@@ -238,7 +250,6 @@ int Lattice::energyFede() const{
   return E_tmp * 0.5;
   }
 */
-
 
 int Lattice::dE(const uint& spin, const bool& p = false) const {
   int dE_tmp = 0;
