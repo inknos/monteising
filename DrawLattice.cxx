@@ -16,6 +16,9 @@
 #define MARKER_STYLE_3D 20
 #define MARKER_SIZE_3D 0.6
 
+#define EIA true
+#define EJA true
+
 ClassImp(DrawLattice)
 
 typedef unsigned int uint;
