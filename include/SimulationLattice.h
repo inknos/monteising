@@ -12,7 +12,7 @@ class SimulationLattice{
   private : 
    
     Lattice * lattice_vector;
-
+    
     const uint dim_vector;
  
   public :
@@ -29,7 +29,15 @@ class SimulationLattice{
 
     ~SimulationLattice();                            
 
-    void simulation();
+    Lattice getLattice(const uint&) const;
+
+    uint getDimVector() const;
+
+    static uint getT();
+
+    static void setT(const double&);
+    
+    void simulation(const TString&, const uint&, const double&, const double&, const uint&);
 
   ClassDef(SimulationLattice, 1)
 };

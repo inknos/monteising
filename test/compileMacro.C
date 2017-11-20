@@ -14,7 +14,8 @@ void compileMacro(TString myopt="fast"){
   //gSystem->SetMakeSharedLib(cmd);
 
   TString workingDir(gSystem->WorkingDirectory());
-
+  workingDir.ReplaceAll("test", "");
+  
   gSystem->SetBuildDir(workingDir + TString("/build"), true);
 
   TString includePath("-I$ROOTSYS/include -I");

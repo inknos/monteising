@@ -20,9 +20,9 @@ void test(){
   gRandom -> SetSeed(time(0));
   
   TStopwatch timer;
-  Lattice uni(1000,1,2);
-  Lattice bi(1000,2,4);
-  Lattice tri(100,3,6);
+  Lattice uni(1000,1);
+  Lattice bi(1000,2);
+  Lattice tri(100,3);
 
   ofstream file;
 

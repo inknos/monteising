@@ -96,8 +96,8 @@ int Lattice::getQ() const { return q; }
 int Lattice::getNumSpin() const { return num_spin; }
 
 double Lattice::getT() { return Lattice::T; }
-  
-void Lattice::setT(double _T){ Lattice::T = _T; }
+
+void Lattice::setT(const double& _T){ Lattice::T = _T; }
 
 bool Lattice::flipSpin(const uint& n){
   if(n > num_spin) return false;
@@ -310,6 +310,26 @@ void Lattice::cooling(){
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
       flipSpin(spin);
+    }
+  }
+}
+
+void Lattice::cooling(const uint& iter) {
+  double _T;
+  uint spin;
+  int tmp_spin;
+
+  for(uint i = 0; i < iter; i++){
+    _T = gRandom -> Rndm() * NOISE + Lattice::T;
+    spin = (uint) ( gRandom -> Rndm() * num_spin );
+    tmp_spin = dE(spin);
+    if( tmp_spin < 0 ){
+      flipSpin(spin);
+    }
+    else{
+      if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
+        flipSpin(spin);
+      }
     }
   }
 }

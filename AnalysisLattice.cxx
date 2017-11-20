@@ -1,3 +1,0 @@
-ClassImp(AnalysisLattice)
-
-

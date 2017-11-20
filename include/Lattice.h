@@ -48,7 +48,7 @@ class Lattice : public TObject{
 
   static double getT();
   
-  void setT(double);
+  static void setT(const double&);
 
   bool flipSpin(const unsigned int&);
 
@@ -71,6 +71,8 @@ class Lattice : public TObject{
   
   /* numerical function cooling */
   void cooling();
+
+  void cooling(const uint&);
 
   
 
