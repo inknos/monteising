@@ -57,11 +57,11 @@ void SimulationLattice::simulation(const TString& fname,
   std::string lv("lattice_vector");
   for(double t = tempmin; t <= tempmax; t += (tempmax - tempmin) / tempstep){
     Lattice::setT(t);
-    //std::cout << "Cooling at T = " << t << std::endl << std::flush;
+    std::cout << "Cooling at T = " << t << std::endl << std::flush;
     for(uint i = 0; i < dim_vector; i++){
       lattice_vector[i].cooling(iter);
       lattice_vector[i].Write( (lv + std::to_string(i) + "_" + std::to_string(t)).c_str() );
-      //std::cout << i << "/" << dim_vector << std::endl << std::flush;
+      std::cout << i << "/" << dim_vector << std::endl << std::flush;
     }
   }
   f.Write();

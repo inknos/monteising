@@ -8,10 +8,10 @@
 #include <vector>
 #include <string>
 
-#define ENERGY        1
-#define TEMPERATURE   2
-#define MAGNETIZATION 3
-#define SITE_ENERGY   4
+#define aENERGY        1
+#define aTEMPERATURE   2
+#define aMAGNETIZATION 3
+#define aSITE_ENERGY   4
 
 typedef unsigned int uint;
 
@@ -26,6 +26,8 @@ class AnalysisLattice{
   double ** energy;
   double ** magnetization;
   double ** site_energy;
+  double ** site_magnetization;
+  Lattice getLattice(const uint& i);
 
   void count(const uint&);
 
@@ -36,22 +38,16 @@ class AnalysisLattice{
 
   AnalysisLattice(const TString&);
 
-  AnalysisLattice(const AnalysisLattice&);
-  
   ~AnalysisLattice();
 
-  AnalysisLattice& operator=(const AnalysisLattice&);
-
-  Lattice getLattice(const uint& i);
- 
   TString getFileName() const;
 
   vector<string> getList() const;
 
-  void analysis(const uint&, const uint&, const TString&, const TString&);
+  void analysis(const uint&, const uint&);
 
   void print();
-
+  
   ClassDef(AnalysisLattice, 1)
     };
 
