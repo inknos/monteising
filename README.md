@@ -7,6 +7,8 @@ More info at https://inknos.github.io/monteising
 
 ``
 git clone https://github.com/inknos/monteising monteising && cd monteising
+
 root
+
 .x compileMacro.C
 ``
