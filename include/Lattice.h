@@ -8,7 +8,6 @@
 #include <math.h>
 #include <iostream>
 
-
 class Lattice : public TObject{
  private:
   const unsigned int dim;       // dimension of the lattice
