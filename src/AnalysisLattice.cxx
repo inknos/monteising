@@ -29,7 +29,6 @@ AnalysisLattice::AnalysisLattice() : file_name(""), dim_c(1), dim_t(1) {
   e_err  = new double[1];
   m_err  = new double[1];
   s_err  = new double[1];
-
 }
 
 AnalysisLattice::AnalysisLattice(const TString& fname) : file_name(fname) {
@@ -188,9 +187,18 @@ void AnalysisLattice::analysisNoErr(const uint& x = 1, const uint& y = 0, const 
   mg -> Draw("AP");
 }
 
+void AnalysisLattice::analysisErr(const uint& x, const uint& y, const TString& name, const TString& title){
+  return;
+}
 
-void AnalysisLattice::analysis(const uint& x, const uint& y, const TString& name, const TString& title){
-  void (AnalysisLattice::*funct)(const uint& _x, const uint& _y, const TString& _name, const TString& _title);
+void AnalysisLattice::analysis(const uint& x, const uint& y, const uint& e, const TString& name, const TString& title){
+  void (AnalysisLattice::*funct)(const uint& x, const uint& y, const TString& name, const TString& title);
+  switch(e){
+  case 1:{ func = &AnalysisLattice::analysisNoErr; break; }
+  case 2:{ func = &AnalysisLattice::analysisErr;   break; }
+  case 3:{ return; }
+  default:{return; }
+  }
 }
 
 void AnalysisLattice::print(){
