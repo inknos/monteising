@@ -119,10 +119,10 @@ void AnalysisLattice::count(const uint& li){
 }
 
 void AnalysisLattice::creation(){
-  temperature = new double[dim_t];
-  energy             = new double*[dim_c];
-  magnetization      = new double*[dim_c];
-  site_energy        = new double*[dim_c];
+  temperature   = new double[dim_t];
+  energy        = new double*[dim_c];
+  magnetization = new double*[dim_c];
+  site_energy   = new double*[dim_c];
 
   e_mean = new double[dim_t];
   m_mean = new double[dim_t];
@@ -133,9 +133,9 @@ void AnalysisLattice::creation(){
   s_err  = new double[dim_t];
 
   for(uint i = 0; i < dim_c; i++){
-    energy[i]             = new double[dim_t];
-    magnetization[i]      = new double[dim_t];
-    site_energy[i]        = new double[dim_t];
+    energy[i]        = new double[dim_t];
+    magnetization[i] = new double[dim_t];
+    site_energy[i]   = new double[dim_t];
   }
 }
 
@@ -186,17 +186,18 @@ void AnalysisLattice::analysisNoErr(const uint& x = 1, const uint& y = 0, const 
 }
 
 void AnalysisLattice::analysisErr(const uint& x, const uint& y, const TString& name, const TString& title){
-  return;
+  
 }
 
-void AnalysisLattice::analysis(const uint& x, const uint& y, const uint& e, const TString& name, const TString& title){
-  void (AnalysisLattice::*func)(const uint& x, const uint& y, const TString& name, const TString& title);
-  switch(e){
+void AnalysisLattice::analysis(const uint& x, const uint& y, const uint& err, const TString& name, const TString& title){
+  void (AnalysisLattice::*func)(const uint& _x, const uint& _y, const TString& _name, const TString& _title);
+  switch(err){
   case 1:{ func = &AnalysisLattice::analysisNoErr; break; }
   case 2:{ func = &AnalysisLattice::analysisErr;   break; }
   case 3:{ return; }
-  default:{return; }
+  default:{ return; }
   }
+  (*this.*func)(x, y, name, title);
 }
 
 void AnalysisLattice::print(){
