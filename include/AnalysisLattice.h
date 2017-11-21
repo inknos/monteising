@@ -29,10 +29,22 @@ class AnalysisLattice{
   double ** site_magnetization;
   Lattice getLattice(const uint& i);
 
+  double * e_mean;
+  double * m_mean;
+  double * s_mean;
+
+  double * e_err;
+  double * m_err;
+  double * s_err;
+  
   void count(const uint&);
 
   void creation();
 
+  void analysisNoErr(const uint&, const uint&, const TString&, const TString&);
+  
+  void analysisErr(const uint&, const uint&, const TString&, const TString&);
+  
  public:
   AnalysisLattice();
 
