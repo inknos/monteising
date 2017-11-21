@@ -81,11 +81,9 @@ AnalysisLattice::AnalysisLattice(const TString& fname) : file_name(fname) {
     m_err[i] = sqrt(m_err[i]);
     s_err[i] = sqrt(s_err[i]);
   }
-  
+  f.Close();
 }
 
-f.Close();
-}
 
 
 AnalysisLattice::~AnalysisLattice(){
@@ -192,7 +190,7 @@ void AnalysisLattice::analysisErr(const uint& x, const uint& y, const TString& n
 }
 
 void AnalysisLattice::analysis(const uint& x, const uint& y, const uint& e, const TString& name, const TString& title){
-  void (AnalysisLattice::*funct)(const uint& x, const uint& y, const TString& name, const TString& title);
+  void (AnalysisLattice::*func)(const uint& x, const uint& y, const TString& name, const TString& title);
   switch(e){
   case 1:{ func = &AnalysisLattice::analysisNoErr; break; }
   case 2:{ func = &AnalysisLattice::analysisErr;   break; }

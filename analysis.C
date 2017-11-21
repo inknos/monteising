@@ -38,7 +38,7 @@ void analysis(){
   timer.Start();
   //ana.analysis(TEMPERATURE, ENERGY, "te", "T/E");
   //ana.analysis(TEMPERATURE, MAGNETIZATION, "tm", "T/M");
-  ana.analysis(TEMPERATURE, SITE_ENERGY, "ts", "T/S; temperature; energy");
+  ana.analysis(TEMPERATURE, SITE_ENERGY, NO_ERR, "ts", "T/S; temperature; energy");
   //ana.analysis(ENERGY, MAGNETIZATION, "em", "E/M");
   timer.Stop();
   timer.Print();

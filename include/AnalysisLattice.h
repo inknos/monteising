@@ -13,6 +13,9 @@
 #define MAGNETIZATION 3
 #define SITE_ENERGY   4
 
+#define NO_ERR        1
+#define ERR           2
+
 typedef unsigned int uint;
 
 class AnalysisLattice{
