@@ -4,6 +4,7 @@
 #include "Lattice.h"
 #include "TString.h"
 #include "TFile.h"
+#include "TMultiGraph.h"
 
 #include <vector>
 #include <string>
@@ -15,6 +16,7 @@
 
 #define NO_ERR        1
 #define ERR           2
+#define BOTH          3
 
 #define DIM_ERR       2
 
@@ -30,6 +32,7 @@ class AnalysisLattice{
 
   uint dim_c;
   uint dim_t;
+  
   double *  temperature;
   double ** energy;
   double ** magnetization;
@@ -47,9 +50,9 @@ class AnalysisLattice{
 
   void creation();
 
-  void analysisNoErr(const uint&, const uint&, const TString&, const TString&);
-  
-  void analysisErr(const uint&, const uint&, const TString&, const TString&);
+  TMultiGraph * analysisNoErr(const uint&, const uint&, const TString&, const TString&);
+
+  TMultiGraph *analysisErr(const uint&, const uint&, const TString&, const TString&);
   
  public:
   AnalysisLattice();
