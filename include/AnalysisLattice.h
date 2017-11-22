@@ -16,6 +16,11 @@
 #define NO_ERR        1
 #define ERR           2
 
+#define DIM_ERR       2
+
+#define SPIN_UP       1
+#define SPIN_DOWN     0
+
 typedef unsigned int uint;
 
 class AnalysisLattice{
@@ -30,13 +35,13 @@ class AnalysisLattice{
   double ** magnetization;
   double ** site_energy;
 
-  double * e_mean;
-  double * m_mean;
-  double * s_mean;
+  double ** e_mean;
+  double ** m_mean;
+  double ** s_mean;
 
-  double * e_err;
-  double * m_err;
-  double * s_err;
+  double ** e_err;
+  double ** m_err;
+  double ** s_err;
   
   void count(const uint&);
 
@@ -63,6 +68,8 @@ class AnalysisLattice{
 
   vector<string> getList() const;
 
+  void setTarget(const double&, const double&, const double&, const double&, const uint&, const uint&, const uint&);
+  
   void analysis(const uint&, const uint&, const uint&, const TString&, const TString&);
 
   void print();

@@ -18,13 +18,13 @@ void analysis(){
   timer.Print();
 
   timer.Start();
-  SimulationLattice sim(lat, 50);
+  SimulationLattice sim(lat, 20);
   cout << "[ done ] SimulationLattice\n" << flush;
   timer.Stop();
   timer.Print();
 
   timer.Start();
-  sim.simulation("simulation.root", 500000, 0, 3, 20);
+  sim.simulation("simulation.root", 500000, 0, 3, 5);
   cout << "[ done ] simulation\n" << flush;
   timer.Stop();
   timer.Print();
@@ -35,6 +35,13 @@ void analysis(){
   timer.Stop();
   timer.Print();
 
+  timer.Start();
+  ana.setTarget(0., 1.5, 0.5, 1.5, SPIN_UP, TEMPERATURE, MAGNETIZATION);
+  ana.setTarget(0., 1.5, -0.5, -1.5, SPIN_DOWN, TEMPERATURE, MAGNETIZATION);
+  cout << "[ done ] Target Set\n" << flush;
+  timer.Stop();
+  timer.Print();
+  
   timer.Start();
   //ana.analysis(TEMPERATURE, ENERGY, "te", "T/E");
   ana.analysis(TEMPERATURE, MAGNETIZATION, NO_ERR, "tm", "T/M");
