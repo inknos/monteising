@@ -33,6 +33,8 @@
 
 #root 
 *.pcm
+*.root
+*.csv
 
 #vim
 # Swap
