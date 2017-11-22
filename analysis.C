@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-void analysis(){
+AnalysisLattice analysis(){
   gRandom->SetSeed(10000);
 
   TStopwatch timer;
@@ -43,4 +43,5 @@ void analysis(){
   timer.Stop();
   timer.Print();
 
+  return ana;
 }
