@@ -12,25 +12,25 @@ AnalysisLattice analysis(){
   TStopwatch timer;
 
   timer.Start();
-  Lattice lat(20,2);
+  Lattice lat(50,2);
   cout << "[ done ] Lattice\n" << flush;
   timer.Stop();
   timer.Print();
 
   timer.Start();
-  SimulationLattice sim(lat, 100);
+  SimulationLattice sim(lat, 10);
   cout << "[ done ] SimulationLattice\n" << flush;
   timer.Stop();
   timer.Print();
 
   timer.Start();
-  sim.simulation("simulation.root", 100000, 0, 5, 10);
+  sim.simulation("simulation2.root", 5000000, 0, 5, 10);
   cout << "[ done ] simulation\n" << flush;
   timer.Stop();
   timer.Print();
 
   timer.Start();
-  AnalysisLattice ana("simulation.root");
+  AnalysisLattice ana("simulation2.root");
   cout << "[ done ] AnalysisLattice\n" << flush;
   timer.Stop();
   timer.Print();
