@@ -18,7 +18,7 @@ AnalysisLattice analysis(){
   timer.Print();
 
   timer.Start();
-  SimulationLattice sim(lat, 5);
+  SimulationLattice sim(lat, 50);
   cout << "[ done ] SimulationLattice\n" << flush;
   timer.Stop();
   timer.Print();

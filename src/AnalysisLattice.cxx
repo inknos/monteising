@@ -5,6 +5,7 @@
 #include "TMultiGraph.h"
 #include "TGraphErrors.h"
 #include "TAxis.h"
+#include "TLine.h"
 
 #include "Lattice.h"
 #include "AnalysisLattice.h"
@@ -30,7 +31,7 @@ AnalysisLattice::AnalysisLattice() : file_name(""), dim_c(1), dim_t(1) {
   energy[1]             = new double;
   magnetization[1]      = new double;
   site_energy[1]        = new double;
-
+  
   for(uint i = 0; i < DIM_ERR; i++){
     e_mean[i] = new double[1];
     m_mean[i] = new double[1];
@@ -39,7 +40,12 @@ AnalysisLattice::AnalysisLattice() : file_name(""), dim_c(1), dim_t(1) {
     e_err[i]  = new double[1];
     m_err[i]  = new double[1];
     s_err[i]  = new double[1];
-  }
+
+    targetx_min = new double[DIM_ERR];
+    targety_min = new double[DIM_ERR]; 
+    targetx_max = new double[DIM_ERR];
+    targety_max = new double[DIM_ERR];
+ }
 }
 
 AnalysisLattice::AnalysisLattice(const TString& fname) : file_name(fname) {
@@ -85,6 +91,12 @@ AnalysisLattice::AnalysisLattice(const AnalysisLattice& obj) :
       s_err[j][i]  = obj.e_err[j][i];
     }
   }
+  for(uint i = 0; i < DIM_ERR; i++){
+    targetx_min[i] = obj.targetx_min[i];
+    targety_min[i] = obj.targety_min[i];
+    targetx_max[i] = obj.targetx_max[i];
+    targety_max[i] = obj.targetx_max[i];
+  }
 }
 
 AnalysisLattice& AnalysisLattice::operator=(const AnalysisLattice& obj){
@@ -122,6 +134,11 @@ AnalysisLattice::~AnalysisLattice(){
   delete []e_err;
   delete []m_err;
   delete []s_err;
+
+  delete []targetx_min;
+  delete []targety_min;
+  delete []targetx_max;
+  delete []targety_max;
 }
 
 /* Private Methods */
@@ -149,6 +166,11 @@ void AnalysisLattice::creation(){
   m_err         = new double*[DIM_ERR];
   s_err         = new double*[DIM_ERR];
 
+  targetx_min   = new double[DIM_ERR];
+  targety_min   = new double[DIM_ERR];
+  targetx_max   = new double[DIM_ERR];
+  targety_max   = new double[DIM_ERR];
+  
   for(uint i = 0; i < dim_c; i++){
     energy[i]        = new double[dim_t];
     magnetization[i] = new double[dim_t];
@@ -170,7 +192,10 @@ TString AnalysisLattice::getFileName() const { return file_name; }
 
 vector<string> AnalysisLattice::getList() const { return l; }
 
-TMultiGraph * AnalysisLattice::analysisNoErr(const uint& x = 1, const uint& y = 0, const TString& name = "graph", const TString& title = "Graph"){
+TMultiGraph * AnalysisLattice::analysisNoErr(const uint& x, const uint& y,
+                                             const uint& err,
+                                             const TString& name, const TString& title,
+                                             const bool& target) {
   TGraph ** gr = new TGraph * [dim_c];
   TMultiGraph * mg = new TMultiGraph(name, title);
 
@@ -207,12 +232,36 @@ TMultiGraph * AnalysisLattice::analysisNoErr(const uint& x = 1, const uint& y = 
   for(uint i = 0; i < dim_c; i++){
     mg -> Add(gr[i]);
   }
-
+  
   mg -> Draw("AP");
+
+  if(target){
+    TLine *** line = new TLine ** [DIM_ERR];
+    for(uint i = 0; i < DIM_ERR; i++){
+      line[i] = new TLine * [4];
+    }
+    for(uint i = 0; i < DIM_ERR; i++){
+      line[i][0] = new TLine(targetx_min[i], targety_min[i], targetx_max[i], targety_min[i]);
+      line[i][1] = new TLine(targetx_min[i], targety_max[i], targetx_max[i], targety_max[i]);
+      line[i][2] = new TLine(targetx_max[i], targety_min[i], targetx_max[i], targety_max[i]);
+      line[i][3] = new TLine(targetx_min[i], targety_min[i], targetx_min[i], targety_max[i]);
+    }
+
+    for(uint i = 0; i < DIM_ERR; i++){
+      for(uint j = 0; j < 4; j++){
+        line[i][j] -> SetLineColorAlpha(2 + i*2, 0.8);
+        line[i][j] -> Draw("SAME");
+      }
+    }
+  }
+
   return mg;
 }
 
-TMultiGraph * AnalysisLattice::analysisErr(const uint& x, const uint& y, const TString& name, const TString& title){
+TMultiGraph * AnalysisLattice::analysisErr(const uint& x, const uint& y,
+                                           const uint& err,
+                                           const TString& name, const TString& title,
+                                           const bool& target){
   void * x_vec;
   void * x_err;
   void * y_vec;
@@ -223,8 +272,16 @@ TMultiGraph * AnalysisLattice::analysisErr(const uint& x, const uint& y, const T
   TGraphErrors ** gr = new TGraphErrors*[DIM_ERR];
   
   TMultiGraph * mg = new TMultiGraph(name, title);
-  
-  for(uint i = 0; i < DIM_ERR; i++){
+
+  uint init = 0, end = 0;
+  switch(err){
+  case 0: { init = 0; end = 1; break; }
+  case 1: { init = 1; end = 2; break; }
+  case 2: { init = 0; end = DIM_ERR; break; }
+  default: {init = 0; end = DIM_ERR; break; }
+  }
+
+  for(uint i = init; i < end; i++){
     switch(x){
     case 1:{ x_vec = e_mean[i]; x_err = e_err[i]; break; }
     case 2:{ x_vec = temperature; x_err = terr; break; }
@@ -249,27 +306,72 @@ TMultiGraph * AnalysisLattice::analysisErr(const uint& x, const uint& y, const T
     }
     gr[i] = new TGraphErrors(dim_t, (double*) x_vec, (double*) y_vec,
                              (double*) x_err, (double*) y_err);
-    gr[i]->SetMarkerStyle(22 + i);
+    gr[i]->SetMarkerStyle(23 - i);
     gr[i]->SetMarkerColor(2 + i * 2);
   
     mg->Add(gr[i]);
-    mg->Add(gr[i]);
   }
-  
+
   mg->Draw("ALP");
+  
+  if(target){
+    TLine *** line = new TLine ** [DIM_ERR];
+    for(uint i = 0; i < DIM_ERR; i++){
+      line[i] = new TLine * [4];
+    }
+    for(uint i = 0; i < DIM_ERR; i++){
+      line[i][0] = new TLine(targetx_min[i], targety_min[i], targetx_max[i], targety_min[i]);
+      line[i][1] = new TLine(targetx_min[i], targety_max[i], targetx_max[i], targety_max[i]);
+      line[i][2] = new TLine(targetx_max[i], targety_min[i], targetx_max[i], targety_max[i]);
+      line[i][3] = new TLine(targetx_min[i], targety_min[i], targetx_min[i], targety_max[i]);
+    }
+
+    for(uint i = 0; i < DIM_ERR; i++){
+      for(uint j = 0; j < 4; j++){
+        line[i][j] -> SetLineColorAlpha(2 + i*2, 0.8);
+        line[i][j] -> Draw("SAME");
+      }
+    }
+  }
+
   delete []terr;
 
   return mg;
 }
 
-void AnalysisLattice::analysis(const uint& x, const uint& y, const uint& err, const TString& name, const TString& title){
-  TMultiGraph * (AnalysisLattice::*func)(const uint& _x, const uint& _y, const TString& _name, const TString& _title);
+TMultiGraph * AnalysisLattice::analysis(const uint& x, const uint& y, const uint& err, const TString& name, const TString& title, const bool& target = false){
+  TMultiGraph * (AnalysisLattice::*func)(const uint& _x, const uint& _y, const uint& _err, const TString& _name, const TString& _title, const bool& _target);
   switch(err){
-  case 1:{ func = &AnalysisLattice::analysisNoErr; break; }
+  case 0:{ func = &AnalysisLattice::analysisErr; break; }
+  case 1:{ func = &AnalysisLattice::analysisErr; break; }
   case 2:{ func = &AnalysisLattice::analysisErr;   break; }
-  default:{ return; }
+  case 3:{ func = &AnalysisLattice::analysisNoErr; break;}
+  default:{ return 0; }
   }
-  (*this.*func)(x, y, name, title);
+  return (*this.*func)(x, y, err, name, title, target);
+}
+
+double* AnalysisLattice::getTargetX(const uint& spin){
+  double * ret = new double[2];
+  ret[0] = targetx_min[spin];
+  ret[1] = targetx_max[spin];
+  return ret;
+}
+
+double* AnalysisLattice::getTargetY(const uint& spin){
+  double * ret = new double[2];
+  ret[0] = targety_min[spin];
+  ret[1] = targety_max[spin];
+  return ret;
+}
+
+double* AnalysisLattice::getTarget(const uint& spin){
+  double * ret = new double[4];
+  ret[0] = targetx_min[spin];
+  ret[1] = targetx_max[spin];
+  ret[2] = targety_min[spin];
+  ret[3] = targety_max[spin];
+  return ret;
 }
 
 void AnalysisLattice::setTarget(const double& x_min, const double& x_max,
@@ -279,6 +381,11 @@ void AnalysisLattice::setTarget(const double& x_min, const double& x_max,
   void * y_vec;
   vector<uint> index;
 
+  targetx_min[dim] = x_min;
+  targety_min[dim] = y_min;
+  targetx_max[dim] = x_max;
+  targety_max[dim] = y_max;
+  
   for(uint j = 0; j < dim_t; j++){
     e_mean[dim][j] = 0; m_mean[dim][j] = 0; s_mean[dim][j] = 0;
     e_err[dim][j]  = 0; m_err[dim][j]  = 0; s_err[dim][j]  = 0;

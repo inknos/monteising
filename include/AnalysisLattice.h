@@ -14,14 +14,17 @@
 #define MAGNETIZATION 3
 #define SITE_ENERGY   4
 
-#define NO_ERR        1
-#define ERR           2
-#define BOTH          3
+#define DIM_ERR       2 // dimension of the analysis vectors = num spins
 
-#define DIM_ERR       2
+// for analysis()
+#define BOTH         -1
+#define SPIN_DOWN     0 // graph only spin down with errors
+#define SPIN_UP       1 // graph only spin up   with errors
+#define ERR           2 // graph both spins     with errors
+#define NO_ERR        3 // graph raw data
 
-#define SPIN_UP       1
-#define SPIN_DOWN     0
+#define TARGET        1
+#define NO_TARGET     0
 
 typedef unsigned int uint;
 
@@ -45,14 +48,19 @@ class AnalysisLattice{
   double ** e_err;
   double ** m_err;
   double ** s_err;
+
+  double * targetx_min;
+  double * targety_min;
+  double * targetx_max;
+  double * targety_max;
   
   void count(const uint&);
 
   void creation();
 
-  TMultiGraph * analysisNoErr(const uint&, const uint&, const TString&, const TString&);
+  TMultiGraph * analysisNoErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
 
-  TMultiGraph *analysisErr(const uint&, const uint&, const TString&, const TString&);
+  TMultiGraph *analysisErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
   
  public:
   AnalysisLattice();
@@ -71,9 +79,15 @@ class AnalysisLattice{
 
   vector<string> getList() const;
 
+  double * getTargetX(const uint&);
+
+  double * getTargetY(const uint&);
+
+  double * getTarget(const uint&);
+  
   void setTarget(const double&, const double&, const double&, const double&, const uint&, const uint&, const uint&);
   
-  void analysis(const uint&, const uint&, const uint&, const TString&, const TString&);
+  TMultiGraph * analysis(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
 
   void print();
 
