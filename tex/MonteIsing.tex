@@ -1,23 +1,26 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper]{geometry}
+
+\usepackage[english]{babel}
+\hyphenation{sil-la-ba-zio-ne pa-ren-te-si}
+\usepackage{newlfont}
+
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{newlfont}
-\usepackage[italian]{babel}
+\usepackage {amsmath, amssymb} 
+\usepackage{bbm}
+
+\usepackage{graphicx}
 \usepackage{rotating}
 \usepackage{subfigure}
 \usepackage{lscape}
 \usepackage[bf, scriptsize]{caption}
 \usepackage{multirow}
 \usepackage{longtable}
-\hyphenation{sil-la-ba-zio-ne pa-ren-te-si}
 \hyphenation{Low-din}
-\usepackage{bbm}
-\usepackage {amsmath, amssymb} 
-\usepackage{graphicx}
 \usepackage{titling}
 \usepackage{eurosym}
 \usepackage{adjustbox}
@@ -44,22 +47,19 @@ Results show the robustness of the proposed solution both in economical and user
 %-----------------------------PAG 1----------------------------------%
 \newpage
 \section*{Introduction}
-The Ising model is a well studied model in Statistical Mechanics which describes ferromagnetism phenomena. Moreover it is characterized by a microscopic configuration space based on D-dimensional lattice that brings to macroscopic statistical quantities. It can easily generalize the concept of collective effects caused by single interacting couples; for this reason thie Ising model became the core of the physics of complex systems. In the last decades computational methods have been applied to search a numerical solution for the 3D Ising model in order to  fill the lack of an analytical solution.  
+The Ising model is a well studied model in Statistical Mechanics which describes ferromagnetism phenomena. It is characterized by a microscopic configuration space based on D-dimensional lattice, that brings to macroscopic statistical quantities. Moreover it can easily generalize the concept of collective effects caused by binary valued points interacting in pairs; for this reason the Ising model became the core of the physics of complex systems. In the last decades computational methods have been applied to search a numerical solution for the 3D Ising model in order to  fill the lack of an analytical solution.  
 \\
-The Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling based on the importance of a region determined a great step for the numerical solutions. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the D-dimensional Ising model with Metropolis algorithm.
+Alongside Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling based on the importance of a region determined a great step for the numerical solutions in general. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the 3D-dimensional Ising model with Metropolis algorithm.
 
 
 \begin{figure}[h!]
 \centering
-%\includegraphics[scale=0.34]{Figura1} 
-\caption[Source: UN, Worldbank, OECD, ITF, Schäfer/Victor 2000, Cosgrove/Cargett 2007, Schäfer 2007, Arthur D. Little]{Forecast of urban growth and goods mobility demand}
+\includegraphics[scale=0.25]{img/img1_intro.jpg} 
+\caption[Source: "monteinsing code" https://inknos.github.io/monteising/]{High temperature simulation of 3D Ising model}
+\includegraphics[scale=0.25]{img/img2_intro.jpg} 
+\caption[Source: "monteinsing code" https://inknos.github.io/monteising/]{Low temperature simulation of 3D Ising model}
 \end{figure}
 
-While  a lot of work has been done until now for the optimization of long journey transportation, the delivery from the last warehouse to the customer still has a central role in this branch of research; in fact this part of the route contributes with the 28\%\footnote{Wikipedia: https://en.wikipedia.org/wiki/Last\_mile\_(transportation)}  to the total cost of transportation. 
-
-This particular fact expresses the proportionality between today cities complexity and transport costs in them, outlining the purpose this work wants to pursuit: optimization and simulation of new delivering methods. 
-Classical optimization system are not adequately solving the problem and a paradigm change could bring better or interesting results for this sector. 
-Moreover we underline the fact that even if the most important stakeholders (public authorities and transportation companies) may have diverging interests and objectives, it is possible to go further finding a better solution in terms of ecological sustainability, valorization of urban ecosystem and services to the citizen. 
 
 %-----------------------------PAG 2----------------------------------%
 \newpage 
@@ -368,38 +368,21 @@ What would happen if there are too few users?
 Keeping all other parameters as found we set the number of users to one tenth the original value, down to 70 agents total.
 We observe that the delivery process takes up to two days, instead of the half day in standard situation and the total expenses increase up to 28\% more.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(70_user).png}  
-\caption{Total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 70 users)}
-\end{figure}
+
 
 We can have an estimate of the curve slope in log-lin scale.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(70_user_fit).png}  
-\caption{Fit: total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 70 users)}
-\end{figure}
+
 
 \newpage
 \subsubsection*{Too many}
 On the opposite we explore what happens if there are too many users, up to 7000 agents total.
 As can be expected the delivery process is completed in a risible time and the expenses are down 70\%, proving the benefit for the commissioner in expanding the participation.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(7000_user).png}  
-\caption{Total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 7000 users)}
-\end{figure}
 
 We can have an estimate of the curve slope in log-lin scale.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(7000_user_fit).png}  
-\caption{Fit: total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 7000 users)}
-\end{figure}
+
 
 \newpage
 \subsubsection*{Wanting more}
@@ -407,38 +390,21 @@ A reasonable question may that an higher pay may be needed to incentive users to
 We examined what would happen if the pay was up to 5\euro{}/km of deviation.
 Similarly to the first case, the process of delivering all packs may take up to two days, but the total expenses will not be too different than the standard situation.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(5_eu_km).png}  
-\caption{Total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
 
 We can have an estimate of the curve slope in log-lin scale.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(5_eu_km_fit).png}  
-\caption{Fit: total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
+
 
 \newpage
 \subsubsection*{High Maintenance}
 A success of our method may have the downside of increasing maintenance costs for the storages around the city.
 Examining a bi-daily maintenance cost five time the standard situation we found an increase in the total expenses around 21\%, like the first case examined, but without any other downside.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(1_storage_cost).png}  
-\caption{Total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
+
 
 We can have an estimate of the curve slope in log-lin scale.
 
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{Grafici/Total_expense(1_storage_cost_fit).png}  
-\caption{Fit: total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)})
-\end{figure}
+
 
 \newpage
 \section{Conclusions}
@@ -468,23 +434,12 @@ Note that the storage's capacity is greater than the minimum required for an uni
 \bigskip
 
 The figure below shows that the curves of expenses and number of packs vs. time have almost an opposite trend; moreover on the right we see that the expenses for each pack decreases with time.
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.65]{conclusion_graph_1.png} 
-\caption*{Packs curve in green, expenses curve in blue}
-\end{figure}
+
 \newpage
 Considering an high and a low number of users we saw that the convergence is faster in the first case and, as expected, less expensive. Note that at the end of the day (1600 ticks) in both cases all packs are delivered.
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.65]{conclusion_graph_2.png} 
-\end{figure}
-\\
+
+
 Increasing the fixed cost parameters we saw that expenses grew, but the model still succeed in delivering all packs in a day (1600 ticks) with a cost for each pack that is lower than 1.75\euro{}.
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.65]{conclusion_graph_3.png} 
-\end{figure}
 \\
 In conclusion this underlines the robustness of the proposed solution both in economical and user's engagement terms, moreover the model held interesting results also in extreme cases. 
 
