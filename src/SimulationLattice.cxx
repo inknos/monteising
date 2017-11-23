@@ -6,8 +6,6 @@
 #include <string>
 #include <iostream>
 
-#include <omp.h>
-
 ClassImp(SimulationLattice)
 
 SimulationLattice::SimulationLattice() : dim_vector(1){
@@ -57,7 +55,6 @@ void SimulationLattice::simulation(const TString& fname,
   
   TFile f(fname, "RECREATE");
   std::string lv("lattice_vector");
-
   for(double t = tempmin; t <= tempmax; t += (tempmax - tempmin) / tempstep){
     Lattice::setT(t);
     //std::cout << "Cooling at T = " << t << std::endl << std::flush;
