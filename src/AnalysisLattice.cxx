@@ -64,7 +64,7 @@ AnalysisLattice::AnalysisLattice(const TString& fname) : file_name(fname) {
     temperature[i] = std::stod(l[i*dim_c].substr(l[i*dim_c].find_last_of("_") + 1));
 
     for(uint j = 0; j < dim_c; j++){
-      energy[j][i] = (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).energy2(false);
+      energy[j][i] = (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).energy(false);
       magnetization[j][i] = (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).magnetization();
       site_energy[j][i] = energy[j][i] / (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).getNumSpin();
     }

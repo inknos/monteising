@@ -58,10 +58,6 @@ class Lattice : public TObject{
   /* Physical functions */
   int energy(const bool&) const;
 
-  int energy2(const bool&) const;
-
-  int energyFede() const ;
-
   int energyParallel(int) const;
   
   int dE(const unsigned int&, const bool&) const;
@@ -73,7 +69,7 @@ class Lattice : public TObject{
 
   void cooling(const uint&);
 
-  
+  double * coolingPar();
 
   ClassDef(Lattice,1)
     };

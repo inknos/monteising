@@ -14,15 +14,27 @@ class SimulationLattice{
     Lattice * lattice_vector;
     
     const uint dim_vector;
- 
+    const uint N;
+    const uint dim;
+
+    TString file;
+    uint iter;
+    double tempmin;
+    double tempmax;
+    uint tempstep;
+    
   public :
 
     SimulationLattice(); 
-     
-    SimulationLattice(const Lattice& , const uint&);
                  
-    SimulationLattice(const uint& , const uint& , const uint&);   
+    SimulationLattice(const uint& , const uint& , const uint&,
+                      const TString&, const uint&,
+                      const double&, const double&, const uint&);   
    
+    SimulationLattice(const Lattice& , const uint&,
+                      const TString&, const uint&,
+                      const double&, const double&, const uint&);
+
     SimulationLattice(const SimulationLattice&);
     
     SimulationLattice& operator=(const SimulationLattice& obj); 
@@ -33,11 +45,37 @@ class SimulationLattice{
 
     uint getDimVector() const;
 
+    uint getN() const;
+    
+    uint getDim() const;
+
+    TString getFile() const;
+
+    uint getIter() const;
+
+    double getTempMin() const;
+
+    double getTempMax() const;
+
+    double getTempStep() const;
+
+    void setFile(const TString&);
+
+    void setIter(const uint&);
+
+    void setTempMin(const double&);
+
+    void setTempMax(const double&);
+
+    void setTempStep(const uint&);
+     
     static uint getT();
 
     static void setT(const double&);
+
+    void run();
     
-    void simulation(const TString&, const uint&, const double&, const double&, const uint&);
+    //void simulation(const TString&, const uint&, const double&, const double&, const uint&);
 
   ClassDef(SimulationLattice, 1)
 };

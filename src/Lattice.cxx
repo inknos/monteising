@@ -129,40 +129,6 @@ void Lattice::printLatticeROOT(const TString& name, const TString& ln = "lat") c
 
 int Lattice::energy(const bool& p = false) const {
   int E_tmp = 0;
-  uint pow_tmp1;
-  uint pow_tmp2;
-  uint i_tmp;
-  for(uint i = 0; i < num_spin; i++){
-    for(uint d = 0; d < dim; d++){
-      //
-      if(d == 0){ // skips first cycle pow and prevents one pow in every future cycle
-        pow_tmp1 = 1;
-        pow_tmp2 = N;
-      }
-      else{
-        pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
-        pow_tmp2 = (uint) pow(N, d + 1); // one single pow for each loop
-      }
-      //
-      if(d == dim - 1){ // last loop => biggest torus => no need to control position
-        lattice[i] ^ lattice[ (int) ( (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
-        lattice[i] ^ lattice[ (int) ( (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
-      }
-      else{
-        i_tmp = ( (int) (i / pow_tmp2) ) * pow_tmp2;
-        lattice[i] ^ lattice[ (int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
-        lattice[i] ^ lattice[ (int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? E_tmp -= 1 : E_tmp += 1;
-      }
-      /* Pauli term */
-      if(p){ lattice[i] ? E_tmp += H : E_tmp -= H; }
-      //
-    }
-  }
-  return - E_tmp * 0.5;
-}
-
-int Lattice::energy2(const bool& p = false) const {
-  int E_tmp = 0;
   uint pow_tmp1 = 1;
   uint pow_tmp2 = N;
   uint i_tmp;
@@ -182,54 +148,7 @@ int Lattice::energy2(const bool& p = false) const {
   }
   return - E_tmp;
 }
-
-int Lattice::energyFede() const{
-  int E_tmp = 0;
-  int N2 = pow(N,2);
-  int r1 , q1 , r2 , q2; //resto e quoziente della divisione per N^1 e e N^2
-  int a0, a1, a2;
-
-  switch(dim){
-  case 1 : {
-    for(uint i = 0; i < num_spin; i++){
-      a0 = (i+1)%N;
-      lattice[i] ^ lattice[a0] ? E_tmp -= 1 : E_tmp += 1;
-    }
-    break;
-  }
-  case 2 : {
-    for(uint i = 0; i < num_spin; i++){
-      q1 = i/N;
-      r1 = i%N;
-      a0 = (r1+1)%N;
-      a1 = (q1+1)%N;
-
-      lattice[i] ^ lattice[q1*N + a0] ? E_tmp -= 1 : E_tmp += 1;
-      lattice[i] ^ lattice[a1*N + r1] ? E_tmp -=1 : E_tmp += 1;
-    }
-    break;
-  }
-  case 3 : {
-    for(uint i = 0; i < num_spin; i++){
-      q2 = i/N2;
-      r2 = i%N2;
-      q1 = r2/N;
-      r1 = r2%N;
-
-      a0 = (r1+1)%N;
-      a1 = (q1+1)%N;
-      a2 = (q2+1)%N;
-
-      lattice[i] ^ lattice[q2*N2 + q1*N + a0 ] ? E_tmp -= 1 : E_tmp += 1;
-      lattice[i] ^ lattice[q2*N2+ a1*N + r1] ? E_tmp -=1 : E_tmp += 1;
-      lattice[i] ^ lattice[a2*N2 +r2] ? E_tmp -=1 : E_tmp += 1;
-    }
-    break;
-  }
-  }
-  return -E_tmp;
-}
-
+   
 /*
   int Lattice::energyParallel(int nt = 4) const {
   int E_tmp = 0;
@@ -332,4 +251,29 @@ void Lattice::cooling(const uint& iter) {
       }
     }
   }
+}
+
+double * Lattice::coolingPar(){
+  double * arr = new double[4];
+  arr[0] = gRandom -> Rndm() * NOISE + Lattice::T;
+  arr[1] = 0;
+  arr[2] = 0;
+  arr[3] = 0;
+  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
+  int tmp_spin = dE(spin);
+  if( tmp_spin < 0 ){
+    flipSpin(spin);
+    arr[1] = (double) tmp_spin;
+    getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+    arr[3] = (double) tmp_spin / num_spin;
+  }
+  else{
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / arr[0])){
+      flipSpin(spin);
+      arr[1] = (double) tmp_spin;
+      getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+      arr[3] = (double) tmp_spin / num_spin;
+    }
+  }
+  return arr;
 }
