@@ -12,7 +12,7 @@
 
 typedef unsigned int uint;
 
-struct BLock : public TObject{
+struct Block : public TObject{
   
   double T;
   double M;

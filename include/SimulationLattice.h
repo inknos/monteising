@@ -76,6 +76,7 @@ class SimulationLattice{
 
     void run();
     
+  
     //void simulation(const TString&, const uint&, const double&, const double&, const uint&);
 
   ClassDef(SimulationLattice, 1)
