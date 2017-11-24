@@ -4,6 +4,7 @@
 #include "Lattice.h"
 #include "TString.h"
 #include "TFile.h"
+#include "Block.h"
 
 typedef unsigned int uint;
 

@@ -92,6 +92,46 @@ void SimulationLattice::setTempStep(const uint& t) { tempstep = t; }
 uint SimulationLattice::getT() { return Lattice::getT(); }
 
 void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
+
+void run(){
+  
+  TFile f(file, "recreate");
+  Block block(0, 0, 0, 0, 0, 0);
+  uint I_0 = 100;
+  int E_tmp;
+  double M_tmp;
+  double S_tmp;
+  double T_tmp;
+  double* data = new double[4];
+  
+  for(uint i = 0; i < dim_vector; i++){
+    
+    lattice_vector[i].cooling(I_0);
+    E_tmp = lattice_vector[i].energy();
+    M_tmp = lattice_vector[i].magnetization();
+    S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
+    T_tmp = getT();//
+    
+    block = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, I_0);
+    block.Write( std::to_string(i) );
+    
+    for(uint j = 0; j < iter; j++){
+      
+      data = lattice_vector[i].coolingPar();
+      E_tmp += data[1];
+      M_tmp += data[2];
+      S_tmp += data[3];
+      T_tmp = data[0];
+      
+      block = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j);
+      block.Write( std::to_string(i) );
+    }
+  }
+  f.Write();
+  f.Close();
+}
+
+
 /*
 void SimulationLattice::simulation(const TString& fname,
                                    const uint& iter,
