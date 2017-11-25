@@ -15,7 +15,7 @@
 
 
 void test_cooling(){
-  SimulationLattice s(100, 2, 1, "test_cooling.root", 10000, 0, 5, 1);
+  SimulationLattice s(100, 2, 1, "test_cooling.root", 100000, 2, 5, 1);
   s.run();
   TFile file("test_cooling.root");
   double* x = new double[10000];

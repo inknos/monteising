@@ -105,6 +105,7 @@ void SimulationLattice::run(){
   double M_tmp;
   double S_tmp;
   double T_tmp;
+  setT(tempmin);
   double* data = new double[4];
  
  
@@ -114,7 +115,7 @@ void SimulationLattice::run(){
     E_tmp = lattice_vector[i].energy(false);
     M_tmp = lattice_vector[i].magnetization();
     S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
-    T_tmp = Lattice::getT();//
+    T_tmp = Lattice::getT();
     
     block_vector[0] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, I_0);
     block_vector[0].Write( (TString)std::to_string(i) );

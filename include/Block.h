@@ -20,15 +20,10 @@ struct Block : public TObject{
   int E;
   uint I;
   
-  Block() : TObject() { }
+  Block();
   
-  Block(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I): TObject(), T(_T), E(_E), M(_M), S(_S), I(_I){
-    SetUniqueID(Id);
-  }
-  
-  
-  
-  
-};
+  Block(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I);
 
+ClassDef(Block, 1)
+};
 #endif /* Block_h */

@@ -28,6 +28,7 @@ void compileMacro(TString myopt="fast"){
   //
   gSystem->CompileMacro(srcPath + TString("Lattice.cxx"), opt.Data());  // load class Lattice
   gSystem->CompileMacro(srcPath + TString("DrawLattice.cxx"), opt.Data());
+  gSystem->CompileMacro(srcPath + TString("Block.cxx"), opt.Data());
   gSystem->CompileMacro(srcPath + TString("SimulationLattice.cxx"), opt.Data());
   gSystem->CompileMacro(srcPath + TString("AnalysisLattice.cxx"), opt.Data());
   //
