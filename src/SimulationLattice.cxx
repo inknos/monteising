@@ -99,7 +99,7 @@ void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 void SimulationLattice::run(){
   
   TFile f(file, "recreate");
-  Block* block_vector = new Block[iter];
+  Block* block_vector = new Block[ iter + 1 ];
   uint I_0 = 100;
   int E_tmp;
   double M_tmp;
@@ -118,7 +118,6 @@ void SimulationLattice::run(){
     T_tmp = Lattice::getT();
     
     block_vector[0] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, I_0);
-    block_vector[0].Write( (TString)std::to_string(i) );
     
     for(uint j = 0; j < iter; j++){
       
@@ -128,12 +127,12 @@ void SimulationLattice::run(){
       S_tmp += data[3];
       T_tmp = data[0];
       
-      block_vector[j] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j);
+      block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j);
     }
     
-    for(uint k = 0; k < iter ; k++){
-      block_vector[k].Write( std::to_string(i).c_str() );
-    }
+   
+    block_vector -> Write();
+    
     std::cout << "Ho scritto il reticolo " << i << std::endl;
   }
   f.Write();

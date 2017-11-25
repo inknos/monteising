@@ -12,20 +12,28 @@
 #include "TGraph.h"
 #include "TFile.h"
 #include "TString.h"
-
+#include "TStopwatch.h"
+#define STEPS 1000
 
 void test_cooling(){
-  SimulationLattice s(100, 2, 1, "test_cooling.root", 100000, 2, 5, 1);
+  TStopwatch timer;
+  SimulationLattice s(10, 2, 1, "test_cooling.root", STEPS, 2, 5, 1);
+  timer.Start();
   s.run();
+  timer.Stop();
+  timer.Print();
   TFile file("test_cooling.root");
-  double* x = new double[10000];
-  double* y = new double[10000];
+  double* x = new double[STEPS];
+  double* y = new double[STEPS];
   
-  for(unsigned int i = 0; i < 10000; i++){
+  timer.Start();
+  for(unsigned int i = 0; i < STEPS; i++){
     y[i] = ((Block*) file.Get( (TString)(string("0;") + std::to_string(i+2)) ))->E;
     x[i] = i;
   }
-  TGraph* gr = new TGraph(10000, x, y);
+  timer.Stop();
+  timer.Print();
+  TGraph* gr = new TGraph(STEPS, x, y);
   gr->Draw();
   
   delete[] x;
