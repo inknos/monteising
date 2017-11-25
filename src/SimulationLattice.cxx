@@ -127,10 +127,9 @@ void SimulationLattice::run(){
       S_tmp += data[3];
       T_tmp = data[0];
       
-      block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j);
+      block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
     }
-    
-   
+
     block_vector -> Write();
     
     std::cout << "Ho scritto il reticolo " << i << std::endl;
