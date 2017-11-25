@@ -20,6 +20,7 @@ class SimulationLattice{
 
     TString file;
     uint iter;
+    uint I0;
     double tempmin;
     double tempmax;
     uint tempstep;
@@ -27,13 +28,15 @@ class SimulationLattice{
   public :
 
     SimulationLattice(); 
-                 
-    SimulationLattice(const uint& , const uint& , const uint&,
-                      const TString&, const uint&,
-                      const double&, const double&, const uint&);   
+
+    SimulationLattice(const uint& _N, const uint& _dim, const uint& _dim_vector);
+    
+    SimulationLattice(const uint& _N, const uint& _dim, const uint& _dim_vector,
+                      const TString& _file, const uint& _i0, const uint& _iter,
+                      const double& _tempmin, const double& _tempmax, const uint& _tempstep);   
    
     SimulationLattice(const Lattice& , const uint&,
-                      const TString&, const uint&,
+                      const TString&, const uint&, const uint&,
                       const double&, const double&, const uint&);
 
     SimulationLattice(const SimulationLattice&);
@@ -60,6 +63,8 @@ class SimulationLattice{
 
     double getTempStep() const;
 
+    uint getI0() const;
+
     void setFile(const TString&);
 
     void setIter(const uint&);
@@ -69,7 +74,9 @@ class SimulationLattice{
     void setTempMax(const double&);
 
     void setTempStep(const uint&);
-     
+
+    void setI0(const uint&);
+    
     static uint getT();
 
     static void setT(const double&);

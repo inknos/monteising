@@ -17,7 +17,8 @@
 
 void test_cooling(){
   TStopwatch timer;
-  SimulationLattice s(10, 2, 1, "test_cooling.root", STEPS, 10, 5, 1);
+  SimulationLattice s(10, 2, 1, "test_cooling.root", 1500, STEPS, 0., 5., 5);
+  
   timer.Start();
   s.run();
   timer.Stop();
@@ -25,18 +26,32 @@ void test_cooling(){
   
   TFile file("test_cooling.root");
 
-  double* x = new double[STEPS];
-  double* y = new double[STEPS];
-  
-  timer.Start();
-  for(unsigned int i = 0; i < STEPS + 1; i++){
-    y[i] =( (Block*) file.Get( TString("Block;") + TString(std::to_string(i + 1).c_str())) ) -> E;
-    x[i] = i;
-    //cout << y[i].E << endl << flush;
+  TClonesArray *hits = new TClonesArray("Block", STEPS + 1);
+
+  TTree *tree = (TTree*) file.Get("tree");
+
+  TBranch ** branch = new TBranch*[s.getDimVector()];
+
+  double* x = new double[STEPS + 1];
+  double* y = new double[STEPS + 1];
+
+  branch[0] = tree -> GetBranch(TString("Lattice_") + TString(std::to_string(0).c_str()));
+
+  cout << "sdfasdf" << endl << flush; 
+  //for(uint i = 0; i < tree->GetEntries(); i++){
+  tree->GetEvent(0);
+  branch[0] -> SetAddress(&hits);
+  uint num = hits->GetEntries();
+   cout << num << endl << flush;
+ for(uint  j = 0; j < num; j++){
+    y[j] = ((Block*) hits->At(j)) -> E;
+    x[j] = j;
   }
-  timer.Stop();
-  timer.Print();
-  TGraph* gr = new TGraph(STEPS, x, y);
+    //}
+  
+
+  cout << "graph" << endl << flush;
+  TGraph* gr = new TGraph(STEPS + 1, x, y);
   gr->Draw();
 
   delete[] x;
