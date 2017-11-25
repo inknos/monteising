@@ -2,7 +2,8 @@
 
 #include "TFile.h"
 #include "TString.h"
-#include "Lattice.h" 
+#include "Lattice.h"
+#include "TClonesArray.h"
 #include <string>
 #include <iostream>
 
@@ -99,8 +100,8 @@ void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 void SimulationLattice::run(){
   
   TFile f(file, "recreate");
-  Block* block_vector = new Block[ iter + 1 ];
-  uint I_0 = 100;
+  TClonesArray array("Block", iter + 1);
+  uint I_0 = 1500;
   int E_tmp;
   double M_tmp;
   double S_tmp;
@@ -116,25 +117,29 @@ void SimulationLattice::run(){
     M_tmp = lattice_vector[i].magnetization();
     S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
     T_tmp = Lattice::getT();
-    
-    block_vector[0] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, I_0);
+
+    Block * b1 = (Block*)array.ConstructedAt(0);
+    b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I_0);
     
     for(uint j = 0; j < iter; j++){
       
       data = lattice_vector[i].coolingPar();
-      E_tmp += data[1];
+      E_tmp += (int) data[1];
       M_tmp += data[2];
       S_tmp += data[3];
       T_tmp = data[0];
-      
-      block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+      //cout << E_tmp << endl << flush;
+      Block * b2 = (Block*)array.ConstructedAt(j + 1);
+      b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+      //block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+      //cout << block_vector[j + 1].E << endl << flush;
     }
 
-    block_vector -> Write();
+    array.Write();
     
     std::cout << "Ho scritto il reticolo " << i << std::endl;
   }
-  f.Write();
+  //f.Write();
   f.Close();
 }
 

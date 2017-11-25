@@ -24,6 +24,8 @@ struct Block : public TObject{
   
   Block(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I);
 
+  void setBlock(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I);
+  
 ClassDef(Block, 1)
 };
 #endif /* Block_h */
