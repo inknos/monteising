@@ -123,46 +123,61 @@ void SimulationLattice::run(){
   double M_tmp;
   double S_tmp;
   double T_tmp;
-  setT(tempmin);
   double* data = new double[4];
+  double tempN = (tempmax - tempmin) / (tempstep - 1);
  
- 
-  for(uint i = 0; i < dim_vector; i++){
-    tree->Branch(TString("Lattice_") + TString(std::to_string(i).c_str()), &array);
-    cout << i << endl << flush;
-    lattice_vector[i].cooling(I0);
-    E_tmp = lattice_vector[i].energy(false);
-    M_tmp = lattice_vector[i].magnetization();
-    S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
-    T_tmp = Lattice::getT();
-    Block * b1 = (Block*)array -> ConstructedAt(0);
-    b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
-    for(uint j = 0; j < iter; j++){
-      //cout << j << endl << flush;
-      data = lattice_vector[i].coolingPar();
-      E_tmp += (int) data[1];
-      M_tmp += data[2];
-      S_tmp += data[3];
-      T_tmp = data[0];
-      //cout << E_tmp << endl << flush;
-      Block * b2 = (Block*)array -> ConstructedAt(j + 1);
-      b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
-      //block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
-      //cout << block_vector[j + 1].E << endl << flush;
-    }
-
-//DEBUG
- for (Int_t j=0; j< array->GetEntries(); j++){
-	Block *block=(Block*)array->At(j);
-	cout<< "E : " << block->E << " M : " << block->M << endl << flush;  
-      }
-//DEBUG 
-
-    tree->Fill();
-    array->Clear();
+  for(double t = tempmin; t <= tempmax; t += tempN ){
+    setT(t);
+    TString parentName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
+    tree->Branch( parentName , t );
     
-    std::cout << "Ho scritto il reticolo " << i << std::endl;
-  }
+    cout << "t : " << t << endl << flush;
+    
+    for(uint i = 0; i < dim_vector; i++){
+      new TBranchClones( tree->GetBranch( parentName ), 
+                         TString("Lattice_") + TString(std::to_string(i).c_str()),
+                         &array
+                       ); 
+                                                           
+      cout << "i : " << i << endl << flush;
+      
+      lattice_vector[i].cooling(I0);
+      E_tmp = lattice_vector[i].energy(false);
+      M_tmp = lattice_vector[i].magnetization();
+      S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
+      T_tmp = Lattice::getT();
+      Block * b1 = (Block*)array -> ConstructedAt(0);
+      b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
+      
+      for(uint j = 0; j < iter; j++){
+        cout << "j : " << j << endl << flush;
+        data = lattice_vector[i].coolingPar();
+        E_tmp += (int) data[1];
+        M_tmp += data[2];
+        S_tmp += data[3];
+        T_tmp = data[0];
+        //cout << E_tmp << endl << flush;
+        Block * b2 = (Block*)array -> ConstructedAt(j + 1);
+        b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+        //block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+        //cout << block_vector[j + 1].E << endl << flush;
+      }
+      
+      //DEBUG
+      for (Int_t j=0; j< array->GetEntries(); j++){
+	    Block *block=(Block*)array->At(j);
+	    cout<< "E : " << block->E << " M : " << block->M << endl << flush;  
+      }
+      //DEBUG 
+      std::cout << "Ho scritto il reticolo " << i << std::endl;
+      tree->Fill();
+      array->Clear();
+    }
+    
+    tree->Fill();
+    
+  }  
+  
   f.Write();
   f.Close();
 }
