@@ -121,7 +121,8 @@ void SimulationLattice::run(){
   TClonesArray * array = new TClonesArray("Block", iter + 1);
   int E_tmp;
   double M_tmp;
-  double S_tmp;  double T_tmp;
+  double S_tmp;
+  double T_tmp;
   setT(tempmin);
   double* data = new double[4];
  
