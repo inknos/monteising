@@ -30,14 +30,14 @@ void test_cooling(){
 
   TTree *tree = (TTree*) file.Get("tree");
 
-  double* x = new double[STEPS + 1];
-  double* y = new double[STEPS + 1];
-  
   TBranchClones* branch = (TBranchClones*) ( tree -> GetBranch(TString("Lattice_") + TString(std::to_string(0).c_str()))  );
 
   branch -> SetAddress(&hits);
  
   tree -> GetEntry(0);
+  
+  double* x = new double[STEPS + 1];
+  double* y = new double[STEPS + 1];
   
   for(uint  j = 0; j < STEPS +1; j++){
     
