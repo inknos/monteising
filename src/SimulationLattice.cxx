@@ -114,8 +114,6 @@ uint SimulationLattice::getT() { return Lattice::getT(); }
 
 void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
-
-
 void SimulationLattice::run(){
 
   TDatime datime;

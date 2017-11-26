@@ -13,11 +13,11 @@
 #include "TFile.h"
 #include "TString.h"
 #include "TStopwatch.h"
-#define STEPS 10000
+#define STEPS 10000000
 
 void test_cooling(){
   TStopwatch timer;
-  SimulationLattice s(10, 2, 1, "test_cooling.root", 1500, STEPS, 2., 5., 5);
+  SimulationLattice s(100, 2, 1, "test_cooling.root", 1, STEPS, 2., 5., 5);
   
   timer.Start();
   s.run();
@@ -28,7 +28,7 @@ void test_cooling(){
 
   TClonesArray *hits = new TClonesArray("Block", STEPS + 1);
 
-  TTree *tree = (TTree*) file.Get("tree");
+  TTree *tree = (TTree*) file.Get("T_0");
 
   TBranchClones* branch = (TBranchClones*) ( tree -> GetBranch(TString("Lattice_") + TString(std::to_string(0).c_str()))  );
 
