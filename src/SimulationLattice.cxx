@@ -1,4 +1,3 @@
-//cinus sei bello ma non troppo
 #include "SimulationLattice.h"
 
 #include "TTree.h"
