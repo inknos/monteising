@@ -121,7 +121,9 @@ void SimulationLattice::run(){
   TDatime datime;
   unsigned int datime_t = datime.Get();
   const char * file_t = file;
+
   TFile f(file, "recreate");
+
   TTree * tree = new TTree("info", "Info");
   tree -> Branch("N", N);
   tree -> Branch("dim", dim);
@@ -144,29 +146,30 @@ void SimulationLattice::run(){
  
   for(double t = tempmin; t <= tempmax; t += tempN ){
     setT(t);
+
     TString treeName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
     TString treeTitle(TString("Tree_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
-    //cout << "t : " << t << endl << flush;
+
     for(uint i = 0; i < dim_vector; i++){
       tree -> Branch(TString("Lattice_") + TString(std::to_string(i).c_str()), &array);                                                    
-      //cout << "i : " << i << endl << flush;
+
       lattice_vector[i].cooling(I0);
       E_tmp = lattice_vector[i].energy(false);
       M_tmp = lattice_vector[i].magnetization();
       S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
       T_tmp = Lattice::getT();
+
       Block * b1 = (Block*)array -> ConstructedAt(0);
       b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
       
       for(uint j = 0; j < iter; j++){
-        cout << "j : " << j << endl << flush;
         data = lattice_vector[i].coolingPar();
         E_tmp += (int) data[1];
         M_tmp += data[2];
         S_tmp += data[3];
         T_tmp = data[0];
-        //cout << E_tmp << endl << flush;
+
         Block * b2 = (Block*)array -> ConstructedAt(j + 1);
         b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
       }
