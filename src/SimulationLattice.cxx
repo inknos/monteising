@@ -1,6 +1,8 @@
 #include "SimulationLattice.h"
 
 #include "TTree.h"
+#include "TBranch.h"
+#include "TBranchClones.h"
 #include "TFile.h"
 #include "TString.h"
 #include "Lattice.h"
@@ -148,6 +150,13 @@ void SimulationLattice::run(){
       //block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
       //cout << block_vector[j + 1].E << endl << flush;
     }
+
+//DEBUG
+ for (Int_t j=0; j< array->GetEntries(); j++){
+	Block *block=(Block*)array->At(j);
+	cout<< "E : " << block->E << " M : " << block->M << endl << flush;  
+      }
+//DEBUG 
 
     tree->Fill();
     array->Clear();
