@@ -43,7 +43,7 @@ void test_cooling(){
   branch[0] -> SetAddress(&hits);
   uint num = hits->GetEntries();
    cout << num << endl << flush;
- for(uint  j = 0; j < num; j++){
+  for(uint  j = 0; j < num; j++){
     y[j] = ((Block*) hits->At(j)) -> E;
     x[j] = j;
   }
