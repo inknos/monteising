@@ -7,6 +7,8 @@
 #include "TString.h"
 #include "Lattice.h"
 #include "TClonesArray.h"
+#include "TDatime.h"
+
 #include <string>
 #include <iostream>
 
@@ -115,9 +117,21 @@ void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
 
 void SimulationLattice::run(){
-  
+
+  TDatime datime;
+  unsigned int datime_t = datime.Get();
+  const char * file_t = file;
   TFile f(file, "recreate");
-  TTree * tree = new TTree("tree", "TreeLattice");
+  TTree * tree = new TTree("info", "Info");
+  tree -> Branch("N", N);
+  tree -> Branch("dim", dim);
+  tree -> Branch("dim_vector", dim_vector);
+  tree -> Branch("I0", I0);
+  tree -> Branch("iter", iter);
+  tree -> Branch("tempmin", tempmin);
+  tree -> Branch("tempmax", tempmax);
+  tree -> Branch("tempstep", tempstep);
+  tree -> Branch("datime", datime_t);
   TClonesArray * array = new TClonesArray("Block", iter + 1);
   int E_tmp;
   double M_tmp;
@@ -128,16 +142,14 @@ void SimulationLattice::run(){
  
   for(double t = tempmin; t <= tempmax; t += tempN ){
     setT(t);
-    TString parentName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
-    tree->Branch( parentName , t );
+    TString treeName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
+    TString treeTitle(TString("Tree_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
+    TTree * tree = new TTree(treeName, treeTitle);
     
     cout << "t : " << t << endl << flush;
     
     for(uint i = 0; i < dim_vector; i++){
-      new TBranchClones( tree->GetBranch( parentName ), 
-                         TString("Lattice_") + TString(std::to_string(i).c_str()),
-                         &array
-                       ); 
+      tree -> Branch(TString("Lattice_") + TString(std::to_string(i).c_str()), &array); 
                                                            
       cout << "i : " << i << endl << flush;
       
