@@ -17,7 +17,7 @@
 
 void test_cooling(){
   TStopwatch timer;
-  SimulationLattice s(10, 2, 1, "test_cooling.root", 1500, STEPS, 0., 5., 5);
+  SimulationLattice s(10, 2, 1, "test_cooling.root", 1500, STEPS, 2., 5., 5);
   
   timer.Start();
   s.run();
@@ -30,42 +30,21 @@ void test_cooling(){
 
   TTree *tree = (TTree*) file.Get("tree");
 
-  //tree -> SetBranchAdress("Lattice_0", &hits);
-	
-	
-	
   double* x = new double[STEPS + 1];
   double* y = new double[STEPS + 1];
   
-  //branch[0] = tree -> GetBranch(TString("Lattice_") + TString(std::to_string(0).c_str()));
   TBranchClones* branch = (TBranchClones*) ( tree -> GetBranch(TString("Lattice_") + TString(std::to_string(0).c_str()))  );
 
-  cout << "sdfasdf" << endl << flush; 
-  //for(uint i = 0; i < tree->GetEntries(); i++){
-  //tree->GetEvent(0);
   branch -> SetAddress(&hits);
-  //uint num = hits->GetEntries();
-  // cout << num << endl << flush;
+ 
+  tree -> GetEntry(0);
   
- for(uint  j = 0; j < STEPS +1; j++){
+  for(uint  j = 0; j < STEPS +1; j++){
+    
     y[j] = ((Block*) hits->At(j)) -> E;
     x[j] = j;
   }
   
-    //}
-  
-/*
-TFile *MyFile1 = new TFile("File1.root","READ
-
-MyTree->SetBranchAddress("MyObjA", &MyObjA);
-MyTree->SetBranchAddress("MyObjB", &MyObjB);
-MyTree->SetBranchAddress("MyObjC", &MyObjC);
-
-MyTree->GetBranch("MyObjC")->SetFile("File2.root");
-*/
-
-
-  cout << "graph" << endl << flush;
   TGraph* gr = new TGraph(STEPS + 1, x, y);
   gr->Draw();
 
