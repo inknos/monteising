@@ -151,6 +151,18 @@ void SimulationLattice::run(){
   TTree * tree = new TTree("info", "Info");
   tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
   tree -> Fill();
+
+
+  TTree * tree = new TTree("info", "Info");
+  tree -> Branch("N", N);
+  tree -> Branch("dim", dim);
+  tree -> Branch("dim_vector", dim_vector);
+  tree -> Branch("I0", I0);
+  tree -> Branch("iter", iter);
+  tree -> Branch("tempmin", tempmin);
+  tree -> Branch("tempmax", tempmax);
+  tree -> Branch("tempstep", tempstep);
+  tree -> Branch("datime", datime_t);
   
   TClonesArray * array = new TClonesArray("Block", iter + 1);
 
@@ -161,6 +173,7 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
  
+
   for(uint i = 0; i < dim_vector; i++){
     cout << "i: " << i << endl << flush;
     TString treeName(TString("Lattice_") + TString(std::to_string( i ).c_str() ));
@@ -171,7 +184,16 @@ void SimulationLattice::run(){
 
       cout << "t: " << t << endl << flush;
       setT(t);
-      tree -> Branch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ), &array);                                                    
+      tree -> Branch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ), &array);
+  for(double t = tempmin; t <= tempmax; t += tempN ){
+    setT(t);
+
+    TString treeName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
+    TString treeTitle(TString("Tree_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
+    TTree * tree = new TTree(treeName, treeTitle);
+
+    for(uint i = 0; i < dim_vector; i++){
+      tree -> Branch(TString("Lattice_") + TString(std::to_string(i).c_str()), &array);
 
       lattice_vector[i].cooling(I0);
       E_tmp = lattice_vector[i].energy(false);
@@ -194,6 +216,8 @@ void SimulationLattice::run(){
 
       }
       tree -> GetBranch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ) ) -> Fill();
+      }
+
       /*
       //DEBUG
       for (Int_t j=0; j< array->GetEntries(); j++){
@@ -202,9 +226,15 @@ void SimulationLattice::run(){
       }
       //DEBUG 
       */
+
     } 
     tree->Fill();
     std::cout << "Ho scritto il reticolo " << i << std::endl;
+      std::cout << "Ho scritto il reticolo " << i << std::endl;
+      tree->Fill();
+      array->Clear();
+    } 
+    tree->Fill();
   }
   f.Write();
   f.Close();
