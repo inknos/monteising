@@ -38,7 +38,7 @@ SimulationLattice::SimulationLattice(const uint& _N ,
                                      const double& _tempmax,
                                      const uint& _tempstep
                                      ) :
-N(_N) , dim(_dim) , dim_vector(_dim_vector), file(_file), I0(_i0),     
+  N(_N) , dim(_dim) , dim_vector(_dim_vector), file(_file), I0(_i0),
   iter(_iter), tempmin(_tempmin), tempmax(_tempmax),
   tempstep(_tempstep)
 {
@@ -134,7 +134,7 @@ void SimulationLattice::run(){
     uint _datime_t;
   }Info;
   static Info info;
-  
+
   info._N = N;
   info._dim = dim;
   info._dim_vector =  dim_vector;
@@ -144,26 +144,14 @@ void SimulationLattice::run(){
   info._datime_t = datime_t;
   info._tempmin = tempmin;
   info._tempmax = tempmax;
-  
+
   cout << "info.tempmax : " << info._tempmax << endl;
   cout << "tempmax : " << tempmax << endl;
-  
+
   TTree * tree = new TTree("info", "Info");
   tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
   tree -> Fill();
 
-
-  TTree * tree = new TTree("info", "Info");
-  tree -> Branch("N", N);
-  tree -> Branch("dim", dim);
-  tree -> Branch("dim_vector", dim_vector);
-  tree -> Branch("I0", I0);
-  tree -> Branch("iter", iter);
-  tree -> Branch("tempmin", tempmin);
-  tree -> Branch("tempmax", tempmax);
-  tree -> Branch("tempstep", tempstep);
-  tree -> Branch("datime", datime_t);
-  
   TClonesArray * array = new TClonesArray("Block", iter + 1);
 
   int E_tmp;
@@ -172,28 +160,17 @@ void SimulationLattice::run(){
   double T_tmp;
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
- 
 
-  for(uint i = 0; i < dim_vector; i++){
+  for(uint i = 0; i < dim_vector; i++) {
     cout << "i: " << i << endl << flush;
     TString treeName(TString("Lattice_") + TString(std::to_string( i ).c_str() ));
     TString treeTitle(TString("LatticeTree_") + TString(std::to_string( i ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
-    
-    for(double t = tempmin; t <= tempmax; t += tempN){
 
-      cout << "t: " << t << endl << flush;
+    for(double t = tempmin; t <= tempmax; t += tempN) {
+
       setT(t);
       tree -> Branch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ), &array);
-  for(double t = tempmin; t <= tempmax; t += tempN ){
-    setT(t);
-
-    TString treeName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
-    TString treeTitle(TString("Tree_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
-    TTree * tree = new TTree(treeName, treeTitle);
-
-    for(uint i = 0; i < dim_vector; i++){
-      tree -> Branch(TString("Lattice_") + TString(std::to_string(i).c_str()), &array);
 
       lattice_vector[i].cooling(I0);
       E_tmp = lattice_vector[i].energy(false);
@@ -203,8 +180,8 @@ void SimulationLattice::run(){
 
       Block * b1 = (Block*)array -> ConstructedAt(0);
       b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
-      
-      for(uint j = 0; j < iter; j++){
+
+      for(uint j = 0; j < iter; j++) {
         data = lattice_vector[i].coolingPar();
         E_tmp += (int) data[1];
         M_tmp += data[2];
@@ -213,28 +190,20 @@ void SimulationLattice::run(){
 
         Block * b2 = (Block*)array -> ConstructedAt(j + 1);
         b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
-
       }
       tree -> GetBranch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ) ) -> Fill();
-      }
-
-      /*
-      //DEBUG
-      for (Int_t j=0; j< array->GetEntries(); j++){
-	    Block *block=(Block*)array->At(j);
-	    cout<< "E : " << block->E << " M : " << block->M << endl << flush;  
-      }
-      //DEBUG 
-      */
-
-    } 
+    }
+    /*
+    //DEBUG
+    for (Int_t j=0; j< array->GetEntries(); j++){
+    Block *block=(Block*)array->At(j);
+    cout<< "E : " << block->E << " M : " << block->M << endl << flush;
+    }
+    //DEBUG
+    */
     tree->Fill();
     std::cout << "Ho scritto il reticolo " << i << std::endl;
-      std::cout << "Ho scritto il reticolo " << i << std::endl;
-      tree->Fill();
-      array->Clear();
-    } 
-    tree->Fill();
+    array->Clear();
   }
   f.Write();
   f.Close();
