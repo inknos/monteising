@@ -7,6 +7,9 @@
 #include "TString.h"
 #include "Lattice.h"
 #include "TClonesArray.h"
+#include "TDatime.h"
+
+//#include "omp.h"
 #include <string>
 #include <iostream>
 
@@ -112,13 +115,45 @@ uint SimulationLattice::getT() { return Lattice::getT(); }
 
 void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
-
-
 void SimulationLattice::run(){
-  
+
+  TDatime datime;
+  unsigned int datime_t = datime.Get();
+  const char * file_t = file;
+
   TFile f(file, "recreate");
-  TTree * tree = new TTree("tree", "TreeLattice");
+  typedef struct{
+    double _tempmin;
+    double _tempmax;
+    uint _N;
+    uint _dim;
+    uint _dim_vector;
+    uint _I0;
+    uint _iter;
+    uint _tempstep;
+    uint _datime_t;
+  }Info;
+  static Info info;
+  
+  info._N = N;
+  info._dim = dim;
+  info._dim_vector =  dim_vector;
+  info._I0 = I0;
+  info._iter = iter;
+  info._tempstep = tempstep;
+  info._datime_t = datime_t;
+  info._tempmin = tempmin;
+  info._tempmax = tempmax;
+  
+  cout << "info.tempmax : " << info._tempmax << endl;
+  cout << "tempmax : " << tempmax << endl;
+  
+  TTree * tree = new TTree("info", "Info");
+  tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
+  tree -> Fill();
+  
   TClonesArray * array = new TClonesArray("Block", iter + 1);
+
   int E_tmp;
   double M_tmp;
   double S_tmp;
@@ -126,84 +161,51 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
  
-  for(double t = tempmin; t <= tempmax; t += tempN ){
-    setT(t);
-    TString parentName(TString("T_") + TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ));
-    tree->Branch( parentName , t );
+  for(uint i = 0; i < dim_vector; i++){
+    cout << "i: " << i << endl << flush;
+    TString treeName(TString("Lattice_") + TString(std::to_string( i ).c_str() ));
+    TString treeTitle(TString("LatticeTree_") + TString(std::to_string( i ).c_str() ));
+    TTree * tree = new TTree(treeName, treeTitle);
     
-    cout << "t : " << t << endl << flush;
-    
-    for(uint i = 0; i < dim_vector; i++){
-      new TBranchClones( tree->GetBranch( parentName ), 
-                         TString("Lattice_") + TString(std::to_string(i).c_str()),
-                         &array
-                       ); 
-                                                           
-      cout << "i : " << i << endl << flush;
-      
+    for(double t = tempmin; t <= tempmax; t += tempN){
+
+      cout << "t: " << t << endl << flush;
+      setT(t);
+      tree -> Branch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ), &array);                                                    
+
       lattice_vector[i].cooling(I0);
       E_tmp = lattice_vector[i].energy(false);
       M_tmp = lattice_vector[i].magnetization();
       S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
       T_tmp = Lattice::getT();
+
       Block * b1 = (Block*)array -> ConstructedAt(0);
       b1 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
       
       for(uint j = 0; j < iter; j++){
-        cout << "j : " << j << endl << flush;
         data = lattice_vector[i].coolingPar();
         E_tmp += (int) data[1];
         M_tmp += data[2];
         S_tmp += data[3];
         T_tmp = data[0];
-        //cout << E_tmp << endl << flush;
+
         Block * b2 = (Block*)array -> ConstructedAt(j + 1);
         b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
-        //block_vector[j + 1] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
-        //cout << block_vector[j + 1].E << endl << flush;
+
       }
-      
+      tree -> GetBranch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ) ) -> Fill();
+      /*
       //DEBUG
       for (Int_t j=0; j< array->GetEntries(); j++){
 	    Block *block=(Block*)array->At(j);
 	    cout<< "E : " << block->E << " M : " << block->M << endl << flush;  
       }
       //DEBUG 
-      std::cout << "Ho scritto il reticolo " << i << std::endl;
-      tree->Fill();
-      array->Clear();
-    }
-    
+      */
+    } 
     tree->Fill();
-    
-  }  
-  
-  f.Write();
-  f.Close();
-}
-
-
-
-/*
-void SimulationLattice::simulation(const TString& fname,
-                                   const uint& iter,
-                                   const double& tempmin = 0,
-                                   const double& tempmax = 5,
-                                   const uint& tempstep= 10){
-  // Ntot steps = t * dim_vector * iter
-  
-  TFile f(fname, "RECREATE");
-  std::string lv("lattice_vector");
-  for(double t = tempmin; t <= tempmax; t += (tempmax - tempmin) / tempstep){
-    Lattice::setT(t);
-    //std::cout << "Cooling at T = " << t << std::endl << std::flush;
-    for(uint i = 0; i < dim_vector; i++){
-      lattice_vector[i].cooling(iter);
-      lattice_vector[i].Write( (lv + std::to_string(i) + "_" + std::to_string(t)).c_str() );
-      //std::cout << i << "/" << dim_vector << std::endl << std::flush;
-    }
+    std::cout << "Ho scritto il reticolo " << i << std::endl;
   }
   f.Write();
   f.Close();
 }
-*/

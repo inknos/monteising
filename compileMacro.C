@@ -9,11 +9,10 @@ void compileMacro(TString myopt="fast"){
 
   //
   //gSystem->Load("libgomp");
-  /*  //Parallel
-  TString cmd( gSystem->GetMakeSharedLib() );
-  cmd.ReplaceAll("g++","g++ -fopenmp");
-  gSystem->SetMakeSharedLib(cmd);
-  */
+  //Parallel
+  //TString cmd( gSystem->GetMakeSharedLib() );
+  //cmd.ReplaceAll("g++","g++ -fopenmp");
+  //gSystem->SetMakeSharedLib(cmd);
 
   TString workingDir(gSystem->WorkingDirectory());
 

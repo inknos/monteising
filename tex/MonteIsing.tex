@@ -167,18 +167,92 @@ In order to have a more efficient transportation, packs are located in different
 The proportionality between deviation and expense needs an incentives analysis in order to reconcile the minimization of the company and the maximization of the ordinary citizen's benefits while guaranteeing the overall ecological benefits to the city.
 
 \newpage
-\subsection{Calibrating the model}
-We aim at creating a simulation suitable for the chosen context, the city of Turin.
+\subsection{Lattice Description}
 
-First we have to estimate the number of possible users interest in participating in a gig-economy-like project, so we analyzed the number of users of EnJoy, a nation-wide car-sharing service. these are roughly 5'000'000 in Italy, the 8\% of the population. Being almost 900'000 the citizen of Turin, estimating a similar percentage of people willing to engage in our project, we end up with 7000 possible candidate. For the purpose of our simulation we will scale down this number to 700, in order to contain the computation cost of the simulation.
+The “lattice” array of a D-dimensional cubic Lattice is $\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$.
+Let $i$ denote the index of the array, ranging from $0$ to $N^D-1$.\\
+Let $i$-$spin$ denote the spin represented by the $L_i$ boolean entry. \\
+The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the lattice arrangement, which in our model is the following: 
+\begin{itemize}
+	\item The origin \textit{O} of the D-dimensional space is chosen to be a spin-vertex of the cubic Lattice such that each edge starting from \textit{O} is aligned along one of the D positive directions of the space. 
+	\item The distance between each couple of adjacent spins is set to one. 
+	\item The spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
+\end{itemize}
 
-Then we have to estimate the number of packs delivered in our city daily. We base our calculation on the number of packs delivered yearly by Amazon Inc., roughly 5'200'000 packs for the city of Turin alone, meaning about 14'000 packs delivered daily, supposing a uniform distribution all year along\footnote{Amazon Innovation Awards 2017, University of Turin, Torino}. Again for the sake of computational cost we will scale this number to 1'400, consistently with the proportion used before.
+%FIGURA caso 1 , 2 , 3 dimensionale
 
-Considering that Amazon charges approximately 6\euro{} for a “same-day" pack delivery and the last mile's contribution to the entire journey cost (from producer to customer) is about 30\%, we defined a maximum threshold of 1.75\euro{} for the simulated delivery.
+\textbf{N.B.} This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range 
+$\{0,1,…,N-1\}$. \\ 
 
-As for the cost of the basic infrastructure needed, namely a number of short-term deposit in which packages are stored around the city, we set 700\euro{}/month the cost for a 24sqm room, comprehensive of maintenance, rent ad basic bills. This scales to about 3\euro{}/month for a 50x40x30cm box, about 0.2\euro{}/pack for a permanence of two days. Fixed cost are considered negligible in the context of our simulation, being considered as long-term investment.
+\subsection*{Coordinates Computation}
 
-Lastly we have to map the size of the city to the patch-size of our model. Turin is roughly 12km radius, a distance that can be covered on average\footnote{35mins by car, 150mins by foot} in 75 minutes. This means that the length of a workday, from 8.30 am to 9.00 pm, being 1 patch/tick the speed of our agents, will be such that each agent is capable of going back and forth from one end to the city to the other about 10 times a day; being the radius of our city proportional to the map's diagonal. This can be translate in NetLogo's language assuming 1600 ticks equals a day.
+Cases from \textit{D=1} to \textit{D=3} are treated in order to understand and generalize the coordinates’ computation. \\
+Before starting, the division $/$ and modulo $\%$ operators are defined as follows : \\
+Given two integer numbers a and n , the operations a/n and a\%n return respectively the quotient and the remainder of the euclidean division of a by n. \\ 
+\textit{e.g.} : $6/3=2$ ; $9/4=2$ ; $6\%3=0$ ; $9\%4=1$ \\
+
+\vspace{0.1cm} 
+\textbf{D=1} \\
+A 1-dimensional lattice is made by $N$ spins aligned along a single $x$ direction .
+In this case the index $i$ represents itself the $x$ coordinate of the spin.\\
+%image 1D
+
+\textbf{D=2} \\
+A 2-dimensional Lattice is a square made by $N^2$ spins.\\
+The index can be expressed as $i = a_0 + a_1N$. \\
+$a_1$ can be seen as the number of $N$-spin lines stacked starting from the quote $y=0$, this number is
+the $y$-cordinate itself while the number or remaining spin $a_0$ is the $x$-coordinate. 
+$a_1$ is computed from $i$ divided by $N$ while $a_0$ is computed from $i$ modulo $N$.
+The $(x,y)$ coordinates of the $i$-spin are given by : $$(a_0,a_1)=(i\%N ; i/N)$$ 
+
+
+\textbf{D=3} \\
+A 3-dimensional Lattice is a cube made by $N^{3}$ spins. \\  
+The index $i$ can be expressed as $i = a_0 + a_1N + a_2N^2$. \\
+$a_2$ can be seen as the number of $N^2$-spin squares stacked starting from the plane $z=0$, this number is 
+the $z$ coordinate itself. $a_2$ is computed from $i/N$.
+Once we have $a_2$ the remaining $(x,y)$ coordinates can be computed from \\ $i\%N^2 = a_0 + a_1N$ as in \{D=2\} case .\\
+The $(x,y,z)$ coordinates of the $i$-spin are given by : $$(a_0,a_1,a_2)=\left( (i\%N^2)\%N , (i\%N^2)/N , i/N^2 \right)$$ 
+
+Generalizing to $D$ dimensions, index $i$ can be expressed as :$ i = \sum_{j=1}^{D-1}a_jN^j $ \\
+Its corresponding coordinates are computed starting from $j=D-1$ and establishing a recurrence relationship :
+$$\mathbf{a} = \left(a_0 = i\%N ,.., a_j = [i\%N^{j+1}]/N^j ,.., a_{D-2} = [i\% N^{D-1}]/N^{D-2} , a_{D-1} = i/N^{D-1}\right)$$ 
+ 
+\section*{Lattice's energy } 
+
+The Lattice's energy is computed according to : 
+$$H = \sum_{<l,m>}^{} -J\sigma_i\sigma_j $$
+
+J is a constant interaction term between each couple $<l,m>$ of spins .\\
+The summation is performed over all possible couples $<l,m>$ of adjacent spins.\\
+
+The Lattice class provides a method wich returns the energy of the system. \\
+The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
+The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively. 
+\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as : 
+
+$$H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}$$ 
+
+It's easy to observe that, performing the first summation $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\ 
+For each fixed index $i$ ,the algorithm takes into account only the interaction term with the 
+$i_{d_+}$-spin so that the number of operation is halved. So the algorithm performs the summation :
+  
+$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \hat{} \ L_{i_{d_+}})$$ 
+
+$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \hat{} \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\hat{}$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\   
+\vspace{0.1cm}
+From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates 
+$\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
+The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
+only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice. 
+
+From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
+\begin{eqnarray*}
+i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
+&=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\} 
+\end{eqnarray*}
+
+The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration. 
 
 %-----------------------------PAG 6----------------------------------%
 \newpage 
