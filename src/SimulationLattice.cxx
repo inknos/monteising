@@ -132,8 +132,8 @@ void SimulationLattice::run(){
     uint _iter;
     uint _tempstep;
     uint _datime_t;
-  }Info;
-  static Info info;
+  }INFO;
+  static INFO info;
 
   info._N = N;
   info._dim = dim;
@@ -162,7 +162,7 @@ void SimulationLattice::run(){
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
   for(uint i = 0; i < dim_vector; i++) {
-    cout << "i: " << i << endl << flush;
+    std::cout << "i: " << i << std::endl << std::flush;
     TString treeName(TString("Lattice_") + TString(std::to_string( i ).c_str() ));
     TString treeTitle(TString("LatticeTree_") + TString(std::to_string( i ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);

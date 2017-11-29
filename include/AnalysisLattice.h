@@ -1,13 +1,7 @@
 #ifndef ANALYSIS_LATTICE_H
 #define ANALYSIS_LATTICE_H
 
-#include "Lattice.h"
 #include "TString.h"
-#include "TFile.h"
-#include "TMultiGraph.h"
-
-#include <vector>
-#include <string>
 
 #define ENERGY        1
 #define TEMPERATURE   2
@@ -28,70 +22,29 @@
 
 typedef unsigned int uint;
 
-class AnalysisLattice{
+class AnalysisLattice {
  private:
-  TString file_name;
-  std::vector<std::string> l;
+  TString file_in;
+  TString file_out;
 
-  uint dim_c;
-  uint dim_t;
-  
-  double *  temperature;
-  double ** energy;
-  double ** magnetization;
-  double ** site_energy;
-
-  double ** e_mean;
-  double ** m_mean;
-  double ** s_mean;
-
-  double ** e_err;
-  double ** m_err;
-  double ** s_err;
-
-  double * targetx_min;
-  double * targety_min;
-  double * targetx_max;
-  double * targety_max;
-  
-  void count(const uint&);
-
-  void creation();
-
-  TMultiGraph * analysisNoErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-
-  TMultiGraph *analysisErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-  
  public:
-  AnalysisLattice();
+  AnalysisLattice(const TString& file_input, const TString& file_output);
 
-  AnalysisLattice(const TString&);
 
-  AnalysisLattice(const AnalysisLattice&);
+  TString getFileIn() const;
+
+  TString getFileOut() const;
+
+  void setFileIn(const TString& file_input);
+
+  void setFileOut(const TString& file_output);
+
+  void read();
+
+  void write();
   
-  ~AnalysisLattice();
-
-  AnalysisLattice& operator=(const AnalysisLattice&);
-
-  Lattice getLattice(const uint& i);
+  void run();
  
-  TString getFileName() const;
-
-  vector<string> getList() const;
-
-  double * getTargetX(const uint&);
-
-  double * getTargetY(const uint&);
-
-  double * getTarget(const uint&);
-  
-  void setTarget(const double&, const double&, const double&, const double&, const uint&, const uint&, const uint&);
-  
-  TMultiGraph * analysis(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-
-  void print();
-
-  ClassDef(AnalysisLattice, 1)
-    };
+};
 
 #endif

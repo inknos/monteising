@@ -14,41 +14,52 @@
 #include "TString.h"
 #include "TStopwatch.h"
 
-#define STEPS 10000
-
-void test_cooling(){
+void test_cooling(int n = 10, int dim = 2, int dim_v = 3, const char* nn = "test_cooling.root",
+                  int i0 = 100, int iter = 1000, double t1 = 0., double t2 = 2., int step = 2 ){
   TStopwatch timer;
-  SimulationLattice s(10, 2, 1, "test_cooling.root", 1, STEPS, 2., 5., 5);
+  
+  SimulationLattice s(n, dim, dim_v, nn, i0, iter, t1, t2, step);
 
   timer.Start();
   s.run();
   timer.Stop();
   timer.Print();
-
+  
   TFile file("test_cooling.root");
 
-  TClonesArray *hits = new TClonesArray("Block", STEPS + 1);
+  TClonesArray *hits = new TClonesArray("Block", iter + 1);
 
   TTree *tree = (TTree*) file.Get("Lattice_0");
 
-  TBranchClones* branch = (TBranchClones*) ( tree -> GetBranch(TString("T_") + TString(std::to_string(0).c_str()))  );
+  TBranchClones* branch = (TBranchClones*) ( tree -> GetBranch(TString("T_") + TString(std::to_string(1).c_str()))  );
 
   branch -> SetAddress(&hits);
 
   tree -> GetEntry(0);
 
-  double* x = new double[STEPS + 1];
-  double* y = new double[STEPS + 1];
+  double* x = new double[iter + 1];
+  double* y = new double[iter + 1];
 
-  for(uint  j = 0; j < STEPS +1; j++){
+  for(uint  j = 0; j < iter +1; j++){
 
     y[j] = ((Block*) hits->At(j)) -> M;
     x[j] = j;
   }
-
-  TGraph* gr = new TGraph(STEPS + 1, x, y);
+  
+  timer.Start();
+  TGraph* gr = new TGraph(iter + 1, x, y);
   gr->Draw();
+  timer.Stop();
+  timer.Print();
 
   delete[] x;
   delete[] y;
+
+  
+  AnalysisLattice a(nn, "out.root");
+  timer.Start();
+  a.run();
+  timer.Stop();
+  timer.Print();
+  
 }
