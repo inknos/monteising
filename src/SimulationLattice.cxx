@@ -135,9 +135,6 @@ void SimulationLattice::run(){
   info._tempmin = tempmin;
   info._tempmax = tempmax;
 
-  cout << "info.tempmax : " << info._tempmax << endl;
-  cout << "tempmax : " << tempmax << endl;
-
   TTree * tree = new TTree("info", "Info");
   tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
   tree -> Fill();
@@ -151,16 +148,16 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
+  int counterT = 0;
   for(uint i = 0; i < dim_vector; i++) {
-    std::cout << "i: " << i << std::endl << std::flush;
     TString treeName(TString("Lattice_") + TString(std::to_string( i ).c_str() ));
     TString treeTitle(TString("LatticeTree_") + TString(std::to_string( i ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
 
+    counterT = 0;
     for(double t = tempmin; t <= tempmax; t += tempN) {
-
       setT(t);
-      tree -> Branch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ), &array);
+      tree -> Branch(TString("T_") + TString( TString(std::to_string( counterT ).c_str() ) ), &array);
 
       lattice_vector[i].cooling(I0);
       E_tmp = lattice_vector[i].energy(false);
@@ -181,7 +178,8 @@ void SimulationLattice::run(){
         Block * b2 = (Block*)array -> ConstructedAt(j + 1);
         b2 -> setBlock(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
       }
-      tree -> GetBranch(TString("T_") + TString( TString(std::to_string( (int) ( (t-tempmin) / tempN ) ).c_str() ) ) ) -> Fill();
+      tree -> GetBranch(TString("T_") + TString( TString(std::to_string( counterT ).c_str() ) ) ) -> Fill();
+      counterT++;
     }
     /*
     //DEBUG

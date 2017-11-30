@@ -50,6 +50,8 @@ class AnalysisLattice {
   
   void run();
 
+  void run2();
+  
   TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
 };
 
