@@ -1,4 +1,5 @@
 #include "SimulationLattice.h"
+#include "INFO.h"
 
 #include "TTree.h"
 #include "TBranch.h"
@@ -122,17 +123,6 @@ void SimulationLattice::run(){
   const char * file_t = file;
 
   TFile f(file, "recreate");
-  typedef struct{
-    double _tempmin;
-    double _tempmax;
-    uint _N;
-    uint _dim;
-    uint _dim_vector;
-    uint _I0;
-    uint _iter;
-    uint _tempstep;
-    uint _datime_t;
-  }INFO;
   static INFO info;
 
   info._N = N;

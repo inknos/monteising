@@ -2,6 +2,8 @@
 #define ANALYSIS_LATTICE_H
 
 #include "TString.h"
+#include "TGraphErrors.h"
+#include "TMultiGraph.h"
 
 #define ENERGY        1
 #define TEMPERATURE   2
@@ -20,14 +22,21 @@
 #define TARGET        1
 #define NO_TARGET     0
 
-typedef unsigned int uint;
+typedef unsigned int       uint;
+typedef const unsigned int cuint;
+typedef const TString      ctstring;
+typedef const bool         cbool;
 
 class AnalysisLattice {
  private:
   TString file_in;
   TString file_out;
-
+  
+  TGraphErrors * drawLattice(cuint& lattice_number,
+                             cuint& x_axis,
+                             cuint& y_axis);
  public:
+
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
 
@@ -38,13 +47,10 @@ class AnalysisLattice {
   void setFileIn(const TString& file_input);
 
   void setFileOut(const TString& file_output);
-
-  void read();
-
-  void write();
   
   void run();
- 
+
+  TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
 };
 
 #endif
