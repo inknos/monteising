@@ -5,3 +5,7 @@
 - eliminare tclonesarray
 
 - suscettivita` termica (e/o calore specifico)
+
+- simulazione 3D
+
+- fit 2D
