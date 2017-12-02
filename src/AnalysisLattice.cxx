@@ -6,8 +6,6 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
-#include "TBranchClones.h"
-#include "TClonesArray.h"
 #include "TMath.h"
 #include "TH1D.h"
 #include "TVectorT.h"
@@ -76,33 +74,45 @@ void AnalysisLattice::run(){
       dT[i][t] = 0; dE[i][t] = 0; dM[i][t] = 0; dS[i][t] = 0;
     }
   }
-  
-  TClonesArray * array = new TClonesArray("Block", iter + 1);
-  
-  TFile ofile(file_out, "RECREATE");
-  TTree * new_info_tree = info_tree -> CloneTree();
 
-  for(uint i = 0; i < dim_vector; i++){
-    TString treeName(TString("Lattice_") + TString(std::to_string(i).c_str() ) );
+  
+  
+  Block * block = new Block[dim_vector];
+  TBranch ** branch = new TBranch*[dim_vector];
+
+  for(uint t = 0; t < tempstep; t++){
+    cout << "t " << t << endl << flush;
+    TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
     TTree * tree = (TTree*) ifile.Get(treeName);
+    cout << tree->GetName() << endl << flush;
+    //cout << tree -> GetEntry(0) << endl << flush;
 
-    for(uint t = 0; t < tempstep; t++){
-      TString branchName(TString("T_") + std::to_string(t).c_str() );
-      TBranchClones * branch = (TBranchClones*) tree -> GetBranch(branchName);
-      branch -> SetAddress(&array);
-      tree -> GetEntry(0);
-
-      for(uint j = 0; j < iter + 1; j++){
-        Tv[j] = ((Block*) array -> At(j)) -> T;
-        Ev[j] = ((Block*) array -> At(j)) -> E;
-        Mv[j] = ((Block*) array -> At(j)) -> M;
-        Sv[j] = ((Block*) array -> At(j)) -> S;
+    for(uint i = 0; i < dim_vector; i++) {
+      cout << "i " << i << endl << flush;
+      TString branchName(TString("Lattice_") + std::to_string(i).c_str() );
+      branch[i] = tree -> GetBranch(branchName);
+      branch[i] -> SetAddress(&block[i]);
+      cout << branch[i]->GetName() << endl << flush;
+    }
+    
+    for(uint j = 0; j < iter + 1; j++) {
+      cout << "j " << j << endl << flush;
+      tree -> GetEntry(j);
+      cout << tree -> GetEntries() << endl << flush;
+      for(uint i = 0; i < dim_vector; i++){
+        
+        cout << "i " << i << endl << flush;
+        /*Tv[j] = block[i].T;
+        Ev[j] = block[i].E;
+        Mv[j] = block[i].M;
+        Sv[j] = block[i].S;
 
         T[i][t] += Tv[j];
         E[i][t] += Ev[j];
         M[i][t] += Mv[j];
-        S[i][t] += Sv[j];
+        S[i][t] += Sv[j];*/
       }
+      /*
       T[i][t] /= (iter + 1);
       E[i][t] /= (iter + 1);
       M[i][t] /= (iter + 1);
@@ -117,42 +127,46 @@ void AnalysisLattice::run(){
       dE[i][t] = TMath::Sqrt( dE[i][t] / ( iter + 1 ) );
       dS[i][t] = TMath::Sqrt( dM[i][t] / ( iter + 1 ) );
       dM[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
+      */
     }
-    cout << "Ho analizzato il reticolo " << i << endl << flush;
+    //cout << "Ho analizzato il reticolo " << i << endl << flush;
   }
   delete[] Tv;
   delete[] Ev;
   delete[] Mv;
   delete[] Sv;
-  
-  ifile.Close();
-  
-  TClonesArray * arr_out = new TClonesArray("Block", 1);
-  Block * block_out;
-  for(uint i = 0; i < dim_vector; i++){
 
-    TString treeName(TString("Lattice_") + TString(std::to_string(i).c_str() ) );
-    TString treeTitle(TString("LatticeTree") + TString(std::to_string(i).c_str() ) );
+  TFile ofile(file_out, "RECREATE");
+  TTree * new_info_tree = info_tree -> CloneTree();
+
+  ifile.Close();
+
+  Block * block_out = new Block[dim_vector * 2];
+  
+  for(uint t = 0; t < tempstep; t++){
+
+    TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
+    TString treeTitle(TString("TemperatureTree") + TString(std::to_string(t).c_str() ) );
     TTree * tree_out = new TTree(treeName, treeTitle);
     //tree_out -> SetDirectory(&ofile);
     
-    for(uint t = 0; t < tempstep; t++){
-      TString t_index_m(TString("Tmean_") + TString(std::to_string(t).c_str() ) );
-      TString t_index_s(TString("Tstd_")  + TString(std::to_string(t).c_str() ) );
+    for(uint i = 0; i < dim_vector; i++){
+      TString t_index_m(TString("Tmean_") + TString(std::to_string(i).c_str() ) );
+      TString t_index_s(TString("Tstd_")  + TString(std::to_string(i).c_str() ) );
 
-      tree_out -> Branch(t_index_m, &arr_out);
-      block_out = (Block*) arr_out -> ConstructedAt(0);
-      block_out -> setBlock(i, T[i][t], E[i][t], M[i][t], S[i][t], t);
-      tree_out -> GetBranch(t_index_m) -> Fill();
+      tree_out -> Branch(t_index_m, &block_out[i]);
+      tree_out -> Branch(t_index_s, &block_out[dim_vector + i]);
+    }
+    for(uint i = 0; i < dim_vector; i++){
+      
+      block_out[i].setBlock(i, T[i][t], E[i][t], M[i][t], S[i][t], t);
       //arr_out -> Clear();
       
-      tree_out -> Branch(t_index_s, &arr_out);
-      block_out = (Block*) arr_out -> ConstructedAt(0);
-      block_out -> setBlock(i, dT[i][t], dE[i][t], dM[i][t], dS[i][t], t);
-      tree_out -> GetBranch(t_index_s) -> Fill();
+      block_out[dim_vector + i].setBlock(i, dT[i][t], dE[i][t], dM[i][t], dS[i][t], t);
       //arr_out -> Clear();
     }
     tree_out -> Fill();
+    //tree_out -> Fill();
     //arr_out -> Clear();
     //tree_out -> Write();
   }
@@ -216,7 +230,7 @@ void AnalysisLattice::run(){
   ofile.Close();
   }
 */
-
+/*
 TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
                                             cuint& x_axis,
                                             cuint& y_axis){
@@ -352,3 +366,4 @@ TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
 
 
 }
+*/
