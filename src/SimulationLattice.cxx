@@ -140,10 +140,10 @@ void SimulationLattice::run(){
 
   Block * block = new Block[dim_vector];
   
-  int E_tmp;
-  double M_tmp;
-  double S_tmp;
-  double T_tmp;
+  int    * E_tmp = new int[dim_vector];
+  double * M_tmp = new double[dim_vector];
+  double * S_tmp = new double[dim_vector];
+  double * T_tmp = new double[dim_vector];
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
@@ -157,28 +157,34 @@ void SimulationLattice::run(){
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
       lattice_vector[i].cooling(I0);
-      E_tmp = lattice_vector[i].energy(false);
-      M_tmp = lattice_vector[i].magnetization();
-      S_tmp = ( (double) E_tmp )/ lattice_vector[i].getNumSpin();
-      T_tmp = Lattice::getT();
+      E_tmp[i] = lattice_vector[i].energy(false);
+      M_tmp[i] = lattice_vector[i].magnetization();
+      S_tmp[i] = ( (double) E_tmp[i])/ lattice_vector[i].getNumSpin();
+      T_tmp[i] = Lattice::getT();
    
-      block[i] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, I0);
+      block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, I0);
     }
     tree -> Fill();
     for(uint j = 0; j < iter; j++) {
       for(uint i = 0; i < dim_vector; i++) {
         data = lattice_vector[i].coolingPar();
-        E_tmp += (int) data[1];
-        M_tmp += data[2];
-        S_tmp += data[3];
-        T_tmp = data[0];
-
-        block[i] = Block(i, T_tmp, E_tmp, M_tmp, S_tmp, j + 1);
+        E_tmp[i] += (int) data[1];
+        M_tmp[i] += data[2];
+        S_tmp[i] += data[3];
+        T_tmp[i] = data[0];
+        if(data[2] < -1) cout << "ERROR" << endl << flush;
+        block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, j + 1);
       }
       tree -> Fill();
     }
     counterT++;
   }
+  delete[] E_tmp;
+  delete[] M_tmp;
+  delete[] S_tmp;
+  delete[] T_tmp;
+  delete[] data;
+  
   f.Write();
   f.Close();
 }

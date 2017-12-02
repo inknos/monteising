@@ -5,10 +5,11 @@
 #include "TGraphErrors.h"
 #include "TMultiGraph.h"
 
-#define ENERGY        1
-#define TEMPERATURE   2
-#define MAGNETIZATION 3
-#define SITE_ENERGY   4
+#define ENERGY         1
+#define TEMPERATURE    2
+#define MAGNETIZATION  3
+#define SITE_ENERGY    4
+#define SUSCEPTIBILITY 5
 
 #define DIM_ERR       2 // dimension of the analysis vectors = num spins
 

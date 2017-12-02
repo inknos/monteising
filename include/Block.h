@@ -17,14 +17,15 @@ struct Block : public TObject{
   double T;
   double M;
   double S;
+  double X;
   int E;
   uint I;
   
   Block();
   
-  Block(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I);
+  Block(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const double& _X, const uint& _I);
 
-  void setBlock(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const uint& _I);
+  void setBlock(const uint& Id, const double& _T, const int& _E, const double& _M, const double& _S, const double& _X, const uint& _I);
   
 ClassDef(Block, 1)
 };
