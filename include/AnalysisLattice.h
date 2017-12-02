@@ -1,13 +1,9 @@
 #ifndef ANALYSIS_LATTICE_H
 #define ANALYSIS_LATTICE_H
 
-#include "Lattice.h"
 #include "TString.h"
-#include "TFile.h"
+#include "TGraphErrors.h"
 #include "TMultiGraph.h"
-
-#include <vector>
-#include <string>
 
 #define ENERGY        1
 #define TEMPERATURE   2
@@ -26,72 +22,35 @@
 #define TARGET        1
 #define NO_TARGET     0
 
-typedef unsigned int uint;
+typedef unsigned int       uint;
+typedef const unsigned int cuint;
+typedef const TString      ctstring;
+typedef const bool         cbool;
 
-class AnalysisLattice{
+class AnalysisLattice {
  private:
-  TString file_name;
-  std::vector<std::string> l;
-
-  uint dim_c;
-  uint dim_t;
+  TString file_in;
+  TString file_out;
   
-  double *  temperature;
-  double ** energy;
-  double ** magnetization;
-  double ** site_energy;
-
-  double ** e_mean;
-  double ** m_mean;
-  double ** s_mean;
-
-  double ** e_err;
-  double ** m_err;
-  double ** s_err;
-
-  double * targetx_min;
-  double * targety_min;
-  double * targetx_max;
-  double * targety_max;
-  
-  void count(const uint&);
-
-  void creation();
-
-  TMultiGraph * analysisNoErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-
-  TMultiGraph *analysisErr(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-  
+  TGraphErrors * drawLattice(cuint& lattice_number,
+                             cuint& x_axis,
+                             cuint& y_axis);
  public:
-  AnalysisLattice();
 
-  AnalysisLattice(const TString&);
+  AnalysisLattice(const TString& file_input, const TString& file_output);
 
-  AnalysisLattice(const AnalysisLattice&);
+
+  TString getFileIn() const;
+
+  TString getFileOut() const;
+
+  void setFileIn(const TString& file_input);
+
+  void setFileOut(const TString& file_output);
   
-  ~AnalysisLattice();
+  void run();
 
-  AnalysisLattice& operator=(const AnalysisLattice&);
-
-  Lattice getLattice(const uint& i);
- 
-  TString getFileName() const;
-
-  vector<string> getList() const;
-
-  double * getTargetX(const uint&);
-
-  double * getTargetY(const uint&);
-
-  double * getTarget(const uint&);
-  
-  void setTarget(const double&, const double&, const double&, const double&, const uint&, const uint&, const uint&);
-  
-  TMultiGraph * analysis(const uint&, const uint&, const uint&, const TString&, const TString&, const bool&);
-
-  void print();
-
-  ClassDef(AnalysisLattice, 1)
-    };
+  TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
+};
 
 #endif

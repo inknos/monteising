@@ -1,538 +1,354 @@
+#include "AnalysisLattice.h"
+#include "Block.h"
+#include "INFO.h"
+
 #include "TString.h"
 #include "TFile.h"
-#include "TList.h"
-#include "TGraph.h"
-#include "TMultiGraph.h"
-#include "TGraphErrors.h"
-#include "TAxis.h"
-#include "TLine.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TBranchClones.h"
+#include "TClonesArray.h"
+#include "TMath.h"
+#include "TH1D.h"
+#include "TVectorT.h"
 
-#include "Lattice.h"
-#include "AnalysisLattice.h"
+#include <string>
 
-#include <vector>
+#include <iostream>
+using namespace std;
 
-ClassImp(AnalysisLattice)
+AnalysisLattice::AnalysisLattice(const TString& file_input, const TString& file_output) :
+  file_in(file_input), file_out(file_output) {}
 
-/* Constructors */
-AnalysisLattice::AnalysisLattice() : file_name(""), dim_c(1), dim_t(1) {
-  energy             = new double*[1];
-  magnetization      = new double*[1];
-  site_energy        = new double*[1];
-  e_mean             = new double*[DIM_ERR];
-  m_mean             = new double*[DIM_ERR];
-  s_mean             = new double*[DIM_ERR];
-  e_err              = new double*[DIM_ERR];
-  m_err              = new double*[DIM_ERR];
-  s_err              = new double*[DIM_ERR];
+TString AnalysisLattice::getFileIn() const { return file_in; }
 
-  temperature        = new double[1];
+TString AnalysisLattice::getFileOut() const { return file_out; }
 
-  energy[1]             = new double;
-  magnetization[1]      = new double;
-  site_energy[1]        = new double;
+void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_input; }
+
+void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
+
+void AnalysisLattice::run(){
+  static INFO info;
+
+  TFile ifile(file_in, "read");
+  TTree * info_tree = (TTree*) ifile.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
+
+  double* Tv= new double[iter + 1];
+  double* Ev= new double[iter + 1];
+  double* Mv= new double[iter + 1];
+  double* Sv= new double[iter + 1];
   
-  for(uint i = 0; i < DIM_ERR; i++){
-    e_mean[i] = new double[1];
-    m_mean[i] = new double[1];
-    s_mean[i] = new double[1];
-
-    e_err[i]  = new double[1];
-    m_err[i]  = new double[1];
-    s_err[i]  = new double[1];
-
-    targetx_min = new double[DIM_ERR];
-    targety_min = new double[DIM_ERR]; 
-    targetx_max = new double[DIM_ERR];
-    targety_max = new double[DIM_ERR];
- }
-}
-
-AnalysisLattice::AnalysisLattice(const TString& fname) : file_name(fname) {
-  TFile f(fname);
-  TList * li = f.GetListOfKeys();
-  uint entries = li->GetEntries();
-  for(uint i = 0; i < entries; i++){
-    l.push_back(li->At(i)->GetName());
+  double** T = new double*[dim_vector];
+  double** E = new double*[dim_vector];
+  double** M = new double*[dim_vector];
+  double** S = new double*[dim_vector];
+  double** dT= new double*[dim_vector];
+  double** dE= new double*[dim_vector];
+  double** dM= new double*[dim_vector];
+  double** dS= new double*[dim_vector];
+  for(uint i = 0; i < dim_vector; i++){
+    T[i] = new double[tempstep];
+    E[i] = new double[tempstep];
+    M[i] = new double[tempstep];
+    S[i] = new double[tempstep];
+    dT[i]= new double[tempstep];
+    dE[i]= new double[tempstep];
+    dM[i]= new double[tempstep];
+    dS[i]= new double[tempstep];
   }
-
-  count(entries);
-
-  creation();
-
-  for(uint i = 0; i < dim_t; i++){
-    temperature[i] = std::stod(l[i*dim_c].substr(l[i*dim_c].find_last_of("_") + 1));
-
-    for(uint j = 0; j < dim_c; j++){
-      energy[j][i] = (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).energy(false);
-      magnetization[j][i] = (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).magnetization();
-      site_energy[j][i] = energy[j][i] / (* (Lattice *)f.Get(l[i * dim_c +j].c_str())).getNumSpin();
+ 
+  for(uint i = 0; i < dim_vector; i++){
+    for(uint t = 0; t < tempstep; t++){
+      T[i][t] = 0; E[i][t] = 0; M[i][t] = 0; S[i][t] = 0;
+      dT[i][t] = 0; dE[i][t] = 0; dM[i][t] = 0; dS[i][t] = 0;
     }
-  }
-  f.Close();
-}
-
-AnalysisLattice::AnalysisLattice(const AnalysisLattice& obj) :
-  file_name(obj.file_name), dim_c(obj.dim_c), dim_t(obj.dim_t) {
-  creation();
-  for(uint i = 0; i < dim_t; i++){
-    temperature[i] = obj.temperature[i];
-    for(uint j = 0; j < dim_c; i++){
-      energy[j][i] = obj.energy[j][i];
-      magnetization[j][i] = obj.magnetization[j][i];
-      site_energy[j][i] = obj.site_energy[j][i];      
-    }
-    for(uint j = 0; j < DIM_ERR; j++){
-      e_mean[j][i] = obj.e_mean[j][i];
-      m_mean[j][i] = obj.e_mean[j][i];
-      s_mean[j][i] = obj.e_mean[j][i];
-      e_err[j][i]  = obj.e_err[j][i];
-      m_err[j][i]  = obj.e_err[j][i];
-      s_err[j][i]  = obj.e_err[j][i];
-    }
-  }
-  for(uint i = 0; i < DIM_ERR; i++){
-    targetx_min[i] = obj.targetx_min[i];
-    targety_min[i] = obj.targety_min[i];
-    targetx_max[i] = obj.targetx_max[i];
-    targety_max[i] = obj.targetx_max[i];
-  }
-}
-
-AnalysisLattice& AnalysisLattice::operator=(const AnalysisLattice& obj){
-  if(&obj == this) return *this;
-  this -> ~AnalysisLattice();
-  new(this) AnalysisLattice(obj);
-  return *this;
-}
-
-AnalysisLattice::~AnalysisLattice(){
-  for(uint i = 0; i < dim_c; i++){
-    delete []energy[i];
-    delete []magnetization[i];
-    delete []site_energy[i];
-  }
-
-  for(uint i = 0; i < DIM_ERR; i++){
-    delete []e_mean[i];
-    delete []m_mean[i];
-    delete []s_mean[i];
-    delete []e_err[i];
-    delete []m_err[i];
-    delete []s_err[i];
-  }
-
-  delete []temperature;
-  delete []energy;
-  delete []magnetization;
-  delete []site_energy;
-
-  delete []e_mean;
-  delete []m_mean;
-  delete []s_mean;
-
-  delete []e_err;
-  delete []m_err;
-  delete []s_err;
-
-  delete []targetx_min;
-  delete []targety_min;
-  delete []targetx_max;
-  delete []targety_max;
-}
-
-/* Private Methods */
-void AnalysisLattice::count(const uint& li){
-  uint temp = 0;
-  dim_c = 0;
-  for(uint i = 0; i < li; i++){
-    temp = std::stoi(l[i].substr(14, l[i].find_last_of("_") - 14));
-    temp > dim_c ? dim_c = temp : temp = dim_c;
-  }
-  dim_c++;
-  dim_t = li / dim_c;
-}
-
-void AnalysisLattice::creation(){
-  temperature   = new double[dim_t];
-  energy        = new double*[dim_c];
-  magnetization = new double*[dim_c];
-  site_energy   = new double*[dim_c];
-
-  e_mean        = new double*[DIM_ERR];
-  m_mean        = new double*[DIM_ERR];
-  s_mean        = new double*[DIM_ERR];
-  e_err         = new double*[DIM_ERR];
-  m_err         = new double*[DIM_ERR];
-  s_err         = new double*[DIM_ERR];
-
-  targetx_min   = new double[DIM_ERR];
-  targety_min   = new double[DIM_ERR];
-  targetx_max   = new double[DIM_ERR];
-  targety_max   = new double[DIM_ERR];
-  
-  for(uint i = 0; i < dim_c; i++){
-    energy[i]        = new double[dim_t];
-    magnetization[i] = new double[dim_t];
-    site_energy[i]   = new double[dim_t];
-  }
-
-  for(uint i = 0; i < DIM_ERR; i++){
-    e_mean[i] = new double[dim_t];
-    m_mean[i] = new double[dim_t];
-    s_mean[i] = new double[dim_t];
-    e_err[i]  = new double[dim_t];
-    m_err[i]  = new double[dim_t];
-    s_err[i]  = new double[dim_t];
-  }
-}
-
-/* Public Methods */
-TString AnalysisLattice::getFileName() const { return file_name; }
-
-vector<string> AnalysisLattice::getList() const { return l; }
-
-TMultiGraph * AnalysisLattice::analysisNoErr(const uint& x, const uint& y,
-                                             const uint& err,
-                                             const TString& name, const TString& title,
-                                             const bool& target) {
-  TGraph ** gr = new TGraph * [dim_c];
-  TMultiGraph * mg = new TMultiGraph(name, title);
-
-  void * x_vec;
-  void * y_vec;
-
-  for(uint i = 0; i < dim_c; i++){
-    switch(x){
-    case 1:{ x_vec = energy[i]; break; }
-    case 2:{ x_vec = temperature; break; }
-    case 3:{ x_vec = magnetization[i]; break; }
-    case 4:{ x_vec = site_energy[i]; break; }
-    default:{
-      std::cout << "Falling to default case for x\n" << std::flush;
-      x_vec = &temperature;
-      break;
-    }
-    }
-    switch(y){
-    case 1:{ y_vec = energy[i]; break; }
-    case 2:{ y_vec = temperature; break; }
-    case 3:{ y_vec = magnetization[i]; break; }
-    case 4:{ y_vec = site_energy[i]; break; }
-    default:{
-      std::cout << "Falling to default case for y\n" << std::flush;
-      y_vec = &energy[i];
-      break;
-    }
-    }
-    gr[i] = new TGraph(dim_t, (double*) x_vec, (double*) y_vec);
-    gr[i] -> SetMarkerColor(kAzure - 10 + i);
-    gr[i] -> SetMarkerStyle(20);
-  }
-  for(uint i = 0; i < dim_c; i++){
-    mg -> Add(gr[i]);
   }
   
-  mg -> Draw("AP");
+  TClonesArray * array = new TClonesArray("Block", iter + 1);
+  
+  TFile ofile(file_out, "RECREATE");
+  TTree * new_info_tree = info_tree -> CloneTree();
 
-  if(target){
-    TLine *** line = new TLine ** [DIM_ERR];
-    for(uint i = 0; i < DIM_ERR; i++){
-      line[i] = new TLine * [4];
-    }
-    for(uint i = 0; i < DIM_ERR; i++){
-      line[i][0] = new TLine(targetx_min[i], targety_min[i], targetx_max[i], targety_min[i]);
-      line[i][1] = new TLine(targetx_min[i], targety_max[i], targetx_max[i], targety_max[i]);
-      line[i][2] = new TLine(targetx_max[i], targety_min[i], targetx_max[i], targety_max[i]);
-      line[i][3] = new TLine(targetx_min[i], targety_min[i], targetx_min[i], targety_max[i]);
-    }
+  for(uint i = 0; i < dim_vector; i++){
+    TString treeName(TString("Lattice_") + TString(std::to_string(i).c_str() ) );
+    TTree * tree = (TTree*) ifile.Get(treeName);
 
-    for(uint i = 0; i < DIM_ERR; i++){
-      for(uint j = 0; j < 4; j++){
-        line[i][j] -> SetLineColorAlpha(2 + i*2, 0.8);
-        line[i][j] -> Draw("SAME");
+    for(uint t = 0; t < tempstep; t++){
+      TString branchName(TString("T_") + std::to_string(t).c_str() );
+      TBranchClones * branch = (TBranchClones*) tree -> GetBranch(branchName);
+      branch -> SetAddress(&array);
+      tree -> GetEntry(0);
+
+      for(uint j = 0; j < iter + 1; j++){
+        Tv[j] = ((Block*) array -> At(j)) -> T;
+        Ev[j] = ((Block*) array -> At(j)) -> E;
+        Mv[j] = ((Block*) array -> At(j)) -> M;
+        Sv[j] = ((Block*) array -> At(j)) -> S;
+
+        T[i][t] += Tv[j];
+        E[i][t] += Ev[j];
+        M[i][t] += Mv[j];
+        S[i][t] += Sv[j];
       }
-    }
-  }
-
-  return mg;
-}
-
-TMultiGraph * AnalysisLattice::analysisErr(const uint& x, const uint& y,
-                                           const uint& err,
-                                           const TString& name, const TString& title,
-                                           const bool& target){
-  void * x_vec;
-  void * x_err;
-  void * y_vec;
-  void * y_err;
-  double * terr = new double[dim_t];
-  for(uint i = 0; i < dim_t; i++) terr[i] = 0.;
-
-  TGraphErrors ** gr = new TGraphErrors*[DIM_ERR];
-  
-  TMultiGraph * mg = new TMultiGraph(name, title);
-
-  uint init = 0, end = 0;
-  switch(err){
-  case 0: { init = 0; end = 1; break; }
-  case 1: { init = 1; end = 2; break; }
-  case 2: { init = 0; end = DIM_ERR; break; }
-  default: {init = 0; end = DIM_ERR; break; }
-  }
-
-  for(uint i = init; i < end; i++){
-    switch(x){
-    case 1:{ x_vec = e_mean[i]; x_err = e_err[i]; break; }
-    case 2:{ x_vec = temperature; x_err = terr; break; }
-    case 3:{ x_vec = m_mean[i]; x_err = m_err[i]; break; }
-    case 4:{ x_vec = s_mean[i]; x_err = s_err[i]; break; }
-    default:{
-      std::cout << "Falling to default case for x\n" << std::flush;
-      x_vec = temperature; x_err = terr;
-      break;
-    }
-    }
-    switch(y){
-    case 1:{ y_vec = e_mean[i]; y_err = e_err[i]; break; }
-    case 2:{ y_vec = temperature; y_err = terr; break; }
-    case 3:{ y_vec = m_mean[i]; y_err = m_err[i]; break; }
-    case 4:{ y_vec = s_mean[i]; y_err = s_err[i]; break; }
-    default:{
-      std::cout << "Falling to default case for y\n" << std::flush;
-      y_vec = e_mean[i]; y_err = e_err[i];
-      break;
-    }
-    }
-    gr[i] = new TGraphErrors(dim_t, (double*) x_vec, (double*) y_vec,
-                             (double*) x_err, (double*) y_err);
-    gr[i]->SetMarkerStyle(23 - i);
-    gr[i]->SetMarkerColor(2 + i * 2);
-  
-    mg->Add(gr[i]);
-  }
-
-  mg->Draw("ALP");
-  
-  if(target){
-    TLine *** line = new TLine ** [DIM_ERR];
-    for(uint i = 0; i < DIM_ERR; i++){
-      line[i] = new TLine * [4];
-    }
-    for(uint i = 0; i < DIM_ERR; i++){
-      line[i][0] = new TLine(targetx_min[i], targety_min[i], targetx_max[i], targety_min[i]);
-      line[i][1] = new TLine(targetx_min[i], targety_max[i], targetx_max[i], targety_max[i]);
-      line[i][2] = new TLine(targetx_max[i], targety_min[i], targetx_max[i], targety_max[i]);
-      line[i][3] = new TLine(targetx_min[i], targety_min[i], targetx_min[i], targety_max[i]);
-    }
-
-    for(uint i = 0; i < DIM_ERR; i++){
-      for(uint j = 0; j < 4; j++){
-        line[i][j] -> SetLineColorAlpha(2 + i*2, 0.8);
-        line[i][j] -> Draw("SAME");
+      T[i][t] /= (iter + 1);
+      E[i][t] /= (iter + 1);
+      M[i][t] /= (iter + 1);
+      S[i][t] /= (iter + 1);
+      for(uint j = 0; j < iter + 1; j++){
+        dT[i][t] += ( T[i][t] - Tv[j] ) * ( T[i][t] - Tv[j] );
+        dE[i][t] += ( E[i][t] - Ev[j] ) * ( E[i][t] - Ev[j] );
+        dM[i][t] += ( M[i][t] - Mv[j] ) * ( M[i][t] - Mv[j] );
+        dS[i][t] += ( S[i][t] - Sv[j] ) * ( S[i][t] - Sv[j] );
       }
+      dT[i][t] = TMath::Sqrt( dT[i][t] / ( iter + 1 ) );
+      dE[i][t] = TMath::Sqrt( dE[i][t] / ( iter + 1 ) );
+      dS[i][t] = TMath::Sqrt( dM[i][t] / ( iter + 1 ) );
+      dM[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
     }
+    cout << "Ho analizzato il reticolo " << i << endl << flush;
   }
-
-  delete []terr;
-
-  return mg;
-}
-
-TMultiGraph * AnalysisLattice::analysis(const uint& x, const uint& y, const uint& err, const TString& name, const TString& title, const bool& target = false){
-  TMultiGraph * (AnalysisLattice::*func)(const uint& _x, const uint& _y, const uint& _err, const TString& _name, const TString& _title, const bool& _target);
-  switch(err){
-  case 0:{ func = &AnalysisLattice::analysisErr; break; }
-  case 1:{ func = &AnalysisLattice::analysisErr; break; }
-  case 2:{ func = &AnalysisLattice::analysisErr;   break; }
-  case 3:{ func = &AnalysisLattice::analysisNoErr; break;}
-  default:{ return 0; }
-  }
-  return (*this.*func)(x, y, err, name, title, target);
-}
-
-double* AnalysisLattice::getTargetX(const uint& spin){
-  double * ret = new double[2];
-  ret[0] = targetx_min[spin];
-  ret[1] = targetx_max[spin];
-  return ret;
-}
-
-double* AnalysisLattice::getTargetY(const uint& spin){
-  double * ret = new double[2];
-  ret[0] = targety_min[spin];
-  ret[1] = targety_max[spin];
-  return ret;
-}
-
-double* AnalysisLattice::getTarget(const uint& spin){
-  double * ret = new double[4];
-  ret[0] = targetx_min[spin];
-  ret[1] = targetx_max[spin];
-  ret[2] = targety_min[spin];
-  ret[3] = targety_max[spin];
-  return ret;
-}
-
-void AnalysisLattice::setTarget(const double& x_min, const double& x_max,
-                                const double& y_min, const double& y_max,
-                                const uint& dim, const uint& x_axis, const uint& y_axis){
-  void * x_vec;
-  void * y_vec;
-  vector<uint> index;
-
-  targetx_min[dim] = x_min;
-  targety_min[dim] = y_min;
-  targetx_max[dim] = x_max;
-  targety_max[dim] = y_max;
+  delete[] Tv;
+  delete[] Ev;
+  delete[] Mv;
+  delete[] Sv;
   
-  for(uint j = 0; j < dim_t; j++){
-    e_mean[dim][j] = 0; m_mean[dim][j] = 0; s_mean[dim][j] = 0;
-    e_err[dim][j]  = 0; m_err[dim][j]  = 0; s_err[dim][j]  = 0;
+  ifile.Close();
+  
+  TClonesArray * arr_out = new TClonesArray("Block", 1);
+  Block * block_out;
+  for(uint i = 0; i < dim_vector; i++){
+
+    TString treeName(TString("Lattice_") + TString(std::to_string(i).c_str() ) );
+    TString treeTitle(TString("LatticeTree") + TString(std::to_string(i).c_str() ) );
+    TTree * tree_out = new TTree(treeName, treeTitle);
+    //tree_out -> SetDirectory(&ofile);
+    
+    for(uint t = 0; t < tempstep; t++){
+      TString t_index_m(TString("Tmean_") + TString(std::to_string(t).c_str() ) );
+      TString t_index_s(TString("Tstd_")  + TString(std::to_string(t).c_str() ) );
+
+      tree_out -> Branch(t_index_m, &arr_out);
+      block_out = (Block*) arr_out -> ConstructedAt(0);
+      block_out -> setBlock(i, T[i][t], E[i][t], M[i][t], S[i][t], t);
+      tree_out -> GetBranch(t_index_m) -> Fill();
+      //arr_out -> Clear();
+      
+      tree_out -> Branch(t_index_s, &arr_out);
+      block_out = (Block*) arr_out -> ConstructedAt(0);
+      block_out -> setBlock(i, dT[i][t], dE[i][t], dM[i][t], dS[i][t], t);
+      tree_out -> GetBranch(t_index_s) -> Fill();
+      //arr_out -> Clear();
+    }
+    tree_out -> Fill();
+    //arr_out -> Clear();
+    //tree_out -> Write();
   }
 
-  for(uint i = 0; i < dim_c; i++) {
+  for(uint i = 0; i < dim_vector; i++){
+    delete[] T[i];
+    delete[] E[i];
+    delete[] M[i];
+    delete[] S[i];
+    delete[] dT[i];
+    delete[] dE[i];
+    delete[] dM[i];
+    delete[] dS[i];
+  }
+  delete[] T;
+  delete[] E;
+  delete[] M;
+  delete[] S;
+  delete[] dT;
+  delete[] dE;
+  delete[] dM;
+  delete[] dS;
+  ofile.Write();
+  ofile.Close();
+}
+/*
+  void AnalysisLattice::run() {
+  for(uint j = 0; j < iter + 1; j++){
+  T_mean += T_vec[j];
+  E_mean += ( (Block*) arr_in -> At(j) ) -> E;
+  M_mean += ( (Block*) arr_in -> At(j) ) -> M;
+  S_mean += ( (Block*) arr_in -> At(j) ) -> S;
+  }
+  T_mean /= (iter + 1);
+  E_mean /= (iter + 1);
+  M_mean /= (iter + 1);
+  S_mean /= (iter + 1);
+  for(uint j = 0; j < iter + 1; j++){
+  T_std += pow(T_mean - ( (Block*) arr_in -> At(j) ) -> T, 2);
+  E_std += pow(E_mean - ( (Block*) arr_in -> At(j) ) -> E, 2);
+  S_std += pow(M_mean - ( (Block*) arr_in -> At(j) ) -> M, 2);
+  M_std += pow(S_mean - ( (Block*) arr_in -> At(j) ) -> S, 2);
+  }
+  T_std = sqrt( T_std / iter );
+  E_std = sqrt( E_std / iter );
+  M_std = sqrt( M_std / iter );
+  S_std = sqrt( S_std / iter );
+
+  block_out = (Block *)arr_out -> ConstructedAt(t);
+  block_out -> setBlock(i, T_mean, E_mean, M_mean, S_mean, t);
+
+  block_out = (Block *)arr_out -> ConstructedAt(t + tempstep);
+  block_out -> setBlock(i, T_std,  E_std,  M_std,  S_std,  t + tempstep);
+  }
+  //filla tree_out
+  tree_out -> GetBranch(TString("Lattice_") + i_index) -> Fill();
+  }
+  tree_out -> Fill();
+  ifile.Close();
+  ofile.Write();
+  ofile.Close();
+  }
+*/
+
+TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
+                                            cuint& x_axis,
+                                            cuint& y_axis){
+  static INFO info;
+
+  TFile f(file_out, "read");
+  TTree * info_tree = (TTree*) f.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
+
+  TTree * tree = (TTree*) f.Get(TString("Lattice_") + TString(std::to_string(lattice_number).c_str() ) );
+  TClonesArray * array_mean = new TClonesArray("Block", 1);
+  TClonesArray * array_std  = new TClonesArray("Block", 1);
+
+  double* x = new double[tempstep];
+  double* y = new double[tempstep];
+  double* dx = new double[tempstep];
+  double* dy = new double[tempstep];
+
+  TBranchClones * branch_mean;
+  TBranchClones * branch_std;
+  for(uint i = 0; i < tempstep; i++){
+    branch_mean = (TBranchClones*) ( tree -> GetBranch(TString("Tmean_") + TString(std::to_string(i).c_str()))  );
+    branch_mean -> SetAddress(&array_mean);
+    branch_std  = (TBranchClones*) ( tree -> GetBranch(TString("Tstd_") + TString(std::to_string(i).c_str()))  );
+    branch_std  -> SetAddress(&array_std);
+    tree -> GetEntry(0);
     switch(x_axis){
-    case 1:{ x_vec = energy[i]; break; }
-    case 2:{ x_vec = temperature; break; }
-    case 3:{ x_vec = magnetization[i]; break; }
-    case 4:{ x_vec = site_energy[i]; break; }
+    case 1:{
+      x[i]  = ((Block*) array_mean -> At(0)) -> E;
+      dx[i] = ((Block*) array_std  -> At(0)) -> E;
+      break;
+    }
+    case 2:{
+      x[i]  = ((Block*) array_mean -> At(0)) -> T;
+      dx[i] = ((Block*) array_std  -> At(0)) -> T;
+      break;
+    }
+    case 3:{
+      x[i]  = ((Block*) array_mean -> At(0)) -> M;
+      dx[i] = ((Block*) array_std  -> At(0)) -> M;
+      break;
+    }
+    case 4:{
+      x[i]  = ((Block*) array_mean -> At(0)) -> S;
+      dx[i] = ((Block*) array_std  -> At(0)) -> S;
+      break;
+    }
     default:{
-      std::cout << "Falling to default case for x\n" << std::flush;
-      x_vec = temperature;
+      x[i]  = ((Block*) array_mean -> At(0)) -> M;
+      dx[i] = ((Block*) array_std  -> At(0)) -> M;
+      std::cout << "Falling to default for x axis (Magnetization)\n" << std::flush;
       break;
     }
     }
     switch(y_axis){
-    case 1:{ y_vec = energy[i]; break; }
-    case 2:{ y_vec = temperature; break; }
-    case 3:{ y_vec = magnetization[i]; break; }
-    case 4:{ y_vec = site_energy[i]; break; }
+    case 1:{
+      y[i]  = ((Block*) array_mean -> At(0)) -> E;
+      dy[i] = ((Block*) array_std  -> At(0)) -> E;
+      break;
+    }
+    case 2:{
+      y[i]  = ((Block*) array_mean -> At(0)) -> T;
+      dy[i] = ((Block*) array_std  -> At(0)) -> T;
+      break;
+    }
+    case 3:{
+      y[i]  = ((Block*) array_mean -> At(0)) -> M;
+      dy[i] = ((Block*) array_std  -> At(0)) -> M;
+      break;
+    }
+    case 4:{
+      y[i]  = ((Block*) array_mean -> At(0)) -> S;
+      dy[i] = ((Block*) array_std  -> At(0)) -> S;
+      break;
+    }
     default:{
-      std::cout << "Falling to default case for y\n" << std::flush;
-      y_vec = energy[i];
+      y[i]  = ((Block*) array_mean -> At(0)) -> M;
+      dy[i] = ((Block*) array_std  -> At(0)) -> M;
+      std::cout << "Falling to default for y axis (Temperature)\n" << std::flush;
       break;
     }
     }
-    for(uint j = 0; j < dim_t; j++){
-      if( ((double*) x_vec)[j] >= x_min &&
-          ((double*) x_vec)[j] <= x_max &&
-          ((double*) y_vec)[j] >= y_min &&
-          ((double*) y_vec)[j] <= y_max ) {
-        // non contare
-        index.push_back(i);
-        break;
-      }
-    }
   }
 
-  for(uint i = 0; i < dim_c; i++){
-    if(std::find(index.begin(), index.end(), i) != index.end()) {
-      for(uint j = 0; j < dim_t; j++){
-        // somma i valori per la media
-        e_mean[dim][j] += energy[i][j];
-        m_mean[dim][j] += magnetization[i][j];
-        s_mean[dim][j] += site_energy[i][j];
-      }
-    }
-    else { continue; }
-  }
-  for(uint i = 0; i < dim_t; i++) {
-    e_mean[dim][i] /= index.size();
-    m_mean[dim][i] /= index.size();
-    s_mean[dim][i] /= index.size();
-  }
+  TGraphErrors * graph = new TGraphErrors(tempstep, x, y, dx, dy);
+  //graph->Draw();
 
-  for(uint i = 0; i < dim_c; i++){
-    if(std::find(index.begin(), index.end(), i) != index.end()) {
-      for(uint j = 0; j < dim_t; j++){ 
-        e_err[dim][j] += pow( e_mean[dim][j] - energy[i][j] , 2);
-        m_err[dim][j] += pow( m_mean[dim][j] - magnetization[i][j] , 2);
-        s_err[dim][j] += pow( s_mean[dim][j] - site_energy[i][j] , 2);
-      }
-    }else{ continue; }
-  }
-  for(uint i = 0; i < dim_t; i++){
-    e_err[dim][i] /= index.size();
-    m_err[dim][i] /= index.size();
-    s_err[dim][i] /= index.size();
-    
-    e_err[dim][i] = sqrt(e_err[dim][i]);
-    m_err[dim][i] = sqrt(m_err[dim][i]);
-    s_err[dim][i] = sqrt(s_err[dim][i]);
-  }
+  delete[] x;
+  delete[] y;
+
+  return graph;
 }
 
-void AnalysisLattice::print(){
-  for(uint i = 0; i < dim_c; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << energy[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
+TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
 
-  for(uint i = 0; i < dim_c; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << magnetization[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
+  static INFO info;
 
-  for(uint i = 0; i < dim_c; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << site_energy[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
+  TFile ifile(file_out, "read");
+  TTree * info_tree = (TTree*) ifile.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
 
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << e_mean[i][j] << '\t';
-    }
-    cout << '\n';
+  TMultiGraph * multi = new TMultiGraph("multigraph", "Multigraph");
+  TGraphErrors * gr;
+  for(uint i = 0; i < dim_vector; i++){
+    gr = drawLattice(i, x_axis, y_axis);
+    multi -> Add(gr);
   }
-  cout << '\n';
+  multi -> Draw("ALP");
 
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << m_mean[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
+  return multi;
 
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << s_mean[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
 
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << e_err[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
-
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << m_err[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
-
-  for(uint i = 0; i < DIM_ERR; i++){
-    for(uint j = 0; j < dim_t; j++){
-      cout << s_err[i][j] << '\t';
-    }
-    cout << '\n';
-  }
-  cout << '\n';
 }
