@@ -8,9 +8,9 @@
 #include "TBranch.h"
 #include "TMath.h"
 #include "TH1D.h"
-#include "TVectorT.h"
 
 #include <string>
+#include <vector>
 
 #include <iostream>
 using namespace std;
@@ -27,6 +27,7 @@ void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_inpu
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
 
 void AnalysisLattice::run(){
+  TH1D::SetDefaultSumw2(true);
   static INFO info;
 
   TFile ifile(file_in, "read");
@@ -44,10 +45,16 @@ void AnalysisLattice::run(){
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
 
-  double* Tv= new double[iter + 1];
-  double* Ev= new double[iter + 1];
-  double* Mv= new double[iter + 1];
-  double* Sv= new double[iter + 1];
+  double** Tv = new double*[dim_vector];
+  double** Ev = new double*[dim_vector];
+  double** Mv = new double*[dim_vector];
+  double** Sv = new double*[dim_vector];
+  for(uint i = 0; i < dim_vector; i++){
+    Tv[i] = new double[iter + 1];
+    Ev[i] = new double[iter + 1];
+    Mv[i] = new double[iter + 1];
+    Sv[i] = new double[iter + 1];
+  }
   
   double** T = new double*[dim_vector];
   double** E = new double*[dim_vector];
@@ -67,7 +74,7 @@ void AnalysisLattice::run(){
     dM[i]= new double[tempstep];
     dS[i]= new double[tempstep];
   }
- 
+
   for(uint i = 0; i < dim_vector; i++){
     for(uint t = 0; t < tempstep; t++){
       T[i][t] = 0; E[i][t] = 0; M[i][t] = 0; S[i][t] = 0;
@@ -75,93 +82,95 @@ void AnalysisLattice::run(){
     }
   }
 
-  
-  
-  Block * block = new Block[dim_vector];
-  TBranch ** branch = new TBranch*[dim_vector];
+  Block * block = 0;
+  TTree * tree;
+  for(uint t = 0; t < tempstep; t++) {
 
-  for(uint t = 0; t < tempstep; t++){
-    cout << "t " << t << endl << flush;
     TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
-    TTree * tree = (TTree*) ifile.Get(treeName);
-    cout << tree->GetName() << endl << flush;
-    //cout << tree -> GetEntry(0) << endl << flush;
-
-    for(uint i = 0; i < dim_vector; i++) {
-      cout << "i " << i << endl << flush;
-      TString branchName(TString("Lattice_") + std::to_string(i).c_str() );
-      branch[i] = tree -> GetBranch(branchName);
-      branch[i] -> SetAddress(&block[i]);
-      cout << branch[i]->GetName() << endl << flush;
+    tree = (TTree*) ifile.Get(treeName);
+    
+    TH1D ** histoT = new TH1D*[dim_vector];
+    TH1D ** histoE = new TH1D*[dim_vector];
+    TH1D ** histoM = new TH1D*[dim_vector];
+    TH1D ** histoS = new TH1D*[dim_vector];
+    for(uint i = 0; i < dim_vector; i++){
+      histoT[i] = new TH1D;
+      histoE[i] = new TH1D;
+      histoM[i] = new TH1D;
+      histoS[i] = new TH1D;
     }
     
-    for(uint j = 0; j < iter + 1; j++) {
-      cout << "j " << j << endl << flush;
-      tree -> GetEntry(j);
-      cout << tree -> GetEntries() << endl << flush;
-      for(uint i = 0; i < dim_vector; i++){
-        
-        cout << "i " << i << endl << flush;
-        /*Tv[j] = block[i].T;
-        Ev[j] = block[i].E;
-        Mv[j] = block[i].M;
-        Sv[j] = block[i].S;
+    for(uint i = 0; i < dim_vector; i++) {
 
-        T[i][t] += Tv[j];
-        E[i][t] += Ev[j];
-        M[i][t] += Mv[j];
-        S[i][t] += Sv[j];*/
+      TString branchName(TString("Lattice_") + std::to_string(i).c_str() );
+      tree -> SetBranchAddress(branchName, &block);
+      
+      for(uint j = 0; j < iter + 1; j++) {
+        tree -> GetEntry(j);  
+        Tv[i][j] = block -> T;
+        Ev[i][j] = block -> E;
+        Mv[i][j] = block -> M;
+        Sv[i][j] = block -> S;
+
+        T[i][t] += Tv[i][j];
+        E[i][t] += Ev[i][j];
+        M[i][t] += Mv[i][j];
+        S[i][t] += Sv[i][j];
       }
-      /*
       T[i][t] /= (iter + 1);
       E[i][t] /= (iter + 1);
       M[i][t] /= (iter + 1);
       S[i][t] /= (iter + 1);
       for(uint j = 0; j < iter + 1; j++){
-        dT[i][t] += ( T[i][t] - Tv[j] ) * ( T[i][t] - Tv[j] );
-        dE[i][t] += ( E[i][t] - Ev[j] ) * ( E[i][t] - Ev[j] );
-        dM[i][t] += ( M[i][t] - Mv[j] ) * ( M[i][t] - Mv[j] );
-        dS[i][t] += ( S[i][t] - Sv[j] ) * ( S[i][t] - Sv[j] );
+        dT[i][t] += ( T[i][t] - Tv[i][j] ) * ( T[i][t] - Tv[i][j] );
+        dE[i][t] += ( E[i][t] - Ev[i][j] ) * ( E[i][t] - Ev[i][j] );
+        dM[i][t] += ( M[i][t] - Mv[i][j] ) * ( M[i][t] - Mv[i][j] );
+        dS[i][t] += ( S[i][t] - Sv[i][j] ) * ( S[i][t] - Sv[i][j] );
       }
       dT[i][t] = TMath::Sqrt( dT[i][t] / ( iter + 1 ) );
       dE[i][t] = TMath::Sqrt( dE[i][t] / ( iter + 1 ) );
       dS[i][t] = TMath::Sqrt( dM[i][t] / ( iter + 1 ) );
       dM[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
-      */
     }
-    //cout << "Ho analizzato il reticolo " << i << endl << flush;
+  }
+
+  for(uint i = 0; i < dim_vector; i++){
+    delete[] Tv[i];
+    delete[] Ev[i];
+    delete[] Mv[i];
+    delete[] Sv[i];
   }
   delete[] Tv;
   delete[] Ev;
   delete[] Mv;
   delete[] Sv;
-
+  
   TFile ofile(file_out, "RECREATE");
   TTree * new_info_tree = info_tree -> CloneTree();
 
   ifile.Close();
 
   Block * block_out = new Block[dim_vector * 2];
-  
+
   for(uint t = 0; t < tempstep; t++){
 
     TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
     TString treeTitle(TString("TemperatureTree") + TString(std::to_string(t).c_str() ) );
     TTree * tree_out = new TTree(treeName, treeTitle);
     //tree_out -> SetDirectory(&ofile);
-    
+
     for(uint i = 0; i < dim_vector; i++){
-      TString t_index_m(TString("Tmean_") + TString(std::to_string(i).c_str() ) );
-      TString t_index_s(TString("Tstd_")  + TString(std::to_string(i).c_str() ) );
+      TString t_index_m(TString("Lattice_mean_") + TString(std::to_string(i).c_str() ) );
+      TString t_index_s(TString("Lattice_std_")  + TString(std::to_string(i).c_str() ) );
 
       tree_out -> Branch(t_index_m, &block_out[i]);
       tree_out -> Branch(t_index_s, &block_out[dim_vector + i]);
     }
     for(uint i = 0; i < dim_vector; i++){
-      
+
       block_out[i].setBlock(i, T[i][t], E[i][t], M[i][t], S[i][t], t);
       //arr_out -> Clear();
-      
+
       block_out[dim_vector + i].setBlock(i, dT[i][t], dE[i][t], dM[i][t], dS[i][t], t);
       //arr_out -> Clear();
     }
@@ -231,9 +240,9 @@ void AnalysisLattice::run(){
   }
 */
 /*
-TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
-                                            cuint& x_axis,
-                                            cuint& y_axis){
+  TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
+  cuint& x_axis,
+  cuint& y_axis){
   static INFO info;
 
   TFile f(file_out, "read");
@@ -263,67 +272,67 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   TBranchClones * branch_mean;
   TBranchClones * branch_std;
   for(uint i = 0; i < tempstep; i++){
-    branch_mean = (TBranchClones*) ( tree -> GetBranch(TString("Tmean_") + TString(std::to_string(i).c_str()))  );
-    branch_mean -> SetAddress(&array_mean);
-    branch_std  = (TBranchClones*) ( tree -> GetBranch(TString("Tstd_") + TString(std::to_string(i).c_str()))  );
-    branch_std  -> SetAddress(&array_std);
-    tree -> GetEntry(0);
-    switch(x_axis){
-    case 1:{
-      x[i]  = ((Block*) array_mean -> At(0)) -> E;
-      dx[i] = ((Block*) array_std  -> At(0)) -> E;
-      break;
-    }
-    case 2:{
-      x[i]  = ((Block*) array_mean -> At(0)) -> T;
-      dx[i] = ((Block*) array_std  -> At(0)) -> T;
-      break;
-    }
-    case 3:{
-      x[i]  = ((Block*) array_mean -> At(0)) -> M;
-      dx[i] = ((Block*) array_std  -> At(0)) -> M;
-      break;
-    }
-    case 4:{
-      x[i]  = ((Block*) array_mean -> At(0)) -> S;
-      dx[i] = ((Block*) array_std  -> At(0)) -> S;
-      break;
-    }
-    default:{
-      x[i]  = ((Block*) array_mean -> At(0)) -> M;
-      dx[i] = ((Block*) array_std  -> At(0)) -> M;
-      std::cout << "Falling to default for x axis (Magnetization)\n" << std::flush;
-      break;
-    }
-    }
-    switch(y_axis){
-    case 1:{
-      y[i]  = ((Block*) array_mean -> At(0)) -> E;
-      dy[i] = ((Block*) array_std  -> At(0)) -> E;
-      break;
-    }
-    case 2:{
-      y[i]  = ((Block*) array_mean -> At(0)) -> T;
-      dy[i] = ((Block*) array_std  -> At(0)) -> T;
-      break;
-    }
-    case 3:{
-      y[i]  = ((Block*) array_mean -> At(0)) -> M;
-      dy[i] = ((Block*) array_std  -> At(0)) -> M;
-      break;
-    }
-    case 4:{
-      y[i]  = ((Block*) array_mean -> At(0)) -> S;
-      dy[i] = ((Block*) array_std  -> At(0)) -> S;
-      break;
-    }
-    default:{
-      y[i]  = ((Block*) array_mean -> At(0)) -> M;
-      dy[i] = ((Block*) array_std  -> At(0)) -> M;
-      std::cout << "Falling to default for y axis (Temperature)\n" << std::flush;
-      break;
-    }
-    }
+  branch_mean = (TBranchClones*) ( tree -> GetBranch(TString("Tmean_") + TString(std::to_string(i).c_str()))  );
+  branch_mean -> SetAddress(&array_mean);
+  branch_std  = (TBranchClones*) ( tree -> GetBranch(TString("Tstd_") + TString(std::to_string(i).c_str()))  );
+  branch_std  -> SetAddress(&array_std);
+  tree -> GetEntry(0);
+  switch(x_axis){
+  case 1:{
+  x[i]  = ((Block*) array_mean -> At(0)) -> E;
+  dx[i] = ((Block*) array_std  -> At(0)) -> E;
+  break;
+  }
+  case 2:{
+  x[i]  = ((Block*) array_mean -> At(0)) -> T;
+  dx[i] = ((Block*) array_std  -> At(0)) -> T;
+  break;
+  }
+  case 3:{
+  x[i]  = ((Block*) array_mean -> At(0)) -> M;
+  dx[i] = ((Block*) array_std  -> At(0)) -> M;
+  break;
+  }
+  case 4:{
+  x[i]  = ((Block*) array_mean -> At(0)) -> S;
+  dx[i] = ((Block*) array_std  -> At(0)) -> S;
+  break;
+  }
+  default:{
+  x[i]  = ((Block*) array_mean -> At(0)) -> M;
+  dx[i] = ((Block*) array_std  -> At(0)) -> M;
+  std::cout << "Falling to default for x axis (Magnetization)\n" << std::flush;
+  break;
+  }
+  }
+  switch(y_axis){
+  case 1:{
+  y[i]  = ((Block*) array_mean -> At(0)) -> E;
+  dy[i] = ((Block*) array_std  -> At(0)) -> E;
+  break;
+  }
+  case 2:{
+  y[i]  = ((Block*) array_mean -> At(0)) -> T;
+  dy[i] = ((Block*) array_std  -> At(0)) -> T;
+  break;
+  }
+  case 3:{
+  y[i]  = ((Block*) array_mean -> At(0)) -> M;
+  dy[i] = ((Block*) array_std  -> At(0)) -> M;
+  break;
+  }
+  case 4:{
+  y[i]  = ((Block*) array_mean -> At(0)) -> S;
+  dy[i] = ((Block*) array_std  -> At(0)) -> S;
+  break;
+  }
+  default:{
+  y[i]  = ((Block*) array_mean -> At(0)) -> M;
+  dy[i] = ((Block*) array_std  -> At(0)) -> M;
+  std::cout << "Falling to default for y axis (Temperature)\n" << std::flush;
+  break;
+  }
+  }
   }
 
   TGraphErrors * graph = new TGraphErrors(tempstep, x, y, dx, dy);
@@ -333,9 +342,9 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   delete[] y;
 
   return graph;
-}
+  }
 
-TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
+  TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
 
   static INFO info;
 
@@ -357,13 +366,13 @@ TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
   TMultiGraph * multi = new TMultiGraph("multigraph", "Multigraph");
   TGraphErrors * gr;
   for(uint i = 0; i < dim_vector; i++){
-    gr = drawLattice(i, x_axis, y_axis);
-    multi -> Add(gr);
+  gr = drawLattice(i, x_axis, y_axis);
+  multi -> Add(gr);
   }
   multi -> Draw("ALP");
 
   return multi;
 
 
-}
+  }
 */
