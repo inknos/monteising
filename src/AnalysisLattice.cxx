@@ -27,6 +27,7 @@ void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_inpu
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
 
 void AnalysisLattice::run(){
+  
   TH1D::SetDefaultSumw2(true);
   static INFO info;
 
@@ -241,7 +242,8 @@ void AnalysisLattice::run(){
 
 TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
                                             cuint& x_axis,
-                                            cuint& y_axis){
+                                            cuint& y_axis,
+                                            cbool& abs){
   static INFO info;
 
   TFile f(file_out, "read");
@@ -268,7 +270,6 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   Block * block_std = 0;
 
   for(uint t = 0; t < tempstep; t++){
-    cout << "t " << t << endl << flush;
     TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
 
     tree -> SetBranchAddress(TString("Lattice_mean_") + TString(std::to_string(lattice_number).c_str()), &block_mean );
@@ -276,7 +277,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
     tree -> GetEntry(0);
     switch(x_axis) {
     case 1:{
-      x[t]  = block_mean -> E;
+      abs ? TMath::Abs( x[t] = block_mean -> E ) : x[t]  = block_mean -> E;
       dx[t] = block_std  -> E;
       break;
     }
@@ -319,7 +320,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
       break;
     }
     case 3:{
-      y[t]  = block_mean -> M;
+      abs ? y[t]  = TMath::Abs( block_mean -> M ) : y[t] = block_mean -> M;
       dy[t] = block_std  -> M;
       break;
     }
@@ -351,7 +352,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   return graph;
 }
 
-TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
+TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis, cbool& abs){
 
   static INFO info;
 
@@ -373,7 +374,7 @@ TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
   TMultiGraph * multi = new TMultiGraph("multigraph", "Multigraph");
   TGraphErrors * gr;
   for(uint i = 0; i < dim_vector; i++){
-    gr = drawLattice(i, x_axis, y_axis);
+    gr = drawLattice(i, x_axis, y_axis, abs);
     multi -> Add(gr);
   }
   multi -> Draw("AP");

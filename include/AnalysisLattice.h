@@ -7,9 +7,14 @@
 
 #define ENERGY         1
 #define TEMPERATURE    2
+#define TEMP           2
 #define MAGNETIZATION  3
+#define MAG            3
 #define SITE_ENERGY    4
+#define SENERGY        4
 #define SUSCEPTIBILITY 5
+#define SUSC           5
+
 
 #define DIM_ERR       2 // dimension of the analysis vectors = num spins
 
@@ -19,6 +24,9 @@
 #define SPIN_UP       1 // graph only spin up   with errors
 #define ERR           2 // graph both spins     with errors
 #define NO_ERR        3 // graph raw data
+
+#define ABS           1
+#define NO_ABS        0
 
 #define TARGET        1
 #define NO_TARGET     0
@@ -35,7 +43,8 @@ class AnalysisLattice {
   
   TGraphErrors * drawLattice(cuint& lattice_number,
                              cuint& x_axis,
-                             cuint& y_axis);
+                             cuint& y_axis,
+                             cbool& abs);
  public:
 
   AnalysisLattice(const TString& file_input, const TString& file_output);
@@ -51,7 +60,7 @@ class AnalysisLattice {
   
   void run();
 
-  TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
+  TMultiGraph * draw(cuint& x_axis, cuint& y_axis, cbool& abs = false);
 };
 
 #endif
