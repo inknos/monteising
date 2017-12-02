@@ -27,7 +27,6 @@ void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_inpu
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
 
 void AnalysisLattice::run(){
-  
   TH1D::SetDefaultSumw2(true);
   static INFO info;
 
