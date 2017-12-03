@@ -41,12 +41,13 @@ class AnalysisLattice {
   TString file_in;
   TString file_out;
   
+ public:
+
   TGraphErrors * drawLattice(cuint& lattice_number,
                              cuint& x_axis,
                              cuint& y_axis,
                              cbool& abs);
- public:
-
+  
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
 

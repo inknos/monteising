@@ -11,9 +11,9 @@
 #include "TF1.h"
 #include "TMath.h"
 
-/*
+
 {
-  SimulationLattice s(10, 2, 10, "prova1.root", 1000, 10000, 1.5, 3., 20);
+  SimulationLattice s(10, 2, 10, "prova1.root", 1000, 10000, 1.5, 3., 50);
   s.run();
   
   AnalysisLattice a("prova1.root", "out1.root");
@@ -25,9 +25,8 @@
   TF1 * f = new TF1("f", "TMath::Power( TMath::Abs( x - 2.27 ) , 0.125 )", 1.5, 2.27);
   f -> Draw("same");
   
-}
-*/
 
+/*
 {
   s = SimulationLattice(10, 2, 10, "prova1.root", 1000, 10000, 1.5, 3., 13);
   s.run();
@@ -41,7 +40,9 @@
   f = new TF1("f", "[0]*TMath::Power( TMath::Abs( x - 2.27 ) , [1] )", 1.5, 2.27);
   g -> Fit(f);
   f -> Draw("same");
-  
-  
+ 
 }
+*/
 
+
+}

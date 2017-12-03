@@ -106,7 +106,7 @@ void AnalysisLattice::run(){
     }
 
     for(uint i = 0; i < dim_vector; i++) {
-      cout << "i " << i << endl << flush;
+      //cout << "i " << i << endl << flush;
       TString branchName(TString("Lattice_") + std::to_string(i).c_str() );
       tree -> SetBranchAddress(branchName, &block);
       // X = <M2> - <M>2 / T

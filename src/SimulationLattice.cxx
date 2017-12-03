@@ -152,7 +152,7 @@ void SimulationLattice::run(){
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
     
-    setT(t * tempN);
+    setT(t * tempN + tempmin);
 
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
