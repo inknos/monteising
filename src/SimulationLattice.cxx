@@ -147,12 +147,12 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
-  int counterT = 0;
-  for(double t = tempmin; t <= tempmax; t += tempN) {
-    TString treeName(TString("T_") + TString(std::to_string( counterT ).c_str() ));
-    TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( counterT ).c_str() ));
+  for(uint t = 0; t < tempstep; t++) {
+    TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
+    TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
-    setT(t);
+    
+    setT(t * tempN);
 
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
@@ -177,7 +177,6 @@ void SimulationLattice::run(){
       }
       tree -> Fill();
     }
-    counterT++;
   }
   delete[] E_tmp;
   delete[] M_tmp;
