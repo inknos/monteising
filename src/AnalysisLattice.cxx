@@ -86,11 +86,14 @@ void AnalysisLattice::run(){
       dT[i][t] = 0; dE[i][t] = 0; dM[i][t] = 0; dS[i][t] = 0;
     }
   }
-
+  
+  double * TCriticVector =  new double[dim_vector];
+  
+  
   Block * block = 0;
   TTree * tree;
   for(uint t = 0; t < tempstep; t++) {
-    cout << "t " << t << endl << flush;
+    //cout << "t " << t << endl << flush;
     TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree = (TTree*) ifile.Get(treeName);
 
@@ -139,6 +142,24 @@ void AnalysisLattice::run(){
       dM[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
     }
   }
+  
+  double TCriticMean = 0.;
+  for(uint i = 0; i < dim_vector; i++){
+    double X_max_tmp = 0.;
+    uint t_max_tmp = 0;
+    
+    for(uint t = 0; t < tempstep; t++){
+      if(X[i][t] > X_max_tmp){
+        X_max_tmp = X[i][t];
+        t_max_tmp = t;
+      }
+    }
+    TCriticVector[i] = T[i][t_max_tmp];
+    cout << "T critic of Lattice " << i << " is :" << TCriticVector[i] << endl << flush;
+    
+    TCriticMean += TCriticVector[i];
+  }
+  cout << "T critic mean is : " << TCriticMean / dim_vector << endl << flush;
 
   for(uint i = 0; i < dim_vector; i++){
     delete[] Tv[i];
@@ -150,6 +171,8 @@ void AnalysisLattice::run(){
   delete[] Ev;
   delete[] Mv;
   delete[] Sv;
+  
+  delete[] TCriticVector;
 
   TFile ofile(file_out, "RECREATE");
   TTree * new_info_tree = info_tree -> CloneTree();
@@ -259,6 +282,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   uint iter      = info._iter;
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
+  double Tcritic;
 
   double* x = new double[tempstep];
   double* y = new double[tempstep];
@@ -341,6 +365,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
     }
     }
   }
+  
   TGraphErrors * graph = new TGraphErrors(tempstep, x, y, dx, dy);
   //graph->Draw();
 
