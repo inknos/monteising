@@ -90,7 +90,7 @@ void AnalysisLattice::run(){
   Block * block = 0;
   TTree * tree;
   for(uint t = 0; t < tempstep; t++) {
-
+    cout << "t " << t << endl << flush;
     TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree = (TTree*) ifile.Get(treeName);
 
@@ -106,7 +106,7 @@ void AnalysisLattice::run(){
     }
 
     for(uint i = 0; i < dim_vector; i++) {
-
+      cout << "i " << i << endl << flush;
       TString branchName(TString("Lattice_") + std::to_string(i).c_str() );
       tree -> SetBranchAddress(branchName, &block);
       // X = <M2> - <M>2 / T
