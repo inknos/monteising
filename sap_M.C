@@ -13,7 +13,7 @@
 
 
 {
-/*
+
   SimulationLattice s(10, 2, 10, "provaM.root", 1000, 10000, 1.5, 3., 50);
   s.run();
   
@@ -28,17 +28,4 @@
   g -> Fit(f);
 
 
-
-  s = SimulationLattice(10, 2, 10, "provaM.root", 1000, 10000, 1.5, 3., 50);
-  s.run();
-  
-  a = AnalysisLattice("provaM.root", "outM.root");
-  a.run();
-*/
-  g = a.drawLattice(5, TEMPERATURE, MAGNETIZATION, true);
-  g -> Draw();
-  
-  f = new TF1("f", "TMath::Power( TMath::Abs( x - 2.27 ) , [0] )", 1.5, 2.27);
-  g -> Fit(f);
-  //f -> Draw("same");
 }

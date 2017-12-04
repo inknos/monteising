@@ -87,7 +87,6 @@ void AnalysisLattice::run(){
     }
   }
   
-  
   double * TCriticVector =  new double[dim_vector];
    
   double * Tml = new double[tempstep];
@@ -112,17 +111,6 @@ void AnalysisLattice::run(){
     //cout << "t " << t << endl << flush;
     TString treeName(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree = (TTree*) ifile.Get(treeName);
-
-    TH1D ** histoT = new TH1D*[dim_vector];
-    TH1D ** histoE = new TH1D*[dim_vector];
-    TH1D ** histoM = new TH1D*[dim_vector];
-    TH1D ** histoS = new TH1D*[dim_vector];
-    for(uint i = 0; i < dim_vector; i++){
-      histoT[i] = new TH1D;
-      histoE[i] = new TH1D;
-      histoM[i] = new TH1D;
-      histoS[i] = new TH1D;
-    }
 
     for(uint i = 0; i < dim_vector; i++) {
       //cout << "i " << i << endl << flush;
@@ -628,6 +616,37 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
   return graph;
 }
 
+////FITTING
 
+double AnalysisLattice::analiticM(double * x , double * par){
+  if( x[0] >= par[0] ) return 0.;
+  else return TMath::Power( TMath::Abs(x[0]-par[0]) , par[1] );
+}
+
+TGraphErrors* AnalysisLattice::fitLattice( cuint& x_axis,
+                                           cuint& y_axis ){
+  static INFO info;                                       
+  TFile ifile(file_out, "read");
+  TTree * info_tree = (TTree*) ifile.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
+  ifile.Close();                                         
+                      
+                                           
+  TGraphErrors * g = drawLatticeMean(x_axis , y_axis);
+  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , tempmin , tempmax , 2);
+  g ->Fit(f);
+  return g;                                                                   
+}
 
 
