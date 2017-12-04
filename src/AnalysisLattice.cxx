@@ -267,7 +267,8 @@ void AnalysisLattice::run(){
     block_ml[t].setBlock(t, Tml[t], Eml[t], Mml[t], Sml[t], Xml[t], t);
     block_ml[tempstep + t].setBlock(t, dTml[t], dEml[t], dMml[t], dSml[t], dXml[t], t); 
   
-    tree_out_ml -> Fill(); 
+    tree_out_ml -> Fill();
+    std::cout << "[ done ] T = " << tempstep << std::endl << std::flush;
   }
 //  
 
