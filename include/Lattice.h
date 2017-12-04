@@ -12,9 +12,9 @@ typedef unsigned int uint;
 
 class Lattice : public TObject{
  private:
-  const unsigned int dim;       // dimension of the lattice
-  const unsigned int N;         // number of spins in one dimension
-  const unsigned int num_spin;  // pow(N, dim) total number of spins
+  const uint dim;       // dimension of the lattice
+  const uint N;         // number of spins in one dimension
+  const uint num_spin;  // pow(N, dim) total number of spins
   bool * lattice;               // [num_spin] lattice
   static double T;              // Temperature
 
