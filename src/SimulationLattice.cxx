@@ -117,6 +117,22 @@ void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
 void SimulationLattice::run(){
 
+  std::cout << R"(
+?=======================================?
+!                                       !
+!          Simulation Started           !
+!                                       !
+?=======================================?
+!                                       !)";
+  std::cout << endl
+            << "! " << dim_vector << " lattices " << dim << "x" << dim << " with size " << N << " created\t!\n"
+            << "! " << I0 << " iter. not collecting data\t!\n"
+            << "! " << iter << " iter. collecting data  \t!\n"
+            << "! from " << tempmin << " to " << tempmax << " in " << tempstep << "steps\t\t!\n"
+            << R"(!                                       !
+?=======================================?)" 
+           << endl;
+  
   TDatime datime;
   unsigned int datime_t = datime.Get();
   const char * file_t = file;
@@ -172,11 +188,12 @@ void SimulationLattice::run(){
         M_tmp[i] += data[2];
         S_tmp[i] += data[3];
         T_tmp[i] = data[0];
-        if(data[2] < -1) cout << "ERROR" << endl << flush;
+        if(data[2] < -1) cout << "ERROR" << endl << std::flush;
         block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, j + 1);
       }
       tree -> Fill();
     }
+    std::cout << "[ done ] T = " << t * tempN + tempmin << std::endl << std::flush;
   }
   delete[] E_tmp;
   delete[] M_tmp;
