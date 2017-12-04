@@ -120,14 +120,14 @@ void Lattice::printLatticeCSV(const TString& name) const {
   file.close();
 }
 
-void Lattice::printLatticeROOT(const TString& name, const TString& ln = "lat") const {
+void Lattice::printLatticeROOT(const TString& name, const TString& ln) const {
   TFile f(name + TString(".root"), "RECREATE");
   this -> Write(ln);
   f.Write();
   f.Close();
 }
 
-int Lattice::energy(const bool& p = false) const {
+int Lattice::energy(const bool& p ) const {
   int E_tmp = 0;
   uint pow_tmp1 = 1;
   uint pow_tmp2 = N;
@@ -148,39 +148,8 @@ int Lattice::energy(const bool& p = false) const {
   }
   return - E_tmp;
 }
-   
-/*
-  int Lattice::energyParallel(int nt = 4) const {
-  int E_tmp = 0;
-  uint i(0);
-  uint d(0);
-  uint pow_tmp1(0);
-  uint pow_tmp2(0);
-  uint i_tmp(0);
 
-  uint num_spin_t = num_spin;
-  uint dim_t = dim;
-  uint N_t = N;
-  uint e = 0;
-
-  #pragma omp parallel for private(pow_tmp1, pow_tmp2, i_tmp, d) shared(E_tmp) firstprivate(num_spin_t, dim_t, N_t, e)
-  for(i = 0; i < num_spin_t; i++){
-  e = 0;
-  for(d = 0; d < dim_t; d++){
-  pow_tmp1 = (uint) pow(N_t, d);
-  pow_tmp2= (uint) pow(N_t, d + 1);
-  i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
-  lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
-  lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;
-  }
-  E_tmp += e;
-  // if collapse no code here
-  }
-  return E_tmp * 0.5;
-  }
-*/
-
-int Lattice::dE(const uint& spin, const bool& p = false) const {
+int Lattice::dE(const uint& spin, const bool& p ) const {
   int dE_tmp = 0;
   if(spin > num_spin){ return 0; }
   uint pow_tmp1;
