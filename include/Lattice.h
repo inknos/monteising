@@ -12,61 +12,70 @@ typedef unsigned int uint;
 
 class Lattice : public TObject{
  private:
-  const uint dim;       // dimension of the lattice
-  const uint N;         // number of spins in one dimension
-  const uint num_spin;  // pow(N, dim) total number of spins
-  bool * lattice;               // [num_spin] lattice
-  static double T;              // Temperature
+  const uint N;         // number of spins along one edge 
+  const uint dim;       // dimension
+  const uint num_spin;  // total number of spins : N^dim
+  bool * lattice;       // lattice array
+  static double T;      // temperature 
 
  public:
-  /* Public Constructors */
+ 
+  /* CONSTRUCTORS */
+  
   Lattice();
 
   Lattice(const uint& _N , const uint& _dim);
 
   Lattice(const Lattice& obj);
+  
+  /* DESTRUCTOR */
 
   ~Lattice();
+  
+  /* PHYSICAL AND NUMERICAL FUNCTIONS */
+  
+  bool flipSpin(const uint& n);
+  
+  int dE(const uint& spin) const;
+  
+  int energy() const;
 
-  /* Public Operators */
+  float magnetization() const ;
+  
+  void cooling();
+
+  void cooling(const uint& iter);
+
+  double * coolingPar();
+
+  /* OVERLOADED OPERATORS */
+  
   Lattice& operator=(const Lattice& obj);
   
   friend std::ostream &operator<<(std::ostream& out, const Lattice& lat);
 
   bool operator==(const Lattice& obj);
 
-  /* Getters */
-  uint getDim() const;
-
+  /* GETTERS AND SETTERS */
+  
   uint getN() const;
+  
+  uint getDim() const;
+  
+  uint getNumSpin() const;
 
   bool getSpin(const uint & i) const;
-
-  uint getNumSpin() const;
 
   static double getT();
   
   static void setT(const double& _T);
-
-  bool flipSpin(const uint& n);
+  
+  /* OTHERS */
 
   void printLatticeCSV(const TString& name) const;
 
   void printLatticeROOT(const TString& name , const TString& ln = "lat") const;
 
-  /* Physical functions */
-  int energy() const;
-  
-  int dE(const uint& spin) const;
-
-  float magnetization() const ;
-  
-  /* numerical function cooling */
-  void cooling();
-
-  void cooling(const uint& iter);
-
-  double * coolingPar();
 
   ClassDef(Lattice,1)
     };
