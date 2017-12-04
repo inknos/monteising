@@ -13,19 +13,21 @@
 
 
 {
-
-  SimulationLattice s(10, 2, 30, "provaX.root", 1000, 10000, 1.5, 3., 50);
-  s.run();
+  //SimulationLattice s(10, 2, 10, "provaX.root", 1000, 10000, 1.5, 3., 20);
+  //s.run();
   
-  AnalysisLattice a("provaX.root", "outX.root");
+  a = AnalysisLattice("prova.root", "out.root");
   a.run();
   
-  TGraphErrors * g = a.drawLattice(3, TEMPERATURE, SUSCEPTIBILITY, true);
+  g = a.drawLatticeMean(TEMPERATURE, MAGNETIZATION);
   g -> Draw();
   
-  TF1 * f = new TF1("f", "TMath::Power( TMath::Abs( x - 2.4796 ) , [0] )", 1.5, 3.5);
+
+  f = new TF1("f", "TMath::Power( TMath::Abs( x - 2.30 ) , [0] )", 1.5, 2.3);
   //f -> Draw("same");
   g -> Fit(f);
+
+
 
 
 /*

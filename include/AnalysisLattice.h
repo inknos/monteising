@@ -47,6 +47,9 @@ class AnalysisLattice {
                              cuint& x_axis,
                              cuint& y_axis,
                              cbool& abs);
+                             
+  TGraphErrors * drawLatticeMean(cuint& x_axis,
+                                 cuint& y_axis);
   
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
