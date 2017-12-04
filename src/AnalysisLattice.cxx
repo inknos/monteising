@@ -27,6 +27,8 @@ void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_inpu
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
 
 void AnalysisLattice::run(){
+
+  
   TH1D::SetDefaultSumw2(true);
   static INFO info;
 
@@ -45,11 +47,27 @@ void AnalysisLattice::run(){
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
 
+  std::cout << R"(
+?=======================================?
+!                                       !
+!           Analysis Started            !
+!                                       !
+?=======================================?
+!                                       !)";
+  std::cout << endl
+            << "! " << dim_vector << " lattices " << dim << "x" << dim << " with size " << N << " created\t!\n"
+            << "! " << I0 << " iter. not collecting data\t!\n"
+            << "! " << iter << " iter. collecting data  \t!\n"
+            << "! from " << tempmin << " to " << tempmax << " in " << tempstep << "steps\t\t!\n"
+            << R"(!                                       !
+?=======================================?)" 
+            << endl;
+
   double** Tv = new double*[dim_vector];
   double** Ev = new double*[dim_vector];
   double** Mv = new double*[dim_vector];
   double** Sv = new double*[dim_vector];
-
+  
   for(uint i = 0; i < dim_vector; i++){
     Tv[i] = new double[iter + 1];
     Ev[i] = new double[iter + 1];
@@ -182,7 +200,7 @@ void AnalysisLattice::run(){
     dSml[t] = TMath::Sqrt( dSml[t]/dim_vector );
     dXml[t] = TMath::Sqrt( dXml[t]/dim_vector );
     //
-    std::cout << "[ done ] T = " << t << std::endl << std::flush;
+    std::cout << "[ done "<< (int) (((double) t / tempstep) * 100)  <<"% ] T = " << t << std::endl << std::flush;
   }
   
   
@@ -288,6 +306,10 @@ void AnalysisLattice::run(){
   
   ofile.Write();
   ofile.Close();
+  std::cout << R"(?=======================================?
+!                 end                   !
+?=======================================?)" << std::endl;
+
 }
 
 TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
@@ -466,7 +488,7 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
 
   for(uint t = 0; t < tempstep; t++){    
   
-    TTree * tree = (TTree*) f.Get(TString("T_ml_") + TString(std::to_string(t).c_str() ) );
+    TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree -> SetBranchAddress(TString("Lattice_ml_") + TString(std::to_string(t).c_str()), &block_mean );
     tree -> SetBranchAddress(TString("Lattice_ml_std_") + TString(std::to_string(t).c_str()), &block_std);
     tree -> GetEntry(0);

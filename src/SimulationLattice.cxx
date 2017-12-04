@@ -8,10 +8,16 @@
 #include "TString.h"
 #include "Lattice.h"
 #include "TDatime.h"
+#include "TH1D.h"
+
+#include "TDirectory.h"
 
 //#include "omp.h"
 #include <string>
+#include <vector>
 #include <iostream>
+#include <algorithm>
+#include <utility>
 
 ClassImp(SimulationLattice)
 
@@ -163,12 +169,23 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
+  std::vector<double> temp_array;
+  double tc = 2.27;
+  double vc = 1;
+  for(uint t = 0; t < tempstep / 4; t++){
+    temp_array.push_back( ( tc - vc - tempmin ) * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc - vc + vc  * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc + vc * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / tempstep / 4 ) );
+  }
+  std::sort( temp_array.begin(), temp_array.end() );
+  
   for(uint t = 0; t < tempstep; t++) {
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
     
-    setT(t * tempN + tempmin);
+    setT(temp_array[t]);
 
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
@@ -193,7 +210,10 @@ void SimulationLattice::run(){
       }
       tree -> Fill();
     }
-    std::cout << "[ done ] T = " << t * tempN + tempmin << std::endl << std::flush;
+    tree->Write();
+    tree->Delete();
+    gDirectory->ls();
+    std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
   }
   delete[] E_tmp;
   delete[] M_tmp;
