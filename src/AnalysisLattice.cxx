@@ -619,8 +619,9 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
 ////FITTING
 
 double AnalysisLattice::analiticM(double * x , double * par){
-  if( x[0] >= par[0] ) return 0.;
-  else return TMath::Power( TMath::Abs(x[0]-par[0]) , par[1] );
+  double Tc =2.27;
+  if( x[0] >= Tc ) return 0.*par[1];
+  else return TMath::Power( TMath::Abs(x[0] - Tc) , par[0]);
 }
 
 TGraphErrors* AnalysisLattice::fitLattice( cuint& x_axis,
@@ -644,9 +645,21 @@ TGraphErrors* AnalysisLattice::fitLattice( cuint& x_axis,
                       
                                            
   TGraphErrors * g = drawLatticeMean(x_axis , y_axis);
-  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , tempmin , tempmax , 2);
-  g ->Fit(f);
+  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , 1.8 , 2.27 , 1);
+  g ->Fit(f , "R");
+  g -> Draw(); 
   return g;                                                                   
 }
+
+void AnalysisLattice::plotAnalitic(){
+  TF1 *fteo = new TF1("fteo", analiticM ,0.5,2.4,1);
+  fteo->SetLineColor(kRed);
+  double zeropam = 0.;
+  double alpha = 0.125;
+  fteo->SetParameters(alpha , zeropam);
+  //fteo->SetParNames("normalizzazione","coefficiente");
+  fteo->Draw();
+} 
+
 
 

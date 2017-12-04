@@ -59,6 +59,8 @@ class AnalysisLattice {
   TGraphErrors* fitLattice(
                            cuint& x_axis,
                            cuint& y_axis);
+                           
+  void plotAnalitic(); 
                                
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
