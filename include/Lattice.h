@@ -11,7 +11,6 @@
 class Lattice : public TObject{
  private:
   const unsigned int dim;       // dimension of the lattice
-  const unsigned int q;         //
   const unsigned int N;         // number of spins in one dimension
   const unsigned int num_spin;  // pow(N, dim) total number of spins
   bool * lattice;               // [num_spin] lattice
@@ -41,8 +40,6 @@ class Lattice : public TObject{
 
   bool getSpin(const unsigned int & i) const;
 
-  int getQ() const;
-
   int getNumSpin() const;
 
   static double getT();
@@ -56,9 +53,9 @@ class Lattice : public TObject{
   void printLatticeROOT(const TString& name , const TString& ln = "lat") const;
 
   /* Physical functions */
-  int energy(const bool& p = false ) const;
+  int energy() const;
   
-  int dE(const unsigned int& spin, const bool& p = false) const;
+  int dE(const unsigned int& spin) const;
 
   float magnetization() const ;
   

@@ -105,19 +105,19 @@ double SimulationLattice::getTempStep() const {return tempstep; }
 
 uint SimulationLattice::getI0() const { return I0; }
 
+uint SimulationLattice::getT() { return Lattice::getT(); }
+
 void SimulationLattice::setFile(const TString& f) { file =f; }
 
 void SimulationLattice::setIter(const uint& i) { iter = i; }
 
-void SimulationLattice::setTempMin(const double& t) { tempmin = t; }
+void SimulationLattice::setTempMin(const double& _tempmin) { tempmin = _tempmin; }
 
-void SimulationLattice::setTempMax(const double& t) { tempmax = t; }
+void SimulationLattice::setTempMax(const double& _tempmax) { tempmax = _tempmax; }
 
-void SimulationLattice::setTempStep(const uint& t) { tempstep = t; }
+void SimulationLattice::setTempStep(const uint& _tempstep) { tempstep = _tempstep; }
 
 void SimulationLattice::setI0(const uint& _I0) { I0 = _I0; }
-
-uint SimulationLattice::getT() { return Lattice::getT(); }
 
 void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
@@ -190,7 +190,7 @@ void SimulationLattice::run(){
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
       lattice_vector[i].cooling(I0);
-      E_tmp[i] = lattice_vector[i].energy(false);
+      E_tmp[i] = lattice_vector[i].energy();
       M_tmp[i] = lattice_vector[i].magnetization();
       S_tmp[i] = ( (double) E_tmp[i])/ lattice_vector[i].getNumSpin();
       T_tmp[i] = Lattice::getT();

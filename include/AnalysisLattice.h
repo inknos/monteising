@@ -56,8 +56,7 @@ class AnalysisLattice {
                                  cuint& y_axis);
   
   
-  TGraphErrors* fitLattice(
-                           cuint& x_axis,
+  TGraphErrors* fitLattice(cuint& x_axis,
                            cuint& y_axis);
                            
   void plotAnalitic(); 

@@ -24,15 +24,15 @@ class DrawLattice {
   
   void setN();
 
-  void setN(unsigned int);
+  void setN(unsigned int _N);
   
   void setDim();
 
-  void setDim(unsigned int);
+  void setDim(unsigned int _dim);
   
   void setNumSpin();
 
-  void setNumSpin(unsigned int);
+  void setNumSpin(unsigned int _num_spin);
 
   void draw2D();
 
@@ -41,9 +41,9 @@ class DrawLattice {
  public:
   DrawLattice();
 
-  DrawLattice(const Lattice&);
+  DrawLattice(const Lattice& lat);
 
-  DrawLattice(const TString&, const TString&);
+  DrawLattice(const TString& fi, const TString& nf);
   
   Lattice getLattice() const;
 
@@ -53,7 +53,7 @@ class DrawLattice {
 
   unsigned int getNumSpin() const;
   
-  void readFile(const TString&, const TString&);
+  void readFile(const TString& fname, const TString& lname);
 
   void draw();
   
