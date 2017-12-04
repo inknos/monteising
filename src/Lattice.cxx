@@ -20,7 +20,6 @@
 
 //#include <omp.h>
 
-typedef unsigned int uint;
 
 ClassImp(Lattice)
 
@@ -81,9 +80,9 @@ bool Lattice::operator==(const Lattice& obj){
 }
 
 /* Getters */
-int Lattice::getDim() const { return dim; }
+uint Lattice::getDim() const { return dim; }
 
-int Lattice::getN() const{ return N; }
+uint Lattice::getN() const{ return N; }
 
 bool Lattice::getSpin(const uint & i) const{
   //if(i < 0) return i;
@@ -91,7 +90,7 @@ bool Lattice::getSpin(const uint & i) const{
   return lattice[i];
 }
 
-int Lattice::getNumSpin() const { return num_spin; }
+uint Lattice::getNumSpin() const { return num_spin; }
 
 double Lattice::getT() { return Lattice::T; }
 

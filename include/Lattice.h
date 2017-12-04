@@ -8,6 +8,8 @@
 #include <math.h>
 #include <iostream>
 
+typedef unsigned int uint;
+
 class Lattice : public TObject{
  private:
   const unsigned int dim;       // dimension of the lattice
@@ -20,7 +22,7 @@ class Lattice : public TObject{
   /* Public Constructors */
   Lattice();
 
-  Lattice(const unsigned int& _N , const unsigned int& _dim);
+  Lattice(const uint& _N , const uint& _dim);
 
   Lattice(const Lattice& obj);
 
@@ -34,19 +36,19 @@ class Lattice : public TObject{
   bool operator==(const Lattice& obj);
 
   /* Getters */
-  int getDim() const;
+  uint getDim() const;
 
-  int getN() const;
+  uint getN() const;
 
-  bool getSpin(const unsigned int & i) const;
+  bool getSpin(const uint & i) const;
 
-  int getNumSpin() const;
+  uint getNumSpin() const;
 
   static double getT();
   
   static void setT(const double& _T);
 
-  bool flipSpin(const unsigned int& n);
+  bool flipSpin(const uint& n);
 
   void printLatticeCSV(const TString& name) const;
 
@@ -55,7 +57,7 @@ class Lattice : public TObject{
   /* Physical functions */
   int energy() const;
   
-  int dE(const unsigned int& spin) const;
+  int dE(const uint& spin) const;
 
   float magnetization() const ;
   
