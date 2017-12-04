@@ -116,38 +116,19 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 
 %-----------------------------PAG 4----------------------------------%
-\newpage
-
-
-%-----------------------------PAG 5----------------------------------%
 \newpage 
 \section{Code}
-This section's aim to introduce a possible solution to the Last Mile Problem that we investigated and modeled. 
-The approach to this problem comes from the analysis of the city of Turin, in particular about the urban situation and the world of the sharing economy. 
-First of all, as we shown in the introducing section, nowadays every city in the world is growing and becoming (in our terms) more complex, our case study will be Turin. 
-This complexity causes inefficiency of transportation in urban area, the lack of mobility, and an increase of pollution. 
-All forecasts about those problems  affecting cities are not optimistic and a lot of research is focused on this aspect. 
-Starting from those premises we turn our interest on the world of sharing economy watching to:
-\begin{center}
-\begin{itemize}
-\item BlaBlaCar (cars)
-\item Enjoy (cars)
-\item TOBike (bikes)
-\item Foodora (bikes)
-\end{itemize}
-\end{center}
-In particular there are 116 TOBike stations with about 10 bikes for each station and 186 Enjoy's cars in Turin. 
-Morover there is 1 subway, 10 trams routes and 112 bus routes used by about 1200 vehicles; adding all the private vehicles for a population of 887,101 citizens we discover a great complexity about the transportation system in Turin. 
+This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
 
-The main innovation of our idea is to convert this problem in our solution, finding a way to delivery goods all around the city increasing the efficiency as the complexity of a city grows. 
-Basic idea is to deal with the delivery process by entrusting the last mile of the package's journey to people that are moving in town to their destination; this lays the bases for the inclusion of citizens, and their urban movements, in the transportation process transmuting them from passive user to active actor and ensuring the ecology of the process. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.45]{img/Schema_classi.png}   
+\caption{Class scheme}
+\end{figure}
 
-We create a model that simulates people traveling with different vehicles in a space to their destination; each one could change his journey, diverting from the original one, in order to deliver a pack to its destination. 
-Every person has a different “inner'' cost that depends on his vehicle and personal interest, this brings to an auction in which the delivery company aim at minimizing the expenses, corresponding to the product of the inner cost and the length of the deviation. 
-In order to have a more efficient transportation, packs are located in different magazines in the space, taking inspiration to the 20 Amazon's lockers in Turin; obviously they are put in the nearest magazine to the pack's destination. 
-The proportionality between deviation and expense needs an incentives analysis in order to reconcile the minimization of the company and the maximization of the ordinary citizen's benefits while guaranteeing the overall ecological benefits to the city.
 
-\newpage
+
+
 \subsection{Lattice Description}
 
 The “lattice” array of a D-dimensional cubic Lattice is $\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$.
@@ -164,6 +145,12 @@ The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin ca
 
 \textbf{N.B.} This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range 
 $\{0,1,…,N-1\}$. \\ 
+
+
+
+%-----------------------------PAG 5----------------------------------%
+\newpage
+
 
 \subsection*{Coordinates Computation}
 
@@ -199,13 +186,16 @@ Generalizing to $D$ dimensions, index $i$ can be expressed as :$ i = \sum_{j=1}^
 Its corresponding coordinates are computed starting from $j=D-1$ and establishing a recurrence relationship :
 $$\mathbf{a} = \left(a_0 = i\%N ,.., a_j = [i\%N^{j+1}]/N^j ,.., a_{D-2} = [i\% N^{D-1}]/N^{D-2} , a_{D-1} = i/N^{D-1}\right)$$ 
  
-\section*{Lattice's energy } 
+%-----------------------------PAG 6----------------------------------%
+ 
+\newpage
+\subsection*{Lattice's energy } 
 
-The Lattice's energy is computed according to : 
-$$H = \sum_{<l,m>}^{} -J\sigma_i\sigma_j $$
+The Lattice's energy is computed according to equation (1).
 
-J is a constant interaction term between each couple $<l,m>$ of spins .\\
-The summation is performed over all possible couples $<l,m>$ of adjacent spins.\\
+
+%J is a constant interaction term between each couple $<l,m>$ of spins .\\
+%The summation is performed over all possible couples $<l,m>$ of adjacent %spins.\\
 
 The Lattice class provides a method wich returns the energy of the system. \\
 The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
@@ -235,231 +225,10 @@ i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left
 
 The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration. 
 
-%-----------------------------PAG 6----------------------------------%
-\newpage 
-\section{Code}
-The basic idea of this work is to give the possibility to every one is traveling in the city to transport a pack to its destination. 
-This is a simple concept that, as we shown in the previous section, has some implications. In order to introduce the code to the reader it is useful to present the simulation through its evolution, i.e. we want to show how the code has changed starting from the first idea/solution for the Last Mile Problem to its generalization. 
-We remind that the code is written in NetLogo 6.0 and it is possible to freely download it and run the simulation.
-
-
-\subsection{Moving agents in a cartesian coordinate system}
-First of all we have to implement a code that simulates the movement of a defined number of agents in a environment characterized by an empty cartesian coordinate system. 
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.44]{3_1}  
-\caption{Moving agents and fixed storages}
-\end{figure}
-
-\subsubsection*{Basic Agents}
-The basic agent in our simulation will be a breed called “user" moving freely.
-They will have a set of own variable, at this point only the destination.
-Agents are created in random patches ad are assigned other random patches as destination.
-Each agent will then move toward their destination in a straight line and die once reached it.
-To avoid the extinction of users, a new one is created in the patch the previous one died.
-
-\subsubsection*{Special Patches}
-A special patchset is created to represent the storages around the city.
-These patches will be identified by a boolean value, indicating the role of storage or not, and, if so, they will also own a variable “space", that will be further used to represent the physical space in a storage room.
-\looseness=-1
-
-\newpage
-\subsection{Moving packs}
-Once create the basic structure we need to simulate the transportation of packages around the city done by users.
-\medskip
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.5]{3_2}  
-\caption{Agents delivering packs}
-\end{figure}
-\medskip
-\subsubsection*{Packages}
-A breed called “packages" is created in order to simulate the goods transported in the space. Each package will own two variable, one for the destination and another, boolean, to indicate if they are assigned to a user or not.
-Each packages is placed in a locker-patch ad assigned a random point on the map as destination.
-
-\medskip
-\subsubsection*{Pick-up}
-In order to be picked up a package needs to be put in relation with a user.
-At first this will be done randomly, the user will go from his position to the position of the package, then do the destination of the package and lastly to his own destination.
-To properly keep track of what a user is doing we need to add two new variables to the user breed, “busy" and “bag". Bag will contain the id of the assigned pack and busy will be true if the pack is being transported to its destination by the user.
-
-\newpage
-\subsection{Optimizing}
-Since now all operation are done randomly and with no regards to the optimization of the process. We need to introduce a way to properly choose the package-user couple such that the distance traveled is minimal.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.39]{3_3}  
-\caption{Cost evolution after auction}
-\end{figure}
-\subsubsection*{Auction}
-To optimize the travel we will use an auction for each package.
-Each user will have a new variable, “cost", that will be the amount of a virtual money needed to be paid in order to deviate one patch off the straight line connecting the origin and the destination of the user.
-Each package will ask all the user the amount they will need in order to deviate from their original route, pick them up and bring them to destination: the lower bidder will be assigned the pack and will proceed with the delivery.
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.45]{auction}  
-\end{figure}
-\looseness=-1
-\newpage
-\subsection{Making it real}
-At this point we already have all the essential part of our simulation: agent moving around, delivering packs, in a sort of optimized process. Yet we are far from real and some elements need to be taken into account.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.4]{3_4}  
-\caption{Complex movement behaviour}
-\end{figure}
-\medskip
-\subsubsection*{Highest cost}
-The commissioner will not be willing to pay any amount to have his packages delivered, a maximum cost per package is fixed, if the lowest bidder ask for a total amount higher than the fixed maximum cost, the package is not assigned and the auction run again.
-\medskip
-\subsubsection*{Goods placement}
-Packages are not placed randomly in the storages patches but, if the space is enough, each package will be placed in the storage nearest to its destination.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.77]{place_pack}  
-\end{figure}
-\newpage
-\subsubsection*{Day and night}
-People fluxes are not constant during the day, in a city they follow the home-work path one way or the other in the morning and in the evening.
-To simulate that we suppose that after a certain amount of ticks we switch from morning to evening.
-The cartesian space is divided in two section, the left and the right one respectively along the xcor, during one part of the day agent will be assigned a destination on one side with an higher probability, the other way round during the other part of the day.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.8]{dest_day_night}  
-\end{figure}
-
-\subsubsection*{Randomness}
-Random behaviour are created for user: they may, with a small probability, not accept to deliver a package, their internal cost is uniformly distributed around a mean value instead of being fixed.
-
-\subsubsection*{Maintenance cost}
-As we can expect the maintenance of all storages around the city will have a cost, more and bigger storages will cost more and add up to the expenses of the commissioner. A value can be chosen to simulate this cost.
-
-\subsection{City of Turin}
-In order to scale the simulation to the city of Turin, a series of metric are calculated with the same ratio we can find in the real life, as explained in the previous chapter.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.8]{scaling}  
-\end{figure}
+%-----------------------------PAG 7----------------------------------%
 
 \newpage
 \section{Results}
-In this section we present the results obtained from the Agent-Based simulation. We discovered that the solution is feasible i.e. people traveling in the city can deliver all packs on time and with a total expense that is lower than the upper-bound (1.75\euro{} per pack). Moreover, being the Foodora's employee salary about 0.5\euro{}/km, we can see that in our estimated range of parameters a person can be paid more than a common delivery man.
-
-Using genetic algorithms implemented in Behavior Search 6.0 we optimized the number of storages and their space, keeping all other estimated parameters fixed such as the number of users, the number of packs and the cost of each box in the storage. 
-
-Figure below show the fitness minimization (expenses) with the following parameters: 1400 packs, 700 users, 1\euro{}/km for users' deviation, 1.75\euro{} as maximum expense for a pack delivery, 0.2\euro{} cost storage's box.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.33]{BS-02lcost-10lmax-lspace304} 
-\caption{Behavior Search result: 10 storages with 304 boxes each, total expense 1439.28}
-\end{figure}
-
-Considering 0.8\euro{} as storage's box cost, we find again that the number of boxes in each storage is greater than the minimum needed. This implies that spending money for having bigger storage is useful in case a pack has to be delivered in the neighborhood.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.33]{BS-08lcost-10lmax-153lspace.png} 
-\caption{Behavior Search result: 10 storages with 153 boxes each, total expense 1542.02}
-\end{figure}
-
-\newpage 
-May be found interesting for the reader to have a deeper look at two of the most important curves in our simulation: number packs vs. time and total expenses vs. time. 
-
-The figure below show that the number of packs exponentially decreases with time as expected.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.59]{Grafici/Packs(02lcost_10lmax_304lspace).png} 
-\caption{Numb packs vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
-
-In order to roughly estimate the curve decrease we did a linear regression with 0.07 mean squared error.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.59]{Grafici/Packs(02lcost_10lmax_304lspace)[E_0,07].png} 
-\caption{Fit: numb packs vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
-
-\newpage
-On the other hand the total expenses approximately increase as a logarithm, which compensates the number of packs trend.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.6]{Grafici/Total_expense(02lcost_10lmax_304lspace).png}  
-\caption{Total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
-
-Even if the mean squared error is considerably worse than the first fitting, we can have an estimate of the curve slope.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.6]{Grafici/Total_expense(02lcost_10lmax_304lspace)[E_4272].png}  
-\caption{Fit: total expenses vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
-
-\newpage
-At any instant we have a different average cost of delivery, so we can plot the ratio between expenses and packs vs. time. As shown in the figure below the initial costs are relevant but they decrease rapidly with time.
-
-\begin{figure}[h!]
-\centering
-%\includegraphics[scale=0.8]{Grafici/Total_expense_Packs(02lcost_10lmax_304lspace).png}   
-\caption{Total expenses/numb packs vs. ticks (10 storages with 304 boxes each, 1400 packs, 700 users)}
-\end{figure}
- 
-\newpage
-\section{Extreme Cases}
-As a proof of concept we decided to analyze some extreme cases in order to explore if our solution is robust enough to survive real-life challenges.
-
-\subsubsection*{Too few}
-What would happen if there are too few users? 
-Keeping all other parameters as found we set the number of users to one tenth the original value, down to 70 agents total.
-We observe that the delivery process takes up to two days, instead of the half day in standard situation and the total expenses increase up to 28\% more.
-
-
-
-We can have an estimate of the curve slope in log-lin scale.
-
-
-
-\newpage
-\subsubsection*{Too many}
-On the opposite we explore what happens if there are too many users, up to 7000 agents total.
-As can be expected the delivery process is completed in a risible time and the expenses are down 70\%, proving the benefit for the commissioner in expanding the participation.
-
-
-We can have an estimate of the curve slope in log-lin scale.
-
-
-
-\newpage
-\subsubsection*{Wanting more}
-A reasonable question may that an higher pay may be needed to incentive users to participate in the activity. 
-We examined what would happen if the pay was up to 5\euro{}/km of deviation.
-Similarly to the first case, the process of delivering all packs may take up to two days, but the total expenses will not be too different than the standard situation.
-
-
-We can have an estimate of the curve slope in log-lin scale.
-
-
-
-\newpage
-\subsubsection*{High Maintenance}
-A success of our method may have the downside of increasing maintenance costs for the storages around the city.
-Examining a bi-daily maintenance cost five time the standard situation we found an increase in the total expenses around 21\%, like the first case examined, but without any other downside.
-
-
-
-We can have an estimate of the curve slope in log-lin scale.
-
-
 
 \newpage
 \section{Conclusions}
