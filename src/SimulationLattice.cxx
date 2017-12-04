@@ -8,10 +8,16 @@
 #include "TString.h"
 #include "Lattice.h"
 #include "TDatime.h"
+#include "TH1D.h"
+
+#include "TDirectory.h"
 
 //#include "omp.h"
 #include <string>
+#include <vector>
 #include <iostream>
+#include <algorithm>
+#include <utility>
 
 ClassImp(SimulationLattice)
 
@@ -99,24 +105,40 @@ double SimulationLattice::getTempStep() const {return tempstep; }
 
 uint SimulationLattice::getI0() const { return I0; }
 
+uint SimulationLattice::getT() { return Lattice::getT(); }
+
 void SimulationLattice::setFile(const TString& f) { file =f; }
 
 void SimulationLattice::setIter(const uint& i) { iter = i; }
 
-void SimulationLattice::setTempMin(const double& t) { tempmin = t; }
+void SimulationLattice::setTempMin(const double& _tempmin) { tempmin = _tempmin; }
 
-void SimulationLattice::setTempMax(const double& t) { tempmax = t; }
+void SimulationLattice::setTempMax(const double& _tempmax) { tempmax = _tempmax; }
 
-void SimulationLattice::setTempStep(const uint& t) { tempstep = t; }
+void SimulationLattice::setTempStep(const uint& _tempstep) { tempstep = _tempstep; }
 
 void SimulationLattice::setI0(const uint& _I0) { I0 = _I0; }
-
-uint SimulationLattice::getT() { return Lattice::getT(); }
 
 void SimulationLattice::setT(const double& _T) { Lattice::setT(_T); }
 
 void SimulationLattice::run(){
 
+  std::cout << R"(
+?=======================================?
+!                                       !
+!          Simulation Started           !
+!                                       !
+?=======================================?
+!                                       !)";
+  std::cout << endl
+            << "! " << dim_vector << " lattices " << dim << "x" << dim << " with size " << N << " created\t!\n"
+            << "! " << I0 << " iter. not collecting data\t!\n"
+            << "! " << iter << " iter. collecting data  \t!\n"
+            << "! from " << tempmin << " to " << tempmax << " in " << tempstep << "steps\t\t!\n"
+            << R"(!                                       !
+?=======================================?)" 
+           << endl;
+  
   TDatime datime;
   unsigned int datime_t = datime.Get();
   const char * file_t = file;
@@ -147,17 +169,28 @@ void SimulationLattice::run(){
   double* data = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
+  std::vector<double> temp_array;
+  double tc = 2.27;
+  double vc = 1;
+  for(uint t = 0; t < tempstep / 4; t++){
+    temp_array.push_back( ( tc - vc - tempmin ) * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc - vc + vc  * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc + vc * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / tempstep / 4 ) );
+  }
+  std::sort( temp_array.begin(), temp_array.end() );
+  
   for(uint t = 0; t < tempstep; t++) {
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
     
-    setT(t * tempN + tempmin);
+    setT(temp_array[t]);
 
     for(uint i = 0; i < dim_vector; i++) {
       tree -> Branch(TString("Lattice_") + TString( TString(std::to_string( i ).c_str() ) ), "Block", &block[i]);
       lattice_vector[i].cooling(I0);
-      E_tmp[i] = lattice_vector[i].energy(false);
+      E_tmp[i] = lattice_vector[i].energy();
       M_tmp[i] = lattice_vector[i].magnetization();
       S_tmp[i] = ( (double) E_tmp[i])/ lattice_vector[i].getNumSpin();
       T_tmp[i] = Lattice::getT();
@@ -172,11 +205,15 @@ void SimulationLattice::run(){
         M_tmp[i] += data[2];
         S_tmp[i] += data[3];
         T_tmp[i] = data[0];
-        if(data[2] < -1) cout << "ERROR" << endl << flush;
+        if(data[2] < -1) cout << "ERROR" << endl << std::flush;
         block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, j + 1);
       }
       tree -> Fill();
     }
+    tree->Write();
+    tree->Delete();
+    gDirectory->ls();
+    std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
   }
   delete[] E_tmp;
   delete[] M_tmp;

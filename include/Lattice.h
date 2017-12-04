@@ -11,7 +11,6 @@
 class Lattice : public TObject{
  private:
   const unsigned int dim;       // dimension of the lattice
-  const unsigned int q;         //
   const unsigned int N;         // number of spins in one dimension
   const unsigned int num_spin;  // pow(N, dim) total number of spins
   bool * lattice;               // [num_spin] lattice
@@ -21,18 +20,18 @@ class Lattice : public TObject{
   /* Public Constructors */
   Lattice();
 
-  Lattice(const unsigned int&, const unsigned int&);
+  Lattice(const unsigned int& _N , const unsigned int& _dim);
 
-  Lattice(const Lattice&);
+  Lattice(const Lattice& obj);
 
   ~Lattice();
 
   /* Public Operators */
-  Lattice& operator=(const Lattice&);
+  Lattice& operator=(const Lattice& obj);
   
-  friend std::ostream &operator<<(std::ostream&, const Lattice&);
+  friend std::ostream &operator<<(std::ostream& out, const Lattice& lat);
 
-  bool operator==(const Lattice&);
+  bool operator==(const Lattice& obj);
 
   /* Getters */
   int getDim() const;
@@ -41,33 +40,29 @@ class Lattice : public TObject{
 
   bool getSpin(const unsigned int & i) const;
 
-  int getQ() const;
-
   int getNumSpin() const;
 
   static double getT();
   
-  static void setT(const double&);
+  static void setT(const double& _T);
 
-  bool flipSpin(const unsigned int&);
+  bool flipSpin(const unsigned int& n);
 
-  void printLatticeCSV(const TString&) const;
+  void printLatticeCSV(const TString& name) const;
 
-  void printLatticeROOT(const TString&, const TString&) const;
+  void printLatticeROOT(const TString& name , const TString& ln = "lat") const;
 
   /* Physical functions */
-  int energy(const bool&) const;
-
-  int energyParallel(int) const;
+  int energy() const;
   
-  int dE(const unsigned int&, const bool&) const;
+  int dE(const unsigned int& spin) const;
 
   float magnetization() const ;
   
   /* numerical function cooling */
   void cooling();
 
-  void cooling(const uint&);
+  void cooling(const uint& iter);
 
   double * coolingPar();
 

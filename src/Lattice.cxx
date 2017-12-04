@@ -28,13 +28,13 @@ ClassImp(Lattice)
 double Lattice::T = 0;
 
 
-Lattice::Lattice() : TObject(), q(2), N(1), dim(1) , num_spin(1){
+Lattice::Lattice() : TObject(), N(1), dim(1) , num_spin(1){
   lattice = new bool[1];
   lattice[0] = gRandom->Rndm() > 0.5 ? 0 : 1;
 }
 
 Lattice::Lattice(const uint& _N, const uint& _dim) :
-  TObject(), N(_N) , dim(_dim), q(0) , num_spin(pow(_N, _dim)){
+  TObject(), N(_N) , dim(_dim) , num_spin(pow(_N, _dim)){
   lattice = new bool[ num_spin ];
   for(uint i = 0; i < num_spin; i++){
     lattice[i] = gRandom->Rndm() > 0.5 ? 0 : 1;
@@ -43,7 +43,7 @@ Lattice::Lattice(const uint& _N, const uint& _dim) :
 
 /* Copy-constructor */
 Lattice::Lattice(const Lattice &obj) :
-  TObject(), N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
+  TObject(), N(obj.N) , dim(obj.dim) , num_spin(obj.num_spin){
   lattice = new bool[obj.num_spin];
   for(uint i = 0; i < obj.num_spin; i++){
     lattice[i] = obj.lattice[i];
@@ -91,8 +91,6 @@ bool Lattice::getSpin(const uint & i) const{
   return lattice[i];
 }
 
-int Lattice::getQ() const { return q; }
-
 int Lattice::getNumSpin() const { return num_spin; }
 
 double Lattice::getT() { return Lattice::T; }
@@ -120,14 +118,14 @@ void Lattice::printLatticeCSV(const TString& name) const {
   file.close();
 }
 
-void Lattice::printLatticeROOT(const TString& name, const TString& ln = "lat") const {
+void Lattice::printLatticeROOT(const TString& name, const TString& ln) const {
   TFile f(name + TString(".root"), "RECREATE");
   this -> Write(ln);
   f.Write();
   f.Close();
 }
 
-int Lattice::energy(const bool& p = false) const {
+int Lattice::energy() const {
   int E_tmp = 0;
   uint pow_tmp1 = 1;
   uint pow_tmp2 = N;
@@ -148,39 +146,8 @@ int Lattice::energy(const bool& p = false) const {
   }
   return - E_tmp;
 }
-   
-/*
-  int Lattice::energyParallel(int nt = 4) const {
-  int E_tmp = 0;
-  uint i(0);
-  uint d(0);
-  uint pow_tmp1(0);
-  uint pow_tmp2(0);
-  uint i_tmp(0);
 
-  uint num_spin_t = num_spin;
-  uint dim_t = dim;
-  uint N_t = N;
-  uint e = 0;
-
-  #pragma omp parallel for private(pow_tmp1, pow_tmp2, i_tmp, d) shared(E_tmp) firstprivate(num_spin_t, dim_t, N_t, e)
-  for(i = 0; i < num_spin_t; i++){
-  e = 0;
-  for(d = 0; d < dim_t; d++){
-  pow_tmp1 = (uint) pow(N_t, d);
-  pow_tmp2= (uint) pow(N_t, d + 1);
-  i_tmp = ( (int) (i / pow_tmp2) - 1 ) * pow_tmp2;
-  lattice[i] ^ lattice[(int) ( i_tmp + (i + pow_tmp1)            % pow_tmp2 )] ? e -= 1 : e += 1;
-  lattice[i] ^ lattice[(int) ( i_tmp + (i - pow_tmp1 + pow_tmp2) % pow_tmp2 )] ? e -= 1 : e += 1;
-  }
-  E_tmp += e;
-  // if collapse no code here
-  }
-  return E_tmp * 0.5;
-  }
-*/
-
-int Lattice::dE(const uint& spin, const bool& p = false) const {
+int Lattice::dE(const uint& spin ) const {
   int dE_tmp = 0;
   if(spin > num_spin){ return 0; }
   uint pow_tmp1;
@@ -206,8 +173,6 @@ int Lattice::dE(const uint& spin, const bool& p = false) const {
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
       lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
-    //if(p){ lattice[spin] ? E_tmp += H : E_tmp -= H; }
-    //
   }
   return dE_tmp * 2;
 }

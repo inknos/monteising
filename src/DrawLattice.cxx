@@ -58,15 +58,15 @@ void DrawLattice::readFile(const TString& fname, const TString& lname){
 /* Private Functions */
 void DrawLattice::setN(){ N = lattice.getN(); }
 
-void DrawLattice::setN(uint n){ N = n; }
+void DrawLattice::setN(uint _N){ N = _N; }
 
 void DrawLattice::setDim(){ dim = lattice.getDim(); }
 
-void DrawLattice::setDim(uint d){ dim = d; }
+void DrawLattice::setDim(uint _dim){ dim = _dim; }
 
 void DrawLattice::setNumSpin(){ num_spin = lattice.getNumSpin(); }
 
-void DrawLattice::setNumSpin(uint ns){ num_spin = ns; }
+void DrawLattice::setNumSpin(uint _num_spin){ num_spin = _num_spin; }
 
 void DrawLattice::draw2D(){
   uint index = 0;

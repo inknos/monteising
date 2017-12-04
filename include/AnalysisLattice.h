@@ -41,13 +41,26 @@ class AnalysisLattice {
   TString file_in;
   TString file_out;
   
+  
+  
  public:
+ 
+  static double analiticM(double* x , double*par);
 
   TGraphErrors * drawLattice(cuint& lattice_number,
                              cuint& x_axis,
                              cuint& y_axis,
                              cbool& abs);
+                             
+  TGraphErrors * drawLatticeMean(cuint& x_axis,
+                                 cuint& y_axis);
   
+  
+  TGraphErrors* fitLattice(cuint& x_axis,
+                           cuint& y_axis);
+                           
+  void plotAnalitic(); 
+                               
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
 
