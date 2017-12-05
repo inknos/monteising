@@ -7,55 +7,69 @@
 #include "TFile.h"
 
 class DrawLattice {
+ 
  private:
-  Lattice lattice;
-  unsigned int N;
-  unsigned int dim;
-  unsigned int num_spin;
-
-  TString fname;
-  TString lname;
+ 
+  Lattice lattice;            //Lattice object    
+  uint N , dim , num_spin;    //N , dim , num_spin of lattice
   
-  TString cname;
-  TString ctitle;
-
-  TString gname;
-  TString gtitle;
+  TString fname;              //name of root file 
+  TString lname;              //name of Lattice saved in file fname.root
   
-  void setN();
-
-  void setN(unsigned int _N);
+  TString cname , ctitle;     //canvas name and canvas title
+  TString gname , gtitle;     //graph name and graph title
   
-  void setDim();
-
-  void setDim(unsigned int _dim);
-  
-  void setNumSpin();
-
-  void setNumSpin(unsigned int _num_spin);
+  /* DRAW FUNCTIONS */
 
   void draw2D();
 
   void draw3D();
   
+  /* SETTERS */
+   
+  void setN();
+
+  void setN(uint _N);
+  
+  void setDim();
+
+  void setDim(uint _dim);
+  
+  void setNumSpin();
+
+  void setNumSpin(uint _num_spin);
+  
+  
+  
  public:
+ 
+  /* CONSTRUCTORS */
+  
   DrawLattice();
 
   DrawLattice(const Lattice& lat);
 
-  DrawLattice(const TString& fi, const TString& nf);
+  DrawLattice(const TString& _fname, const TString& _lname);
+  
+  void readFile(const TString& _fname, const TString& _lname);
+  
+  /* DRAW FUNCTION */
+  
+  void draw();
+  
+  /* GETTERS */
   
   Lattice getLattice() const;
 
-  unsigned int getN() const;
+  uint getN() const;
 
-  unsigned int getDim() const;
+  uint getDim() const;
 
-  unsigned int getNumSpin() const;
+  uint getNumSpin() const;
   
-  void readFile(const TString& fname, const TString& lname);
-
-  void draw();
+  
+  
+  
   
   ClassDef(DrawLattice, 1)
   

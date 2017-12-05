@@ -6,27 +6,29 @@
 #include "TFile.h"
 #include "Block.h"
 
-typedef unsigned int uint;
-
 class SimulationLattice{
   
   private : 
    
     Lattice * lattice_vector;
     
-    const uint dim_vector;
     const uint N;
     const uint dim;
+    const uint dim_vector;
 
     TString file;
+    
     uint iter;
     uint I0;
+    
     double tempmin;
     double tempmax;
     uint tempstep;
     
   public :
 
+    /* CONSTRUCTORS */
+  
     SimulationLattice(); 
 
     SimulationLattice(const uint& _N, const uint& _dim, const uint& _dim_vector);
@@ -41,50 +43,55 @@ class SimulationLattice{
 
     SimulationLattice(const SimulationLattice& obj);
     
+    /* ASSIGNMENT OPERATOR */
+    
     SimulationLattice& operator=(const SimulationLattice& obj); 
 
-    ~SimulationLattice();                            
+    /* DESTRUCTOR */
+    
+    ~SimulationLattice();
+    
+    /* GETTERS AND SETTERS */                            
 
     Lattice getLattice(const uint& i) const;
-
-    uint getDimVector() const;
 
     uint getN() const;
     
     uint getDim() const;
+    
+    uint getDimVector() const;
 
     TString getFile() const;
 
     uint getIter() const;
+    
+    uint getI0() const;
 
     double getTempMin() const;
 
     double getTempMax() const;
 
     double getTempStep() const;
-
-    uint getI0() const;
     
     static uint getT();
 
     void setFile(const TString& _file);
 
     void setIter(const uint& _iter);
+    
+    void setI0(const uint& _i0);
 
     void setTempMin(const double& _tempmin);
 
     void setTempMax(const double& _tempmax);
 
     void setTempStep(const uint& _tempstep);
-
-    void setI0(const uint& _i0);
-
-    static void setT(const double& _T);
-
-    void run();
     
-  
-    //void simulation(const TString&, const uint&, const double&, const double&, const uint&);
+    static void setT(const double& _T);
+    
+    /* RUN FUNCTION */
+    
+    void run();
 
   ClassDef(SimulationLattice, 1)
 };

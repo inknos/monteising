@@ -6,7 +6,6 @@
 #include "TMultiGraph.h"
 
 #include "DrawLattice.h"
-#include "Lattice.h"
 
 #define COLOR_ZEROS kBlue
 #define COLOR_ONES  kRed
@@ -16,36 +15,35 @@
 #define MARKER_STYLE_3D 20
 #define MARKER_SIZE_3D 0.6
 
-#define EIA true
-#define EJA true
-
 ClassImp(DrawLattice)
 
-typedef unsigned int uint;
-
-DrawLattice::DrawLattice() : lattice(), N(1), dim(1), num_spin(1),
-			     fname(""), lname(""), cname("cv"),
-			     ctitle("Default Canvas"), gname("gr"), gtitle("Ising") {} 
-
-DrawLattice::DrawLattice(const Lattice& lat) :
-  lattice(lat), N(lat.getN()), dim(lat.getDim()), num_spin(lat.getNumSpin()),
-  fname(""), lname(""), cname("cv"), ctitle("default canvas"), gname("gr"), gtitle("Ising") {}
-
-DrawLattice::DrawLattice(const TString& fi, const TString& nf) :
-  fname(fi), lname(nf), cname("cv"), ctitle("default canvas"),
-  gname("gr"), gtitle("Ising") {
-  readFile(fname, lname);
-}
-
 /* Public Functions */
-Lattice DrawLattice::getLattice() const { return lattice; }
 
-uint DrawLattice::getN() const { return N; }
+/* CONSTRUCTORS */
 
-uint DrawLattice::getDim() const { return dim; }
+//Default
+DrawLattice::DrawLattice() : 
+           lattice(), 
+           N(1), dim(1), num_spin(1),
+			     fname(""), lname(""), 
+			     cname("cv"), ctitle("Default Canvas"), 
+			     gname("gr"), gtitle("Ising") {} 
 
-uint DrawLattice::getNumSpin() const { return num_spin; }
+//Standard1 - Draw from Lattice
+DrawLattice::DrawLattice(const Lattice& lat) :
+           lattice(lat), 
+           N(lat.getN()), dim(lat.getDim()), num_spin(lat.getNumSpin()),
+           fname(""), lname(""), 
+           cname("cv"), ctitle("default canvas"), 
+           gname("gr"), gtitle("Ising") {}
 
+//Standard2 - Draw from File
+DrawLattice::DrawLattice(const TString& _fname, const TString& _lname) :
+           fname(_fname), lname(_lname), 
+           cname("cv"), ctitle("default canvas"),
+           gname("gr"), gtitle("Ising") {readFile(fname, lname);}
+
+// readFile for Standard2
 void DrawLattice::readFile(const TString& fname, const TString& lname){
   TFile f(fname);
   lattice = * (Lattice*) f.Get(lname);
@@ -55,18 +53,40 @@ void DrawLattice::readFile(const TString& fname, const TString& lname){
   setNumSpin();
 }
 
+
+/* DRAW FUNCTION */ 
+
+void DrawLattice::draw(){
+  void (DrawLattice::*func)();
+  switch(dim){
+  case 1: return;
+  case 2: {
+    func = &DrawLattice::draw2D;
+    break;
+  }
+  case 3: {
+    func = &DrawLattice::draw3D;
+    break;  
+  }
+  default: return;
+  }
+  (*this.*func)();
+}
+
+/* GETTERS */ 
+
+Lattice DrawLattice::getLattice() const { return lattice; }
+
+uint DrawLattice::getN() const { return N; }
+
+uint DrawLattice::getDim() const { return dim; }
+
+uint DrawLattice::getNumSpin() const { return num_spin; }
+
+
 /* Private Functions */
-void DrawLattice::setN(){ N = lattice.getN(); }
 
-void DrawLattice::setN(uint _N){ N = _N; }
-
-void DrawLattice::setDim(){ dim = lattice.getDim(); }
-
-void DrawLattice::setDim(uint _dim){ dim = _dim; }
-
-void DrawLattice::setNumSpin(){ num_spin = lattice.getNumSpin(); }
-
-void DrawLattice::setNumSpin(uint _num_spin){ num_spin = _num_spin; }
+/* DRAW FUNCTIONS */
 
 void DrawLattice::draw2D(){
   uint index = 0;
@@ -80,7 +100,7 @@ void DrawLattice::draw2D(){
   TCanvas* c1 = new TCanvas(cname,ctitle,200,10,700,500);
 
   TMultiGraph *mg = new TMultiGraph();
-   mg->SetTitle(gtitle);
+  mg->SetTitle(gtitle);
   
   TGraph * g0 = new TGraph(zeros);
   for(uint i = 0; i < num_spin; i++){
@@ -154,19 +174,17 @@ void DrawLattice::draw3D(){
   g1->Draw("AP same");
 }
 
-void DrawLattice::draw(){
-  void (DrawLattice::*func)();
-  switch(dim){
-  case 1: return;
-  case 2: {
-    func = &DrawLattice::draw2D;
-    break;
-  }
-  case 3: {
-    func = &DrawLattice::draw3D;
-    break;  
-  }
-  default: return;
-  }
-  (*this.*func)();
-}
+/* SETTERS */
+
+void DrawLattice::setN(){ N = lattice.getN(); }
+
+void DrawLattice::setN(uint _N){ N = _N; }
+
+void DrawLattice::setDim(){ dim = lattice.getDim(); }
+
+void DrawLattice::setDim(uint _dim){ dim = _dim; }
+
+void DrawLattice::setNumSpin(){ num_spin = lattice.getNumSpin(); }
+
+void DrawLattice::setNumSpin(uint _num_spin){ num_spin = _num_spin; }
+

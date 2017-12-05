@@ -225,6 +225,670 @@ i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left
 
 The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration. 
 
+\section*{Classes}
+	
+\subsection*{Lattice}
+
+\begin{itemize}
+
+	\item[] PRIVATE DATA MEMBERS \\ 
+	
+	\begin{tabular}{lll}
+		const uint 		& \textbf{N}        & number of spins along one edge				  \\
+		const uint 		& \textbf{dim}      & dimension										   \\
+  		const uint 		& \textbf{num\textunderscore spin} & total number of spins : $N^{dim}$  \\
+  		bool ${}^*$  	& \textbf{lattice}  & lattice array										 \\
+  		static double 	& \textbf{T}        & temperature  										  \\
+	\end{tabular}
+
+	\item[] PUBLIC MEMBER FUNCTIONS \\ 
+	\begin{itemize}
+		\item[] CONSTRUCTORS \\
+
+			\item[] \textbf{Lattice}()	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{Lattice}(const uint\& \textunderscore N , const uint\& \textunderscore dim)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{Lattice}(const Lattice\& obj)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+
+		
+		\item[] DESTRUCTOR \\
+		
+			\item[] \textbf{$\sim$ Lattice}	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}		
+		
+		\item[] PHYSICAL AND NUMERICAL FUNCTIONS \\
+ 		
+			\item[] bool \textbf{flipSpin}(const uint\& n)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] int \textbf{dE}(const uint\& spin) const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] int \textbf{energy}() const;		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] float \textbf{magnetization}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{cooling}(const uint\& iter) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] double * \textbf{coolingPar}()	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		\item[] OVERLOADED OPERATORS \\
+
+			\item[] Lattice\& \textbf{operator=}(const Lattice\& obj)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] friend std::ostream\& \textbf{operator$<<$}(std::ostream\& out, const Lattice\& lat) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] bool \textbf{operator==}(const Lattice\& obj) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+
+		\item[] GETTERS AND SETTERS \\
+					
+			\item[] uint \textbf{getN}() const 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] uint \textbf{getDim}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] uint \textbf{getNumSpin}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] bool \textbf{getSpin}(const uint \& i) const 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] static double \textbf{getT}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] static void \textbf{setT}(const double\& \textunderscore T)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+		\item[] OTHERS \\
+			
+			\item[] void \textbf{printLatticeCSV}(const TString\& name) const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{printLatticeROOT}(const TString\& name , const TString\& ln = "lat") const	
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+	\end{itemize}
+
+	
+\end{itemize}
+
+
+\subsection*{DrawLattice}
+
+\begin{itemize}
+
+	\item[] PRIVATE DATA MEMBERS \\ 
+	
+	\begin{tabular}{lll}
+		Lattice & \textbf{lattice}  & Lattice object \\
+		
+  		uint  & \textbf{N },\textbf{ dim },\textbf{ num\textunderscore spin} 
+  		& \textbf{N },\textbf{ dim },\textbf{ num\textunderscore spin} of \textbf{lattice} \\
+  		
+		TString & \textbf{fname} & name of root file \\
+		TString & \textbf{fname} & name of Lattice saved in file fname.root\\
+		TString & \textbf{cname } , \textbf{ctitle} & canvas name and title \\
+		TString & \textbf{gname } , \textbf{gtitle} & graph name and title \\
+		   			
+	\end{tabular}
+
+	\item[] PUBLIC MEMBER FUNCTIONS \\ 
+	\begin{itemize}
+		\item[] CONSTRUCTORS \\
+
+			\item[] \textbf{DrawLattice}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{DrawLattice}(const Lattice\& lat)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{DrawLattice}(const TString\& \textunderscore fname, const TString\& 														\textunderscore lname)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		\item[] READFILE \\
+
+			\item[] \textbf{readFile}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		\item[] DRAW FUNCTION \\
+		
+			\item[] void \textbf{draw}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+
+		\item[]	GETTERS \\		
+		
+			\item[] uint \textbf{getN}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] uint \textbf{getDim}() 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] uint \textbf{getNumSpin}() 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+	\end{itemize}
+	
+	\item[] PRIVATE MEMBER FUNCTIONS \\ 
+	\begin{itemize}
+			
+		\item[] DRAW FUNCTIONS
+			\item[] void \textbf{draw2D}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{draw3D}()  		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+		\item[] SETTERS
+			
+			\item[] void \textbf{setN}() 	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setN}(\textunderscore N) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] void \textbf{setDim}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setDim}(\textunderscore dim) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setNumSpin}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setNumSpin}(\textunderscore num\textunderscore spin ) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+				
+	\end{itemize}
+
+	
+\end{itemize}
+
+
+\subsection*{SimulationLattice}
+
+\begin{itemize}
+
+	\item[] PRIVATE DATA MEMBERS \\ 
+	
+	\begin{tabular}{lll}
+		Lattice ${}^*$  	& \textbf{lattice\textunderscore vector}  & blabla	\\
+			
+		const uint 		& \textbf{N}        & blabla			  \\
+		const uint 		& \textbf{dim}      & blabla			  \\
+		const uint 		& \textbf{dim\textunderscore vector}    & blabla \\
+		
+  		const TString  	& \textbf{file} & blabla  \\
+  		
+  		uint 		& \textbf{iter}        & blabla			  \\
+		uint 		& \textbf{I0}      	   & blabla			  \\
+  										
+  		double 	& \textbf{tempmin}        & blabla 	 \\
+  		double 	& \textbf{tempmax}        & blabla 	 \\
+  		uint 	& \textbf{tempstep}       & blabla	 \\
+  		
+	\end{tabular}
+
+	\item[] PUBLIC MEMBER FUNCTIONS \\ 
+	\begin{itemize}
+		\item[] CONSTRUCTORS \\
+
+			\item[] \textbf{SimulationLattice}()	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+
+			\item[] \textbf{SimulationLattice}(const Lattice\& \textunderscore lat , const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] \textbf{SimulationLattice}(const SimulationLattice\& obj)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] SimulationLattice\& \textbf{operator=}(const SimulationLattice\& obj)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		\item[] DESTRUCTOR \\
+		
+			\item[] \textbf{$\sim$ SimulationLattice}	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}		
+		
+		\item[] GETTERS AND SETTERS \\
+ 			
+ 			\item[] Lattice \textbf{getLattice}(const uint\& i)		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[]  uint \textbf{getN}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[]  uint \textbf{getDim}() const	 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[]  uint \textbf{getDimVector}() const			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] TString \textbf{getFile}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[]	uint \textbf{getIter}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] uint \textbf{getI0}() const			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] double \textbf{getTempMin}() const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] double \textbf{getTempMax}() const			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] double \textbf{getTempStep}() const			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			%\item[] static uint \texbf{getT}()	 
+			%\begin{itemize}
+			%	\item[] 
+			%\end{itemize}
+			
+			\item[] void \textbf{setFile}(const TString\& \textunderscore file ) 	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[]	void \textbf{setIter}(const uint\& \textunderscore iter) 	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setI0}(const uint\& \textunderscore i0) 	 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setTempMin}(const double\& \textunderscore tempmin) 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] void \textbf{setTempMax}(const double\& \textunderscore tempmax)			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] void \textbf{setTempStep}(const uint\& \textunderscore tempstep) 			 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			%\item[] void \texbf{setT}(const double \& \textunderscore T)	 
+			%\begin{itemize}
+			%	\item[] 
+			%\end{itemize}
+			
+
+			
+		\item[] RUN \\
+			
+			\item[] void \textbf{printLatticeCSV}(const TString\& name) const		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+	\end{itemize}
+
+	
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection*{SimulationLattice}
+
+\begin{itemize}
+
+	\item[] PRIVATE DATA MEMBERS \\ 
+	
+	\begin{tabular}{lll}
+		const uint 		& \textbf{dim}      & dimension										  \\
+  		const uint 		& \textbf{N}        & number of spins along one edge				   \\
+  		const uint 		& \textbf{num\textunderscore spin} & total number of spins : $N^{dim}$  \\
+  		bool ${}^*$  	& \textbf{lattice}  & lattice array										 \\
+  		static double 	& \textbf{T}        & temperature  										  \\
+	\end{tabular}
+
+	\item[] PUBLIC MEMBER FUNCTIONS \\ 
+	\begin{itemize}
+		\item[] CONSTRUCTORS \\
+
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		
+		\item[] DESTRUCTOR \\
+
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}		
+		
+		\item[] PHYSICAL AND NUMERICAL FUNCTIONS \\
+		
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}	
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+			
+			\item[] 		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+		
+		
+			
+	\end{itemize}
+
+	
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %-----------------------------PAG 7----------------------------------%
 
 \newpage
@@ -275,3 +939,6 @@ The model could be extended by considering:
 \item daily data for a real time calculation.
 \end{itemize}
 \end{document}
+\grid
+\grid
+\grid
