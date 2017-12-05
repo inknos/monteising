@@ -8,66 +8,74 @@
 #include <math.h>
 #include <iostream>
 
+typedef unsigned int uint;
+
 class Lattice : public TObject{
- private:
-  const unsigned int dim;       // dimension of the lattice
-  const unsigned int q;         //
-  const unsigned int N;         // number of spins in one dimension
-  const unsigned int num_spin;  // pow(N, dim) total number of spins
-  bool * lattice;               // [num_spin] lattice
-  static double T;              // Temperature
+  private:
+    const uint N;         // number of spins along one edge 
+    const uint dim;       // dimension
+    const uint num_spin;  // total number of spins : N^dim
+    bool * lattice;       // lattice array
+    static double T;      // temperature 
 
- public:
-  /* Public Constructors */
-  Lattice();
+  public:
+ 
+    /* CONSTRUCTORS */
+    
+    Lattice();
 
-  Lattice(const unsigned int& _N , const unsigned int& _dim);
+    Lattice(const uint& _N , const uint& _dim);
 
-  Lattice(const Lattice& obj);
+    Lattice(const Lattice& obj);
+    
+    /* DESTRUCTOR */
 
-  ~Lattice();
+    ~Lattice();
+    
+    /* PHYSICAL AND NUMERICAL FUNCTIONS */
+    
+    bool flipSpin(const uint& n);
+    
+    int dE(const uint& spin) const;
+    
+    int energy() const;
 
-  /* Public Operators */
-  Lattice& operator=(const Lattice& obj);
-  
-  friend std::ostream &operator<<(std::ostream& out, const Lattice& lat);
+    float magnetization() const ;
+    
+    void cooling();
 
-  bool operator==(const Lattice& obj);
+    void cooling(const uint& iter);
 
-  /* Getters */
-  int getDim() const;
+    double * coolingPar();
 
-  int getN() const;
+    /* OVERLOADED OPERATORS */
+    
+    Lattice& operator=(const Lattice& obj);
+    
+    friend std::ostream &operator<<(std::ostream& out, const Lattice& lat);
 
-  bool getSpin(const unsigned int & i) const;
+    bool operator==(const Lattice& obj);
 
-  int getQ() const;
+    /* GETTERS AND SETTERS */
+    
+    uint getN() const;
+    
+    uint getDim() const;
+    
+    uint getNumSpin() const;
 
-  int getNumSpin() const;
+    bool getSpin(const uint & i) const;
 
-  static double getT();
-  
-  static void setT(const double& _T);
+    static double getT();
+    
+    static void setT(const double& _T);
+    
+    /* OTHERS */
 
-  bool flipSpin(const unsigned int& n);
+    void printLatticeCSV(const TString& name) const;
 
-  void printLatticeCSV(const TString& name) const;
+    void printLatticeROOT(const TString& name , const TString& ln = "lat") const;
 
-  void printLatticeROOT(const TString& name , const TString& ln = "lat") const;
-
-  /* Physical functions */
-  int energy(const bool& p = false ) const;
-  
-  int dE(const unsigned int& spin, const bool& p = false) const;
-
-  float magnetization() const ;
-  
-  /* numerical function cooling */
-  void cooling();
-
-  void cooling(const uint& iter);
-
-  double * coolingPar();
 
   ClassDef(Lattice,1)
     };

@@ -17,117 +17,82 @@
 #define J 1
 #define NOISE 1e-5
 
-
-//#include <omp.h>
-
-typedef unsigned int uint;
-
 ClassImp(Lattice)
 
-//setting the Temperature
+// setting static member Temperature
 double Lattice::T = 0;
 
+/* CONSTRUCTORS */
 
-Lattice::Lattice() : TObject(), q(2), N(1), dim(1) , num_spin(1){
+//Default
+Lattice::Lattice() : TObject(), N(1), dim(1) , num_spin(1){
   lattice = new bool[1];
   lattice[0] = gRandom->Rndm() > 0.5 ? 0 : 1;
 }
 
+//Standard
 Lattice::Lattice(const uint& _N, const uint& _dim) :
-  TObject(), N(_N) , dim(_dim), q(0) , num_spin(pow(_N, _dim)){
+  TObject(), N(_N) , dim(_dim) , num_spin(pow(_N, _dim)){
   lattice = new bool[ num_spin ];
   for(uint i = 0; i < num_spin; i++){
     lattice[i] = gRandom->Rndm() > 0.5 ? 0 : 1;
   }
 }
 
-/* Copy-constructor */
+//Copy
 Lattice::Lattice(const Lattice &obj) :
-  TObject(), N(obj.N) , dim(obj.dim) , q(obj.q) , num_spin(obj.num_spin){
+  TObject(), N(obj.N) , dim(obj.dim) , num_spin(obj.num_spin){
   lattice = new bool[obj.num_spin];
   for(uint i = 0; i < obj.num_spin; i++){
     lattice[i] = obj.lattice[i];
   }
 }
 
+/* DESTRUCTOR */
+
 Lattice::~Lattice(){
   delete []lattice;
 }
 
-/* Overload */
-Lattice& Lattice::operator=(const Lattice& obj){
-  if(&obj == this) return *this;
-  this -> ~Lattice();
-  new(this) Lattice(obj);
-  return *this;
-}
 
-std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
-  for(uint i = 0; i < lat.num_spin; i++){
-    out << lat.lattice[i] << " " << std::flush;
-    for(uint j = 1; j < lat.dim; j++){
-      if( (i + 1 ) % (uint) pow(lat.N, lat.dim - j) == 0 ) out << std::endl << std::flush;
-    }
-  }
-  return out;
-}
 
-bool Lattice::operator==(const Lattice& obj){
-  if(N != obj.N || dim != obj.dim) return false;
-  for(uint i = 0; i < num_spin; i++){
-    if(lattice[i] != obj.lattice[i]) return false;
-  }
-  return true;
-}
-
-/* Getters */
-int Lattice::getDim() const { return dim; }
-
-int Lattice::getN() const{ return N; }
-
-bool Lattice::getSpin(const uint & i) const{
-  //if(i < 0) return i;
-  if(i > num_spin) return i;
-  return lattice[i];
-}
-
-int Lattice::getQ() const { return q; }
-
-int Lattice::getNumSpin() const { return num_spin; }
-
-double Lattice::getT() { return Lattice::T; }
-
-void Lattice::setT(const double& _T){ Lattice::T = _T; }
+/* PHYSICAL AND NUMERICAL FUNCTIONS */
 
 bool Lattice::flipSpin(const uint& n){
   if(n > num_spin) return false;
-  //std::cout << "I'm fliping" << std::endl << std::flush;
   lattice[n] = !lattice[n];
   return true;
 }
 
-void Lattice::printLatticeCSV(const TString& name) const {
-  std::ofstream file;
-  file.open(name + TString(".csv"), std::ofstream::out | std::ofstream::trunc);
-  file <<"#," << "N:" << N  << ", " << "dim:" << dim << ", " << "\n";
-  for(uint i = 0; i < num_spin; i++){
-    if(lattice[i]) file << 1 << ", " << std::flush;
-    else file << -1 << ", " << std::flush;
-    for(uint j = 1; j < dim; j++){
-      if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) file << std::endl << std::flush;
+int Lattice::dE(const uint& spin ) const {
+  int dE_tmp = 0;
+  if(spin > num_spin){ return 0; }
+  uint pow_tmp1;
+  uint pow_tmp2;
+  uint i_tmp;
+  for(uint d = 0; d < dim; d++){
+    if(d == 0){
+      pow_tmp1 = 1;
+      pow_tmp2 = N;
+    }
+    else{
+      pow_tmp1 = pow_tmp2;             
+      pow_tmp2 = (uint) pow(N, d + 1); 
+    }
+    if(d == dim - 1){
+      lattice[spin] ^ lattice[ (int) ( (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[spin] ^ lattice[ (int) ( (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+    }
+    else{
+      i_tmp = ( (int) (spin / pow_tmp2) ) * pow_tmp2;
+      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
   }
-  file.close();
+  return dE_tmp * 2;
 }
 
-void Lattice::printLatticeROOT(const TString& name, const TString& ln) const {
-  TFile f(name + TString(".root"), "RECREATE");
-  this -> Write(ln);
-  f.Write();
-  f.Close();
-}
-
-int Lattice::energy(const bool& p ) const {
+int Lattice::energy() const {
   int E_tmp = 0;
   uint pow_tmp1 = 1;
   uint pow_tmp2 = N;
@@ -143,42 +108,10 @@ int Lattice::energy(const bool& p ) const {
       }
     }
     if(d == dim - 1) continue;
-    pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
-    pow_tmp2 = (uint) pow(N, d + 2); // one single pow for each loop
+    pow_tmp1 = pow_tmp2;             
+    pow_tmp2 = (uint) pow(N, d + 2); 
   }
   return - E_tmp;
-}
-
-int Lattice::dE(const uint& spin, const bool& p ) const {
-  int dE_tmp = 0;
-  if(spin > num_spin){ return 0; }
-  uint pow_tmp1;
-  uint pow_tmp2;
-  uint i_tmp;
-  for(uint d = 0; d < dim; d++){
-    //
-    if(d == 0){ // skips first cycle pow and prevents one pow in every future cycle
-      pow_tmp1 = 1;
-      pow_tmp2 = N;
-    }
-    else{
-      pow_tmp1 = pow_tmp2;             // this one is prevented by if statement
-      pow_tmp2 = (uint) pow(N, d + 1); // one single pow for each loop
-    }
-    //
-    if(d == dim - 1){ // last loop => biggest torus => no need to control position
-      lattice[spin] ^ lattice[ (int) ( (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-      lattice[spin] ^ lattice[ (int) ( (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-    }
-    else{
-      i_tmp = ( (int) (spin / pow_tmp2) ) * pow_tmp2;
-      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-    }
-    //if(p){ lattice[spin] ? E_tmp += H : E_tmp -= H; }
-    //
-  }
-  return dE_tmp * 2;
 }
 
 float Lattice::magnetization() const {
@@ -187,7 +120,6 @@ float Lattice::magnetization() const {
   return M_temp / num_spin;
 }
 
-/* Cooling */
 void Lattice::cooling(){
   double _T = gRandom -> Rndm() * NOISE + Lattice::T;
   uint spin = (uint) ( gRandom -> Rndm() * num_spin );
@@ -246,3 +178,72 @@ double * Lattice::coolingPar(){
   }
   return arr;
 }
+
+/* OVERLOADED OPERATORS */
+
+Lattice& Lattice::operator=(const Lattice& obj){
+  if(&obj == this) return *this;
+  this -> ~Lattice();
+  new(this) Lattice(obj);
+  return *this;
+}
+
+std::ostream& operator<<(std::ostream &out, const Lattice& lat) {
+  for(uint i = 0; i < lat.num_spin; i++){
+    out << lat.lattice[i] << " " << std::flush;
+    for(uint j = 1; j < lat.dim; j++){
+      if( (i + 1 ) % (uint) pow(lat.N, lat.dim - j) == 0 ) out << std::endl << std::flush;
+    }
+  }
+  return out;
+}
+
+bool Lattice::operator==(const Lattice& obj){
+  if(N != obj.N || dim != obj.dim) return false;
+  for(uint i = 0; i < num_spin; i++){
+    if(lattice[i] != obj.lattice[i]) return false;
+  }
+  return true;
+}
+
+/* GETTERS AND SETTERS */
+
+uint Lattice::getN() const{ return N; }
+
+uint Lattice::getDim() const { return dim; }
+
+uint Lattice::getNumSpin() const { return num_spin; }
+
+bool Lattice::getSpin(const uint & i) const{
+  if(i > num_spin) return i;
+  return lattice[i];
+}
+
+double Lattice::getT() { return Lattice::T; }
+
+void Lattice::setT(const double& _T){ Lattice::T = _T; }
+
+/* OTHERS */  
+
+void Lattice::printLatticeCSV(const TString& name) const {
+  std::ofstream file;
+  file.open(name + TString(".csv"), std::ofstream::out | std::ofstream::trunc);
+  file <<"#," << "N:" << N  << ", " << "dim:" << dim << ", " << "\n";
+  for(uint i = 0; i < num_spin; i++){
+    if(lattice[i]) file << 1 << ", " << std::flush;
+    else file << -1 << ", " << std::flush;
+    for(uint j = 1; j < dim; j++){
+      if( (i + 1 ) % (uint) pow(N, dim - j) == 0 ) file << std::endl << std::flush;
+    }
+  }
+  file.close();
+}
+
+void Lattice::printLatticeROOT(const TString& name, const TString& ln) const {
+  TFile f(name + TString(".root"), "RECREATE");
+  this -> Write(ln);
+  f.Write();
+  f.Close();
+}
+
+
