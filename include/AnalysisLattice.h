@@ -49,8 +49,7 @@ class AnalysisLattice {
 
   TGraphErrors * drawLattice(cuint& lattice_number,
                              cuint& x_axis,
-                             cuint& y_axis,
-                             cbool& abs);
+                             cuint& y_axis);
                              
   TGraphErrors * drawLatticeMean(cuint& x_axis,
                                  cuint& y_axis);
@@ -74,7 +73,7 @@ class AnalysisLattice {
   
   void run();
 
-  TMultiGraph * draw(cuint& x_axis, cuint& y_axis, cbool& abs = false);
+  TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
 };
 
 #endif
