@@ -179,11 +179,12 @@ void SimulationLattice::run(){
   double tc = 2.27;
   double vc = 1;
   for(uint t = 0; t < tempstep / 4; t++){
-    temp_array.push_back( ( tc - vc - tempmin ) * ( (double) t / tempstep / 4 ) );
-    temp_array.push_back( tc - vc + vc  * ( (double) t / tempstep / 4 ) );
-    temp_array.push_back( tc + vc * ( (double) t / tempstep / 4 ) );
-    temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / tempstep / 4 ) );
+    temp_array.push_back( tempmin + ( tc - vc - tempmin ) * ( (double) t / ((double)tempstep / 4) ) );
+    temp_array.push_back( tc - vc + vc  * ( (double) t / ((double)tempstep / 4) ) );
+    temp_array.push_back( tc + vc * ( (double) t / ((double)tempstep / 4) ) );
+    temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / ((double)tempstep / 4) ) );
   }
+
   std::sort( temp_array.begin(), temp_array.end() );
   
   for(uint t = 0; t < tempstep; t++) {
