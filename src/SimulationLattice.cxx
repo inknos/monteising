@@ -143,7 +143,7 @@ void SimulationLattice::run(){
   unsigned int datime_t = datime.Get();
   const char * file_t = file;
 
-  TFile f(file, "recreate");
+  TFile f(file_t, "recreate");
   static INFO info;
 
   info._N = N;
@@ -156,19 +156,23 @@ void SimulationLattice::run(){
   info._tempmin = tempmin;
   info._tempmax = tempmax;
 
-  TTree * tree = new TTree("info", "Info");
-  tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
-  tree -> Fill();
-  tree -> Write();
+  std::cout << "werwerw" << std::endl << std::flush;
+  
+  TTree * tree_info = new TTree("info", "Info");
+  tree_info -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
+  tree_info -> Fill();
+  //tree_info -> Write();
+  std::cout << "asfsdafs" << std::endl << std::flush;
   f.Write();
-  tree -> Delete();
+  //f.Close();
+  tree_info -> Delete();
   Block * block = new Block[dim_vector];
   
   int    * E_tmp = new int[dim_vector];
   double * M_tmp = new double[dim_vector];
   double * S_tmp = new double[dim_vector];
   double * T_tmp = new double[dim_vector];
-  double* data = new double[4];
+  double * data  = new double[4];
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
   std::vector<double> temp_array;
@@ -183,8 +187,11 @@ void SimulationLattice::run(){
   std::sort( temp_array.begin(), temp_array.end() );
   
   for(uint t = 0; t < tempstep; t++) {
+    std::cout << t << std::endl << std::flush;
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
+    
+    //TFile outputfile(treeName + TString(".root"), "RECREATE");
     TTree * tree = new TTree(treeName, treeTitle);
     
     setT(temp_array[t]);
@@ -212,9 +219,10 @@ void SimulationLattice::run(){
       }
       tree -> Fill();
     }
-    f.Write();
-    tree->Delete();
-    gDirectory->ls();
+    //f.Write();
+    tree -> Write();
+    tree -> Delete();
+    gDirectory -> ls();
     std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
   }
   delete[] E_tmp;
