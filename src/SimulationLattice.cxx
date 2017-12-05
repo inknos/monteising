@@ -159,7 +159,9 @@ void SimulationLattice::run(){
   TTree * tree = new TTree("info", "Info");
   tree -> Branch("Info", &info._tempmin, "_tempmin/D:_tempmax:_N/i:_dim:_dim_vector:_I0:_iter:_tempstep:_datime_t");
   tree -> Fill();
-
+  tree -> Write();
+  f.Write();
+  tree -> Delete();
   Block * block = new Block[dim_vector];
   
   int    * E_tmp = new int[dim_vector];
@@ -210,7 +212,7 @@ void SimulationLattice::run(){
       }
       tree -> Fill();
     }
-    tree->Write();
+    f.Write();
     tree->Delete();
     gDirectory->ls();
     std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
