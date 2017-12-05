@@ -165,7 +165,7 @@ void SimulationLattice::run(){
   std::cout << "asfsdafs" << std::endl << std::flush;
   f.Write();
   //f.Close();
-  tree_info -> Delete();
+  delete tree_info;
   Block * block = new Block[dim_vector];
   
   int    * E_tmp = new int[dim_vector];
@@ -188,7 +188,7 @@ void SimulationLattice::run(){
   std::sort( temp_array.begin(), temp_array.end() );
   
   for(uint t = 0; t < tempstep; t++) {
-    std::cout << t << std::endl << std::flush;
+    //std::cout << t << std::endl << std::flush;
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     
@@ -221,11 +221,14 @@ void SimulationLattice::run(){
       tree -> Fill();
     }
     //f.Write();
-    tree -> Write();
-    tree -> Delete();
+    //tree -> Write();
+    delete tree;
+    //delete tree;
     gDirectory -> ls();
     std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
   }
+  delete[] block;
+  
   delete[] E_tmp;
   delete[] M_tmp;
   delete[] S_tmp;
