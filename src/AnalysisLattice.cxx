@@ -27,8 +27,6 @@ void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_inpu
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
 
 void AnalysisLattice::run(){
-
-  
   TH1D::SetDefaultSumw2(true);
   static INFO info;
 
@@ -97,16 +95,15 @@ void AnalysisLattice::run(){
     dS[i]= new double[tempstep];
     dX[i]= new double[tempstep];
   }
-
   for(uint i = 0; i < dim_vector; i++){
     for(uint t = 0; t < tempstep; t++){
       T[i][t] = 0; E[i][t] = 0; M[i][t] = 0; S[i][t] = 0 ; X[i][t] = 0;
       dT[i][t] = 0; dE[i][t] = 0; dM[i][t] = 0; dS[i][t] = 0; dX[i][t] = 0;
     }
   }
-  
+
   double * TCriticVector =  new double[dim_vector];
-   
+
   double * Tml = new double[tempstep];
   double * Eml = new double[tempstep];
   double * Mml = new double[tempstep];
@@ -121,7 +118,7 @@ void AnalysisLattice::run(){
     Tml[t] = 0.;Eml[t] = 0.;Mml[t] = 0.;Sml[t] = 0.;Xml[t] = 0.;
     dTml[t] = 0.;dEml[t] = 0.;dMml[t] = 0.;dSml[t] = 0.;dXml[t] = 0.; 
   }
-  
+
   Block * block = 0;
   TTree * tree;
   for(uint t = 0; t < tempstep; t++) {
@@ -156,22 +153,22 @@ void AnalysisLattice::run(){
         dM[i][t] += ( M[i][t] - Mv[i][j] ) * ( M[i][t] - Mv[i][j] );
         dS[i][t] += ( S[i][t] - Sv[i][j] ) * ( S[i][t] - Sv[i][j] );
       }
-      
+
       dT[i][t] = TMath::Sqrt( dT[i][t] / ( iter + 1 ) );
       dE[i][t] = TMath::Sqrt( dE[i][t] / ( iter + 1 ) );
       dS[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
-        //
-        //calcolo suscettivita 
-        X[i][t] = dM[i][t];  
-        //calcolo errore suscettività
-        for(uint j = 0; j < iter + 1; j++){
-          dX[i][t] += X[i][t] - ( M[i][t] - Mv[i][j] ) * ( M[i][t] - Mv[i][j] );
-          dX[i][t] *= dX[i][t];
-        } 
-        dX[i][t] = TMath::Sqrt( dX[i][t] / ( iter + 1 ) );
-        X[i][t] /= T[i][t] ;
-        dX[i][t] /= T[i][t] ;
-        //
+      //
+      //calcolo suscettivita 
+      X[i][t] = dM[i][t];  
+      //calcolo errore suscettività
+      for(uint j = 0; j < iter + 1; j++){
+        dX[i][t] += X[i][t] - ( M[i][t] - Mv[i][j] ) * ( M[i][t] - Mv[i][j] );
+        dX[i][t] *= dX[i][t];
+      } 
+      dX[i][t] = TMath::Sqrt( dX[i][t] / ( iter + 1 ) );
+      X[i][t] /= T[i][t] ;
+      dX[i][t] /= T[i][t] ;
+      //
       dM[i][t] = TMath::Sqrt( dS[i][t] / ( iter + 1 ) );
       
       Tml[t] += TMath::Abs( T[i][t] );
@@ -180,7 +177,6 @@ void AnalysisLattice::run(){
       Sml[t] += TMath::Abs( S[i][t] );
       Xml[t] += TMath::Abs( X[i][t] );
     }
-  
     //
     Tml[t] /= dim_vector;
     Eml[t] /= dim_vector;
@@ -202,7 +198,6 @@ void AnalysisLattice::run(){
     //
     std::cout << "[ done "<< (int) (((double) t / tempstep) * 100)  <<"% ] T = " << t << std::endl << std::flush;
   }
-  
   
   double TCriticMean = 0.;
   for(uint i = 0; i < dim_vector; i++){
@@ -289,7 +284,6 @@ void AnalysisLattice::run(){
   delete[] dE;
   delete[] dM;
   delete[] dS;
-  
   //
   delete[] TCriticVector;
   delete[] Tml;
@@ -303,19 +297,16 @@ void AnalysisLattice::run(){
   delete[] dSml;
   delete[] dXml;
   //
-  
   ofile.Write();
   ofile.Close();
   std::cout << R"(?=======================================?
 !                 end                   !
 ?=======================================?)" << std::endl;
-
 }
 
 TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
                                             cuint& x_axis,
-                                            cuint& y_axis,
-                                            cbool& abs){
+                                            cuint& y_axis) {
   static INFO info;
 
   TFile f(file_out, "read");
@@ -333,8 +324,8 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
 
-  double* x = new double[tempstep];
-  double* y = new double[tempstep];
+  double* x  = new double[tempstep];
+  double* y  = new double[tempstep];
   double* dx = new double[tempstep];
   double* dy = new double[tempstep];
 
@@ -350,7 +341,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
     
     switch(x_axis) {
     case 1:{
-      abs ? TMath::Abs( x[t] = block_mean -> E ) : x[t]  = block_mean -> E;
+      x[t]  = block_mean -> E;
       dx[t] = block_std  -> E;
       break;
     }
@@ -393,7 +384,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
       break;
     }
     case 3:{
-      abs ? y[t]  = TMath::Abs( block_mean -> M ) : y[t] = block_mean -> M;
+      y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
       break;
     }
@@ -426,7 +417,7 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   return graph;
 }
 
-TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis, cbool& abs){
+TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis){
 
   static INFO info;
 
@@ -448,14 +439,13 @@ TMultiGraph * AnalysisLattice::draw(cuint& x_axis, cuint& y_axis, cbool& abs){
   TMultiGraph * multi = new TMultiGraph("multigraph", "Multigraph");
   TGraphErrors * gr;
   for(uint i = 0; i < dim_vector; i++){
-    gr = drawLattice(i, x_axis, y_axis, abs);
+    gr = drawLattice(i, x_axis, y_axis);
     multi -> Add(gr);
   }
   multi -> Draw("AP");
 
   return multi;
 }
-
 
 TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
                                                 cuint& y_axis){
@@ -478,8 +468,8 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
   uint datime    = info._datime_t;
   double Tcritic;
 
-  double* x = new double[tempstep];
-  double* y = new double[tempstep];
+  double* x  = new double[tempstep];
+  double* y  = new double[tempstep];
   double* dx = new double[tempstep];
   double* dy = new double[tempstep];
 
@@ -540,7 +530,7 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
     }
     case 3:{
       //abs ? y[t]  = TMath::Abs( block_mean -> M ) : y[t] = block_mean -> M;
-      y[t] = block_mean -> M;
+      y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
       
       break;
