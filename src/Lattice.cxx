@@ -13,7 +13,7 @@
 #include <string>
 
 #define H 1
-#define K 1
+#define K 1e-23
 #define J 1
 #define NOISE 1e-5
 
