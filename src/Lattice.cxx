@@ -64,9 +64,9 @@ bool Lattice::flipSpin(const uint& n){
   return true;
 }
 
-int Lattice::dE(const uint& spin ) const {
+int Lattice::dE(const uint& n ) const {
   int dE_tmp = 0;
-  if(spin > num_spin){ return 0; }
+  if(n > num_spin){ return 0; }
   uint pow_tmp1;
   uint pow_tmp2;
   uint i_tmp;
@@ -80,13 +80,13 @@ int Lattice::dE(const uint& spin ) const {
       pow_tmp2 = (uint) pow(N, d + 1); 
     }
     if(d == dim - 1){
-      lattice[spin] ^ lattice[ (int) ( (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-      lattice[spin] ^ lattice[ (int) ( (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[n] ^ lattice[ (int) ( (n + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[n] ^ lattice[ (int) ( (n - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
     else{
-      i_tmp = ( (int) (spin / pow_tmp2) ) * pow_tmp2;
-      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
-      lattice[spin] ^ lattice[ (int) ( i_tmp + (spin - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      i_tmp = ( (int) (n / pow_tmp2) ) * pow_tmp2;
+      lattice[n] ^ lattice[ (int) ( i_tmp + (n + pow_tmp1)            % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
+      lattice[n] ^ lattice[ (int) ( i_tmp + (n - pow_tmp1 + pow_tmp2) % pow_tmp2 ) ] ? dE_tmp -= 1 : dE_tmp += 1;
     }
   }
   return dE_tmp * 2;
@@ -122,33 +122,33 @@ float Lattice::magnetization() const {
 
 void Lattice::cooling(){
   double _T = gRandom -> Rndm() * NOISE + Lattice::T;
-  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
-  int tmp_spin = dE(spin);
+  uint n = (uint) ( gRandom -> Rndm() * num_spin );
+  int tmp_spin = dE(n);
   if( tmp_spin < 0 ){
-    flipSpin(spin);
+    flipSpin(n);
   }
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
-      flipSpin(spin);
+      flipSpin(n);
     }
   }
 }
 
 void Lattice::cooling(const uint& iter) {
   double _T;
-  uint spin;
-  int tmp_spin;
+  uint n;
+  int tmp_dE;
 
   for(uint i = 0; i < iter; i++){
     _T = gRandom -> Rndm() * NOISE + Lattice::T;
-    spin = (uint) ( gRandom -> Rndm() * num_spin );
-    tmp_spin = dE(spin);
-    if( tmp_spin < 0 ){
-      flipSpin(spin);
+    n = (uint) ( gRandom -> Rndm() * num_spin );
+    tmp_dE = dE(n);
+    if( tmp_dE < 0 ){
+      flipSpin(n);
     }
     else{
-      if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
-        flipSpin(spin);
+      if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / _T)){
+        flipSpin(n);
       }
     }
   }
@@ -160,20 +160,20 @@ double * Lattice::coolingPar(){
   arr[1] = 0;
   arr[2] = 0;
   arr[3] = 0;
-  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
-  int tmp_spin = dE(spin);
-  if( tmp_spin < 0 ){
-    flipSpin(spin);
-    arr[1] = (double) tmp_spin;
-    getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
-    arr[3] = (double) tmp_spin / num_spin;
+  uint n = (uint) ( gRandom -> Rndm() * num_spin );
+  int tmp_dE = dE(n);
+  if( tmp_dE < 0 ){
+    flipSpin(n);
+    arr[1] = (double) tmp_dE;
+    getSpin(n) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+    arr[3] = (double) tmp_dE / num_spin;
   }
   else{
-    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / arr[0])){
-      flipSpin(spin);
-      arr[1] = (double) tmp_spin;
-      getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
-      arr[3] = (double) tmp_spin / num_spin;
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / arr[0])){
+      flipSpin(n);
+      arr[1] = (double) tmp_dE;
+      getSpin(n) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+      arr[3] = (double) tmp_dE / num_spin;
     }
   }
   return arr;

@@ -36,7 +36,7 @@ class Lattice : public TObject{
     
     bool flipSpin(const uint& n);
     
-    int dE(const uint& spin) const;
+    int dE(const uint& n) const;
     
     int energy() const;
 

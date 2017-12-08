@@ -223,142 +223,170 @@ i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left
 &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\} 
 \end{eqnarray*}
 
-The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration. 
+The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration.
+
+\newpage 
 
 \section*{Classes}
 	
 \subsection*{Lattice}
 
+The Lattice class permits to construct a Lattice, compute its termodynamic quantities 
+and change its state with the Metropolis Algorithm. \\	  
+Computation details of functions such as \textbf{energy}() and \textbf{cooling}() are thoroughly explained in Model section. \\ 
+
 \begin{itemize}
 
-	\item[] PRIVATE DATA MEMBERS \\ 
+	\item[] 
+	PRIVATE DATA MEMBERS \\ 
 	
 	\begin{tabular}{lll}
 		const uint 		& \textbf{N}        & number of spins along one edge				  \\
 		const uint 		& \textbf{dim}      & dimension										   \\
   		const uint 		& \textbf{num\textunderscore spin} & total number of spins : $N^{dim}$  \\
-  		bool ${}^*$  	& \textbf{lattice}  & lattice array										 \\
-  		static double 	& \textbf{T}        & temperature  										  \\
+  		bool ${}^*$  	& \textbf{lattice}  & boolean array of size \textbf{num\textunderscore spin} \\
+  		static double 	& \textbf{T}        & temperature  										  	  \\
 	\end{tabular}
+	\\
 
-	\item[] PUBLIC MEMBER FUNCTIONS \\ 
+	\item[] 
+	PUBLIC MEMBER FUNCTIONS \\ 
 	\begin{itemize}
 		\item[] CONSTRUCTORS \\
 
 			\item[] \textbf{Lattice}()	 
 			\begin{itemize}
-				\item[] 
+				\item[] Default Constructor \\ 
+						Creates Lattice object with N=1 , dim=1 \\
+						The single entry of \textbf{lattice} is set to 0 or 1 with 0.5 probability   
 			\end{itemize}
 			
-			\item[] \textbf{Lattice}(const uint\& \textunderscore N , const uint\& \textunderscore dim)		 
+			\item[] \textbf{Lattice}(const uint\& \textunderscore N , const uint\& \textunderscore dim)	 
 			\begin{itemize}
-				\item[] 
+				\item[] Standard Constructor \\
+						Creates Lattice object with N = \textunderscore N,  dim = \textunderscore dim \\
+						Sets each \textbf{lattice} entry to 0 or 1 with 0.5 probability 
 			\end{itemize}
 			
 			\item[] \textbf{Lattice}(const Lattice\& obj)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Copy Constructor \\
+						Creates Lattice object with obj's data members \\
 			\end{itemize}
 
 		
-		\item[] DESTRUCTOR \\
+		\item[]
+		DESTRUCTOR \\
 		
 			\item[] \textbf{$\sim$ Lattice}	 
 			\begin{itemize}
-				\item[] 
+				\item[] Frees up memory allocated by \textbf{lattice} \\
 			\end{itemize}		
 		
-		\item[] PHYSICAL AND NUMERICAL FUNCTIONS \\
+\newpage 		
+	
+		\item[] 
+		PHYSICAL AND NUMERICAL FUNCTIONS \\
  		
 			\item[] bool \textbf{flipSpin}(const uint\& n)		 
 			\begin{itemize}
-				\item[] 
+				\item[] If n $<$ \textbf{num\textunderscore spin} \\
+				Sets \textbf{lattice}[n] to !\textbf{lattice}[n] and returns true \\
+				Else it doesn't change \textbf{lattice} and returns false 
+						
 			\end{itemize}
-			
-			\item[] int \textbf{dE}(const uint\& spin) const		 
+
+			\item[] int \textbf{dE}(const uint\& n) const		 
 			\begin{itemize}
-				\item[] 
+				\item[] Returns energy variation resulting from applying \textbf{flipSpin}(n) \\
+						{\small
+						\textsf{n.b.} : it's a const method, it doesn't apply \textbf{flipSpin}(n)
+						} 
 			\end{itemize}
 			
 			\item[] int \textbf{energy}() const;		 
 			\begin{itemize}
-				\item[] 
-			\end{itemize}
+				\item[] Returns total Energy 
+			\end{itemize} 
 			
 			\item[] float \textbf{magnetization}() const		 
 			\begin{itemize}
-				\item[] 
+				\item[] Returns Magnetization per site  
+				
 			\end{itemize}
 			
 			\item[] void \textbf{cooling}(const uint\& iter) 		 
 			\begin{itemize}
-				\item[] 
+				\item[] Applies one step of Metropolis Algorithm 
+			\end{itemize}
+			
+			
+			\item[] void \textbf{cooling}(const uint\& iter) 		 
+			\begin{itemize}
+				\item[] Applies \textbf{iter} steps of Metropolis Algorithm
 			\end{itemize}
 			
 			\item[] double * \textbf{coolingPar}()	 
 			\begin{itemize}
-				\item[] 
+				\item[] Applies \textbf{cooling}() and returns a four-dimensional array \textbf{arr} \\
+						\textbf{arr} are respectively variations of : \\
+						Temperature , Energy , Magnetization , Energy per site  \\
 			\end{itemize}
 		
-		\item[] OVERLOADED OPERATORS \\
+		\item[] 
+		OVERLOADED OPERATORS \\
 
 			\item[] Lattice\& \textbf{operator=}(const Lattice\& obj)		 
 			\begin{itemize}
-				\item[] 
-			\end{itemize}
+				\item[] Assignment operator \\
+						Deallocates memory with destructor  
+						and allocates in the same position a new Lattice applying copy constructor of obj 				\end{itemize}
 			
-			\item[] friend std::ostream\& \textbf{operator$<<$}(std::ostream\& out, const Lattice\& lat) 		 
+			\item[] friend std::ostream\& \textbf{operator$<<$}(std::ostream\& out, const Lattice\& lat) 	
 			\begin{itemize}
-				\item[] 
+				\item[] Taking \textsf{lat} as a reference to a Lattice object \\
+				Prints \textbf{lattice} member of \textsf{lat} by typing the command \textsf{cout $<<$ lat ;} 
 			\end{itemize}	
 			
 			\item[] bool \textbf{operator==}(const Lattice\& obj) 		 
 			\begin{itemize}
-				\item[] 
+				\item[] Taking \textsf{lat1} and \textsf{lat2} as references to Lattice objects \\
+						\textsf{lat1 == lat2} returns true if \textsf{lat1} and \textsf{lat2} have same data members
 			\end{itemize}
-
-		\item[] GETTERS AND SETTERS \\
+			
+		\item[] 
+		GETTERS AND SETTERS \\
 					
-			\item[] uint \textbf{getN}() const 		 
+			\item[] uint \textbf{getN}() const ; uint \textbf{getDim}() const; uint \textbf{getNumSpin}() const 	
 			\begin{itemize}
-				\item[] 
+			\item[] returns respectively \textbf{N} , \textbf{dim} , \textbf{num\textunderscore spin} 
+			\end{itemize}			
+			
+			\item[] bool \textbf{getSpin}(const uint \& n) const 		 
+			\begin{itemize}
+				\item[] returns \textbf{lattice}[n] entry
+			\end{itemize}
+					
+			\item[] double \textbf{getT}() ; static void \textbf{setT}(const double\& \textunderscore T)	
+			\begin{itemize}
+				\item[] respectively : \\ 
+						Returns \textbf{T} ; Sets \textbf{T} = \textunderscore T \\
 			\end{itemize}
 			
-			\item[] uint \textbf{getDim}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] uint \textbf{getNumSpin}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] bool \textbf{getSpin}(const uint \& i) const 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] static double \textbf{getT}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] static void \textbf{setT}(const double\& \textunderscore T)		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-		\item[] OTHERS \\
+		\item[] 
+		OTHERS \\
 			
 			\item[] void \textbf{printLatticeCSV}(const TString\& name) const		 
 			\begin{itemize}
-				\item[] 
+				\item[] prints \textbf{lattice} in a csv file saved in the working directory
 			\end{itemize}
 			
-			\item[] void \textbf{printLatticeROOT}(const TString\& name , const TString\& ln = "lat") const	
+			\item[] 
+			{\small			
+			void \textbf{printLatticeROOT}(const TString\& name , const TString\& ln = "lat") const	
+			}			
 			\begin{itemize}
-				\item[] 
+				\item[] saves Lattice object in a root file 
 			\end{itemize}
 			
 	\end{itemize}
@@ -366,9 +394,17 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 	
 \end{itemize}
 
+\newpage
 
 \subsection*{DrawLattice}
 
+DrawLattice class permits to draw a 2D or 3D Lattice inside a TCanvas \\
+The Lattice object to be drawn can be imported in two ways with two Constructors \\
+The first constructor takes a Lattice object as argument \\
+The second constructor takes the name of a root file and the name of a Lattice saved with the \textbf{printLatticeROOT} method \\
+The Lattice is displayed in a TMultiGraph which has two TGraphs for up and down spins, with respectively kRed and kBlue color. \\ 
+The computation of the spin coordinates is explained in the Model Section. 
+         
 \begin{itemize}
 
 	\item[] PRIVATE DATA MEMBERS \\ 
@@ -376,65 +412,75 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 	\begin{tabular}{lll}
 		Lattice & \textbf{lattice}  & Lattice object \\
 		
-  		uint  & \textbf{N },\textbf{ dim },\textbf{ num\textunderscore spin} 
-  		& \textbf{N },\textbf{ dim },\textbf{ num\textunderscore spin} of \textbf{lattice} \\
+  		uint  & \textbf{N}, \textbf{ dim}, \textbf{ num\textunderscore spin} 
+  		& \textbf{N}, \textbf{ dim}, \textbf{ num\textunderscore spin} of \textbf{lattice} \\
   		
 		TString & \textbf{fname} & name of root file \\
-		TString & \textbf{fname} & name of Lattice saved in file fname.root\\
-		TString & \textbf{cname } , \textbf{ctitle} & canvas name and title \\
-		TString & \textbf{gname } , \textbf{gtitle} & graph name and title \\
-		   			
+		TString & \textbf{lname} & name of \textbf{Lattice} saved in root file fname\\
+		TString & \textbf{cname} , \textbf{ctitle} & Tcanvas name and title \\
+		TString & \textbf{gname} , \textbf{gtitle} & TMultiGraph name and title \\		   			
 	\end{tabular}
-
+	
+	\begin{itemize}
+	\item[]	{\small
+		\textbf{cname}, \textbf{ctitle}, \textbf{gname}, \textbf{gtitle} 
+		are assigned the same way in each of the three Constructors as 
+		\textsf{ : cname("cv"), ctitle("default canvas"), gname("gr"), gtitle("Ising")} 
+		} 
+		\\
+	\end{itemize}
+		
 	\item[] PUBLIC MEMBER FUNCTIONS \\ 
 	\begin{itemize}
 		\item[] CONSTRUCTORS \\
 
 			\item[] \textbf{DrawLattice}()		 
 			\begin{itemize}
-				\item[] 
+				\item[] Default Constructor \\
+						Creates lattice with Lattice Standard Constructor					
+						
 			\end{itemize}
 			
 			\item[] \textbf{DrawLattice}(const Lattice\& lat)		 
-			\begin{itemize}
-				\item[] 
+			\begin{itemize} 
+				\item[] First Standard Constructor \\
+						Sets \textbf{lattice} = lat 
+						   
 			\end{itemize}
 			
 			\item[] \textbf{DrawLattice}(const TString\& \textunderscore fname, const TString\& 														\textunderscore lname)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Second Standard Constructor \\
+						Searches a Tfile with name \textunderscore fname \\
+						Sets \textbf{lattice} with \textbf{readFile}() 						
+				{\small
+						\item[] void \textbf{readFile}()
+						\begin{itemize}
+							\item[] Gets Lattice object with name \textunderscore lname 
+									from the TFile and sets it to \textbf{lattice}				   		
+						\end{itemize}						 
+				}		 
 			\end{itemize}
-		
-		\item[] READFILE \\
-
-			\item[] \textbf{readFile}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-		
+			
+\newpage
+						
 		\item[] DRAW FUNCTION \\
 		
 			\item[] void \textbf{draw}()		 
 			\begin{itemize}
-				\item[] 
+				\item[] performs a switch statement on \textbf{dim} \\  
+						if \textbf{dim} = 2 applies \textbf{draw2D}() \\
+						if \textbf{dim} = 3 applies \textbf{draw3D}() \\						    
+						else returns without applying a draw Function  
 			\end{itemize}
 
-		\item[]	GETTERS \\		
-		
-			\item[] uint \textbf{getN}()		 
+		\item[]	GETTERS \\
+				
+			\item[] uint \textbf{getN}() ; uint \textbf{getDim}() ; uint \textbf{getNumSpin}()  	
 			\begin{itemize}
-				\item[] 
-			\end{itemize}
+			\item[] returns respectively \textbf{N}, \textbf{dim}, \textbf{num\textunderscore spin} 
+			\end{itemize}	
 			
-			\item[] uint \textbf{getDim}() 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] uint \textbf{getNumSpin}() 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
 	\end{itemize}
 	
 	\item[] PRIVATE MEMBER FUNCTIONS \\ 
@@ -443,50 +489,42 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 		\item[] DRAW FUNCTIONS
 			\item[] void \textbf{draw2D}()		 
 			\begin{itemize}
-				\item[] 
+				\item[] draws a bidimensional TMultiGraph
 			\end{itemize}
 			
 			\item[] void \textbf{draw3D}()  		 
 			\begin{itemize}
-				\item[] 
+				\item[] draw a threedimensional TMultiGraph
 			\end{itemize}
 			
 		\item[] SETTERS
 			
-			\item[] void \textbf{setN}() 	 
+			\item[] void \textbf{setN}() ; void \textbf{setDim}() ; void \textbf{setNumSpin}()				
 			\begin{itemize}
-				\item[] 
+				\item[]
+						{\small
+						 Sets \textbf{N}, \textbf{dim}, \textbf{num\textunderscore spin} respectively to 
+						\textbf{lattice.N}, \textbf{lattice.dim}, \textbf{lattice.num\textunderscore spin} 
+						\\
+						\textsf{n.b.}
+						applied in First and Second Standard Constructor after \textbf{lattice} is set 
+						}
 			\end{itemize}
 			
-			\item[] void \textbf{setN}(\textunderscore N) 		 
+			\item[] void \textbf{setN}(\textunderscore N) ;
+					void \textbf{setDim}(\textunderscore dim) ;
+					void \textbf{setNumSpin}(\textunderscore num\textunderscore spin ) 	
 			\begin{itemize}
-				\item[] 
+				\item[] Sets \textbf{N}, \textbf{dim}, \textbf{num\textunderscore spin} respectively to 
+						\textunderscore N, \textunderscore dim, \textunderscore num\textunderscore spin
 			\end{itemize}	
-			
-			\item[] void \textbf{setDim}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setDim}(\textunderscore dim) 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setNumSpin}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setNumSpin}(\textunderscore num\textunderscore spin ) 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
 				
 	\end{itemize}
 
 	
 \end{itemize}
+
+\newpage
 
 
 \subsection*{SimulationLattice}
