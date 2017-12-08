@@ -570,15 +570,25 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
 
 ////FITTING
 
-double AnalysisLattice::analiticM(double * x , double * par){
-  double Tc =2.27;
-  if( x[0] >= Tc ) return 0.*par[1];
-  else return TMath::Power( TMath::Abs(x[0] - Tc) , par[0]);
+////FITTING
+
+double AnalysisLattice::analiticM(double * x , double * par ){
+  //double Tc =2.27;
+  //if( x[0] >= Tc ) return 0.*par[1];
+  //else{
+     return TMath::Power( TMath::Abs(x[0] - par[1]) , par[0]);
+  //}
 }
 
-TGraphErrors* AnalysisLattice::fitLattice( cuint& x_axis,
-                                           cuint& y_axis ){
-  static INFO info;                                       
+TGraphErrors* AnalysisLattice::fitLattice( bool mean,
+                                           cuint& x_axis,
+                                           cuint& y_axis,
+                                           double Tc = 2.27 ,
+                                           double fit_temp_min = 1.5 ,
+                                           double fit_temp_max = 3.0 ,
+                                           int lat_number = 0
+                                         ){
+  static INFO info;
   TFile ifile(file_out, "read");
   TTree * info_tree = (TTree*) ifile.Get("info");
   TBranch * info_branch = info_tree -> GetBranch("Info");
@@ -593,16 +603,26 @@ TGraphErrors* AnalysisLattice::fitLattice( cuint& x_axis,
   uint iter      = info._iter;
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
-  ifile.Close();                                         
-                      
-                                           
-  TGraphErrors * g = drawLatticeMean(x_axis , y_axis);
-  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , 1.8 , 2.27 , 1);
+  ifile.Close();
+
+
+  TGraphErrors * g;
+
+  if(mean){
+    g = drawLatticeMean(x_axis , y_axis);
+  }
+  else{
+    g = drawLattice(lat_number, x_axis , y_axis );
+  }
+
+  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 2);
+  f -> SetParameter(1, Tc);
   g ->Fit(f , "R");
-  g -> Draw(); 
-  return g;                                                                   
+  g -> Draw();
+  return g;
 }
 
+/*
 void AnalysisLattice::plotAnalitic(){
   TF1 *fteo = new TF1("fteo", analiticM ,0.5,2.4,1);
   fteo->SetLineColor(kRed);
@@ -612,4 +632,4 @@ void AnalysisLattice::plotAnalitic(){
   //fteo->SetParNames("normalizzazione","coefficiente");
   fteo->Draw();
 } 
-
+*/

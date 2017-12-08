@@ -55,9 +55,15 @@ class AnalysisLattice {
                                  cuint& y_axis);
   
   
-  TGraphErrors* fitLattice(cuint& x_axis,
-                           cuint& y_axis);
-                           
+  TGraphErrors* fitLattice( bool mean,
+                            cuint& x_axis,
+                            cuint& y_axis,
+                            double Tc,
+                            double fit_temp_min,
+                            double fit_temp_max,
+                            int lat_number
+                          );
+          
   void plotAnalitic(); 
                                
   AnalysisLattice(const TString& file_input, const TString& file_output);
