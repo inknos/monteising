@@ -122,33 +122,33 @@ float Lattice::magnetization() const {
 
 void Lattice::cooling(){
   double _T = gRandom -> Rndm() * NOISE + Lattice::T;
-  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
-  int tmp_spin = dE(spin);
+  uint n = (uint) ( gRandom -> Rndm() * num_spin );
+  int tmp_spin = dE(n);
   if( tmp_spin < 0 ){
-    flipSpin(spin);
+    flipSpin(n);
   }
   else{
     if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
-      flipSpin(spin);
+      flipSpin(n);
     }
   }
 }
 
 void Lattice::cooling(const uint& iter) {
   double _T;
-  uint spin;
-  int tmp_spin;
+  uint n;
+  int tmp_dE;
 
   for(uint i = 0; i < iter; i++){
     _T = gRandom -> Rndm() * NOISE + Lattice::T;
-    spin = (uint) ( gRandom -> Rndm() * num_spin );
-    tmp_spin = dE(spin);
-    if( tmp_spin < 0 ){
-      flipSpin(spin);
+    n = (uint) ( gRandom -> Rndm() * num_spin );
+    tmp_dE = dE(n);
+    if( tmp_dE < 0 ){
+      flipSpin(n);
     }
     else{
-      if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
-        flipSpin(spin);
+      if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / _T)){
+        flipSpin(n);
       }
     }
   }
@@ -160,20 +160,20 @@ double * Lattice::coolingPar(){
   arr[1] = 0;
   arr[2] = 0;
   arr[3] = 0;
-  uint spin = (uint) ( gRandom -> Rndm() * num_spin );
-  int tmp_spin = dE(spin);
-  if( tmp_spin < 0 ){
-    flipSpin(spin);
-    arr[1] = (double) tmp_spin;
-    getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
-    arr[3] = (double) tmp_spin / num_spin;
+  uint n = (uint) ( gRandom -> Rndm() * num_spin );
+  int tmp_dE = dE(n);
+  if( tmp_dE < 0 ){
+    flipSpin(n);
+    arr[1] = (double) tmp_dE;
+    getSpin(n) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+    arr[3] = (double) tmp_dE / num_spin;
   }
   else{
-    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / arr[0])){
-      flipSpin(spin);
-      arr[1] = (double) tmp_spin;
-      getSpin(spin) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
-      arr[3] = (double) tmp_spin / num_spin;
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / arr[0])){
+      flipSpin(n);
+      arr[1] = (double) tmp_dE;
+      getSpin(n) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );
+      arr[3] = (double) tmp_dE / num_spin;
     }
   }
   return arr;
