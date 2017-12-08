@@ -196,7 +196,7 @@ void AnalysisLattice::run(){
     dSml[t] = TMath::Sqrt( dSml[t]/dim_vector );
     dXml[t] = TMath::Sqrt( dXml[t]/dim_vector );
     //
-    std::cout << "[ done "<< (int) (((double) t / tempstep) * 100)  <<"% ] T = " << t << std::endl << std::flush;
+    std::cout << "[ done "<< (int) (((double) t / tempstep) * 100)  <<"% ] stepT :  " << t << std::endl << std::flush;
   }
   
   double TCriticMean = 0.;
