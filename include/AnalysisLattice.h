@@ -1,6 +1,8 @@
 #ifndef ANALYSIS_LATTICE_H
 #define ANALYSIS_LATTICE_H
 
+#include <vector>
+
 #include "TString.h"
 #include "TGraphErrors.h"
 #include "TMultiGraph.h"
@@ -41,7 +43,10 @@ class AnalysisLattice {
   TString file_in;
   TString file_out;
   
-  
+
+  std::vector<double> bin(const std::vector<double>& vec);
+
+  std::vector<double> binN(cuint& num_bin, const std::vector<double>& vec);
   
  public:
  

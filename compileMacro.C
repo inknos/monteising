@@ -14,7 +14,7 @@ void compileMacro(TString myopt="fast"){
   //cmd.ReplaceAll("g++","g++ -fopenmp");
   //gSystem->SetMakeSharedLib(cmd);
 
-  gSystem-> Exec("rm -r build");
+  //gSystem-> Exec("rm -r build");
   
   TString workingDir(gSystem->WorkingDirectory());
 

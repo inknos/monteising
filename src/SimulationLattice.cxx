@@ -181,9 +181,9 @@ void SimulationLattice::run(){
     temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / ((double)tempstep / 4) ) );
   }
   std::sort( temp_array.begin(), temp_array.end() );
-  for(uint i = 0; i < tempstep; i++){
-    cout << "temp_array is : " << temp_array[i] << endl << flush;
-  }
+  //for(uint i = 0; i < tempstep; i++){
+  //  cout << "temp_array is : " << temp_array[i] << endl << flush;
+  //}
   
   for(uint t = 0; t < tempstep; t++) {
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
@@ -218,7 +218,7 @@ void SimulationLattice::run(){
     f.Write();
     tree->Delete();
     //gDirectory->ls();
-    //std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
+    std::cout << "[ done "<< (int) ( ( (double) t / tempstep ) * 100 ) << "% ] T = " << temp_array[t] << std::endl << std::flush;
   }
   delete[] E_tmp;
   delete[] M_tmp;
