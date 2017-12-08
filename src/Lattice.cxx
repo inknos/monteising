@@ -128,7 +128,7 @@ void Lattice::cooling(){
     flipSpin(n);
   }
   else{
-    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T)){
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_spin / _T )){
       flipSpin(n);
     }
   }
@@ -147,7 +147,7 @@ void Lattice::cooling(const uint& iter) {
       flipSpin(n);
     }
     else{
-      if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / _T)){
+      if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / _T )){
         flipSpin(n);
       }
     }
@@ -169,7 +169,7 @@ double * Lattice::coolingPar(){
     arr[3] = (double) tmp_dE / num_spin;
   }
   else{
-    if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / arr[0])){
+    if(gRandom -> Rndm() < TMath::Exp( - tmp_dE / arr[0] )){
       flipSpin(n);
       arr[1] = (double) tmp_dE;
       getSpin(n) ? arr[2] = 2. / num_spin : arr[2] = - ( 2. / num_spin );

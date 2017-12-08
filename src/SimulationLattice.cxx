@@ -172,13 +172,16 @@ void SimulationLattice::run(){
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
   std::vector<double> temp_array;
+  for(uint i = 0; i < tempstep; i++){
+    temp_array.push_back( 0.);
+  }
   double tc = 2.27;
   double vc = 1;
   for(uint t = 0; t < tempstep / 4; t++){
-    temp_array.push_back( tempmin + ( tc - vc - tempmin ) * ( (double) t / ((double)tempstep / 4) ) );
-    temp_array.push_back( tc - vc + vc  * ( (double) t / ((double)tempstep / 4) ) );
-    temp_array.push_back( tc + vc * ( (double) t / ((double)tempstep / 4) ) );
-    temp_array.push_back( tc + vc + (tempmax - tc - vc) * ( (double) t / ((double)tempstep / 4) ) );
+    temp_array[ t * 4 + 0 ] =  tempmin + ( tc - vc - tempmin ) * ( (double) t / ((double)tempstep / 4) );
+    temp_array[ t * 4 + 1 ] =  tc - vc + vc  * ( (double) t / ((double)tempstep / 4) );
+    temp_array[ t * 4 + 2 ] =  tc + vc * ( (double) t / ((double)tempstep / 4) );
+    temp_array[ t * 4 + 3 ] =  tc + vc + (tempmax - tc - vc) * ( (double) t / ((double)tempstep / 4) );
   }
   std::sort( temp_array.begin(), temp_array.end() );
   //for(uint i = 0; i < tempstep; i++){
