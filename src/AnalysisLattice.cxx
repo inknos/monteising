@@ -15,6 +15,9 @@
 #include <iostream>
 using namespace std;
 
+//setting TempCritic
+double AnalysisLattice::TempCritic = 2.27;
+
 AnalysisLattice::AnalysisLattice(const TString& file_input, const TString& file_output) :
   file_in(file_input), file_out(file_output) {}
 
@@ -25,6 +28,10 @@ TString AnalysisLattice::getFileOut() const { return file_out; }
 void AnalysisLattice::setFileIn(const TString& file_input) { file_in = file_input; }
 
 void AnalysisLattice::setFileOut(const TString& file_output) { file_out = file_output; }
+
+double AnalysisLattice::getTempCritic() { return AnalysisLattice::TempCritic; }
+
+void AnalysisLattice::setTempCritic(const double& _TempCritic){ AnalysisLattice::TempCritic = _TempCritic; }
 
 void AnalysisLattice::run(){
   TH1D::SetDefaultSumw2(true);
@@ -584,18 +591,18 @@ double AnalysisLattice::analiticM(double * x , double * par ){
   //double Tc =2.27;
   //if( x[0] >= Tc ) return 0.*par[1];
   //else{
-     return TMath::Power( TMath::Abs(x[0] - par[1]) , par[0]);
+  return par[1]*TMath::Power( TMath::Abs(x[0] - AnalysisLattice::TempCritic) , par[0]);
   //}
 }
 
-TGraphErrors* AnalysisLattice::fitLattice( bool mean,
-                                           cuint& x_axis,
-                                           cuint& y_axis,
-                                           double Tc = 2.27 ,
-                                           double fit_temp_min = 1.5 ,
-                                           double fit_temp_max = 3.0 ,
-                                           int lat_number = 0
-                                         ){
+void AnalysisLattice::fitLattice( bool mean,
+                                  cuint& x_axis,
+                                  cuint& y_axis,
+                                  double Tc = 2.27 ,
+                                  double fit_temp_min = 1.5 ,
+                                  double fit_temp_max = 3.0 ,
+                                  int lat_number = 0
+                                ) {
   static INFO info;
   TFile ifile(file_out, "read");
   TTree * info_tree = (TTree*) ifile.Get("info");
@@ -623,11 +630,11 @@ TGraphErrors* AnalysisLattice::fitLattice( bool mean,
     g = drawLattice(lat_number, x_axis , y_axis );
   }
 
+  AnalysisLattice::setTempCritic(Tc);  
+  
   TF1 * f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 2);
-  f -> SetParameter(1, Tc);
   g ->Fit(f , "R");
   g -> Draw();
-  return g;
 }
 
 /*
@@ -640,6 +647,7 @@ void AnalysisLattice::plotAnalitic(){
   //fteo->SetParNames("normalizzazione","coefficiente");
   fteo->Draw();
 }
+*/
 
 std::vector<double> AnalysisLattice::bin(const std::vector<double> & vec){
   uint bin = 2;
@@ -660,3 +668,8 @@ std::vector<double> AnalysisLattice::binN(cuint& num_bin, const std::vector<doub
   //std::cout << "dim " << binvec.size() << std::endl << std::flush;
   return binvec;
 }
+
+
+
+
+

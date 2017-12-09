@@ -42,6 +42,7 @@ class AnalysisLattice {
  private:
   TString file_in;
   TString file_out;
+  static double TempCritic;
   
 
   std::vector<double> bin(const std::vector<double>& vec);
@@ -60,7 +61,7 @@ class AnalysisLattice {
                                  cuint& y_axis);
   
   
-  TGraphErrors* fitLattice( bool mean,
+  void fitLattice         ( bool mean,
                             cuint& x_axis,
                             cuint& y_axis,
                             double Tc,
@@ -81,6 +82,10 @@ class AnalysisLattice {
   void setFileIn(const TString& file_input);
 
   void setFileOut(const TString& file_output);
+  
+  static double getTempCritic();
+    
+  static void setTempCritic(const double& _TempCritic);
   
   void run();
 
