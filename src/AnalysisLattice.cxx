@@ -586,13 +586,12 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
 ////FITTING
 
 ////FITTING
+double AnalysisLattice::analiticX(double * x, double * par){
+  return par[2]*TMath::Power( TMath::Abs( x[0]/par[0] - 1) , -par[1] );
+}
 
 double AnalysisLattice::analiticM(double * x , double * par ){
-  //double Tc =2.27;
-  //if( x[0] >= Tc ) return 0.*par[1];
-  //else{
-  return par[1]*TMath::Power( TMath::Abs(x[0] - AnalysisLattice::TempCritic) , par[0]);
-  //}
+  return par[2]*TMath::Power( TMath::Abs( x[0]/par[0] - 1) , par[1] );
 }
 
 void AnalysisLattice::fitLattice( bool mean,
@@ -630,9 +629,16 @@ void AnalysisLattice::fitLattice( bool mean,
     g = drawLattice(lat_number, x_axis , y_axis );
   }
 
-  AnalysisLattice::setTempCritic(Tc);  
+  findTcritic();
   
-  TF1 * f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 2);
+  
+  TF1 * f;
+  if(y_axis == 3){
+    f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 3);
+  }
+  if(y_axis == 5){
+    f = new TF1("f" , AnalysisLattice::analiticX , fit_temp_min , fit_temp_max , 3);
+  }
   g ->Fit(f , "R");
   g -> Draw();
 }
@@ -669,6 +675,55 @@ std::vector<double> AnalysisLattice::binN(cuint& num_bin, const std::vector<doub
   return binvec;
 }
 
+
+void AnalysisLattice::findTcritic(){
+  static INFO info;
+  
+  TFile f(file_out, "read");
+  TTree * info_tree = (TTree*) f.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
+  double Tcritic;
+  
+  double* Temp  = new double[tempstep];
+  double* Susc  = new double[tempstep];
+  
+  Block * block_mean = 0;
+  
+  double SuscMax = 0.;
+  int tMax = 0;
+  
+  for(uint t = 0; t < tempstep; t++){
+    
+    TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
+    tree -> SetBranchAddress(TString("Lattice_ml_") + TString(std::to_string(t).c_str()), &block_mean );
+    tree -> GetEntry(0);
+    
+    Temp[t] = block_mean -> T;
+    Susc[t] = block_mean -> X;
+    
+    if(Susc[t] > SuscMax){
+      SuscMax = Susc[t];
+      tMax = t;
+    }
+    
+  }
+  cout << "TempCritic is : " << Temp[tMax] << endl;
+  setTempCritic(Temp[tMax]);
+  
+  delete[] Temp;
+  delete[] Susc;
+}
 
 
 

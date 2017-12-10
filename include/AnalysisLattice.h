@@ -51,7 +51,8 @@ class AnalysisLattice {
   
  public:
  
-  static double analiticM(double* x , double*par);
+  static double analiticX(double * x, double * par);
+  static double analiticM(double * x , double * par);
 
   TGraphErrors * drawLattice(cuint& lattice_number,
                              cuint& x_axis,
@@ -74,7 +75,6 @@ class AnalysisLattice {
                                
   AnalysisLattice(const TString& file_input, const TString& file_output);
 
-
   TString getFileIn() const;
 
   TString getFileOut() const;
@@ -90,6 +90,8 @@ class AnalysisLattice {
   void run();
 
   TMultiGraph * draw(cuint& x_axis, cuint& y_axis);
+  
+  void findTcritic();
 };
 
 #endif
