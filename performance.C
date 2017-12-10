@@ -8,16 +8,16 @@
 #include <stdio.h>
 #include "AnalysisLattice.h"
 #include "SimulationLattice.h"
-#include "TStopWatch.h"
+#include "TStopwatch.h"
 #include "TString.h"
 
-define unsigned int uint;
+#define unsigned int uint;
 
 void performanceSim(uint size, uint N, uint I0, uint I, uint tempSteps);
-double performance(TString& par);
+void performance(uint par);
 
 void performanceSim(uint size=10, uint N=1, uint I0=1000, uint I=1000, uint tempSteps=4){
-  TStopWatch timer;
+  TStopwatch timer;
   timer.Start();
   SimulationLattice s(size, 2, N, "performance.root", I0, I, 0., 3.5, tempSteps);
   s.run();
@@ -32,28 +32,29 @@ void performanceSim(uint size=10, uint N=1, uint I0=1000, uint I=1000, uint temp
   
 }
 
-double performance(TString& par){
-  if(par == TString("size")){
+void performance(uint par){
+  std::cout << "\t \t \t \t" << "PAR : " << par << endl;
+  if(par == 1){
     performanceSim();
     performanceSim(2*10);
     performanceSim(4*10);
   }
-  if(par == TString("N")){
+  if(par == 2){
     performanceSim();
     performanceSim(10, 2*1);
     performanceSim(10, 4*1);
   }
-  if(par == TString("I0")){
+  if(par == 3){
     performanceSim();
     performanceSim(10, 1, 2*1000);
     performanceSim(10, 1, 4*1000);
   }
-  if(par == TString("I")){
+  if(par == 4){
     performanceSim();
     performanceSim(10, 1, 1000, 2*1000);
     performanceSim(10, 1, 1000, 4*1000);
   }
-  if(par == TString("tempSteps")){
+  if(par == 5){
     performanceSim();
     performanceSim(10, 1, 1000, 1000, 2*4);
     performanceSim(10, 1, 1000, 1000, 4*4);
