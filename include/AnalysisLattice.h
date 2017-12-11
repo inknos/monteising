@@ -71,7 +71,6 @@ class AnalysisLattice {
   void fitLattice         ( bool mean,
                             cuint& x_axis,
                             cuint& y_axis,
-                            double Tc,
                             double fit_temp_min,
                             double fit_temp_max,
                             int lat_number
@@ -89,8 +88,6 @@ class AnalysisLattice {
   void setFileIn(const TString& file_input);
 
   void setFileOut(const TString& file_output);
-
-
 
 
 };
