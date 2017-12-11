@@ -301,27 +301,38 @@ The computation of the spin coordinates is explained in the Model Section.
 
 \subsection*{SimulationLattice}
 
+Simulation Lattice permits to run a simulation and collect data during runtime.
+The simulation is performed on a set of Lattice objects over a range of temperatures \\
+All Lattices have same edge length and same dimension
+For each temperature :  
+\begin{itemize}
+	\item[] each Lattice is submitted to \textbf{I0} cooling iterations in order to reach thermal equilibrium. \\ In this step data are not collected
+	\item[] each Lattice is submitted to \textbf{iter} cooling iterations,   \\
+	 		during each iteration measures of temperature, energy, magnetization and susceptibility are 				collected. 
+\end{itemize} 
+ 
 \begin{itemize}
 
 	\item[] PRIVATE DATA MEMBERS \\ 
 	
 	\begin{tabular}{lll}
-		Lattice ${}^*$  	& \textbf{lattice\textunderscore vector}  & blabla	\\
+		Lattice ${}^*$  	& \textbf{lattice\textunderscore vector}  & vector storing a Lattice for each entry\\
 			
-		const uint 		& \textbf{N}        & blabla			  \\
-		const uint 		& \textbf{dim}      & blabla			  \\
-		const uint 		& \textbf{dim\textunderscore vector}    & blabla \\
+		const uint 		& \textbf{N}        & edge length of each Lattice \\
+		const uint 		& \textbf{dim}      & dimension of each Lattice		\\
+		const uint 		& \textbf{dim\textunderscore vector}    & dimension of \textbf{lattice\textunderscore vector} \\
 		
-  		const TString  	& \textbf{file} & blabla  \\
+  		const TString  	& \textbf{file} & root file name in which data are collected \\
   		
-  		uint 		& \textbf{iter}        & blabla			  \\
-		uint 		& \textbf{I0}      	   & blabla			  \\
+  		uint & \textbf{I0} & number of iterations not collecting data \\
+		uint 		& \textbf{iter} & number of iterations collecting data \\
   										
-  		double 	& \textbf{tempmin}        & blabla 	 \\
-  		double 	& \textbf{tempmax}        & blabla 	 \\
-  		uint 	& \textbf{tempstep}       & blabla	 \\
-  		
+  		double 	& \textbf{tempmin}        & minimum range's temperature  \\
+  		double 	& \textbf{tempmax}        & maximum range's temperature	  \\
+  		uint 	& \textbf{tempstep}       & number of temperatures in the range \\
+   		
 	\end{tabular}
+	\item[] \textbf{n.b.} : \textbf{tempstep} should be a multiple of 4 for implementation reasons \\ 
 
 	\item[] PUBLIC MEMBER FUNCTIONS \\ 
 	\begin{itemize}
@@ -329,142 +340,62 @@ The computation of the spin coordinates is explained in the Model Section.
 
 			\item[] \textbf{SimulationLattice}()	 
 			\begin{itemize}
-				\item[] 
+				\item[] Default Constructor
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector)		 
 			\begin{itemize}
-				\item[] 
+				\item[] 3-Parameters Constructor \\
+						The other data members can be assigned with the setter methods
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Full Parameter Constructor
 			\end{itemize}
 
 			\item[] \textbf{SimulationLattice}(const Lattice\& \textunderscore lat , const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)			 
 			\begin{itemize}
-				\item[] 
+				\item[] Constructor based on a Lattice  \\
+						Sets \textbf{N} and \textbf{dim} as those of lat    
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const SimulationLattice\& obj)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Copy Constructor
 			\end{itemize}
 			
 			\item[] SimulationLattice\& \textbf{operator=}(const SimulationLattice\& obj)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Assignment Operator
 			\end{itemize}
 		
 		\item[] DESTRUCTOR \\
 		
 			\item[] \textbf{$\sim$ SimulationLattice}	 
 			\begin{itemize}
-				\item[] 
-			\end{itemize}		
-		
-		\item[] GETTERS AND SETTERS \\
- 			
- 			\item[] Lattice \textbf{getLattice}(const uint\& i)		 
-			\begin{itemize}
-				\item[] 
+				\item[] Frees up memory allocated by \textbf{lattice\textunderscore vector} 
 			\end{itemize}
-			
-			\item[]  uint \textbf{getN}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]  uint \textbf{getDim}() const	 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]  uint \textbf{getDimVector}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] TString \textbf{getFile}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]	uint \textbf{getIter}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] uint \textbf{getI0}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] double \textbf{getTempMin}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}	
-			
-			\item[] double \textbf{getTempMax}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] double \textbf{getTempStep}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			%\item[] static uint \texbf{getT}()	 
-			%\begin{itemize}
-			%	\item[] 
-			%\end{itemize}
-			
-			\item[] void \textbf{setFile}(const TString\& \textunderscore file ) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]	void \textbf{setIter}(const uint\& \textunderscore iter) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setI0}(const uint\& \textunderscore i0) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setTempMin}(const double\& \textunderscore tempmin) 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}	
-			
-			\item[] void \textbf{setTempMax}(const double\& \textunderscore tempmax)			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setTempStep}(const uint\& \textunderscore tempstep) 			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			%\item[] void \texbf{setT}(const double \& \textunderscore T)	 
-			%\begin{itemize}
-			%	\item[] 
-			%\end{itemize}
-			
-
 			
 		\item[] RUN \\
 			
-			\item[] void \textbf{printLatticeCSV}(const TString\& name) const		 
+			\item[] void \textbf{run}() const		 
 			\begin{itemize}
-				\item[] 
+				\item[] Performs the simulation 
 			\end{itemize}
-			
+					
+		
+		\item[] GETTERS AND SETTERS \\
+ 			
+ 			\item[] Getters methods are defined for all the Private Data Members except for \textbf{lattice\textunderscore vector}, but its entries can be obtained with : 
+ 			  
+ 			\item[] Lattice \textbf{getLattice}(const uint\& i)		 
+			\begin{itemize}
+				\item[] returns \textbf{lattice\textunderscore vector}[i]  
+			\end{itemize}
+ 					
+ 			\item[] Setters methods are defined for all the Private Data Members except for \textbf{lattice\textunderscore vector} \textbf{N}, \textbf{dim} and \textbf{dim\textunderscore vector}   
+ 			 		
 	\end{itemize}
 
 	
@@ -475,123 +406,124 @@ The computation of the spin coordinates is explained in the Model Section.
 
 \begin{itemize}
 
-	\item[] PRIVATE DATA MEMBERS \\ 
-	
-	\begin{tabular}{lll}
-		const TString 		& \textbf{file\textunderscore in}      & input root file name	 \\
-		const TString 		& \textbf{file\textunderscore out}      & output root file name	 \\		
-		%bisogna decidere se togliere o meno questo data member se fittiamo il lattice  		
-  		static double 	& \textbf{TempCritic}   & critic temperature  						\\
-	\end{tabular}
 
-	\item[] PUBLIC MEMBER FUNCTIONS \\ 
-	\begin{itemize}
-		\item[] CONSTRUCTOR \\
+\item[] PRIVATE DATA MEMBERS \\
 
-			\item[] \textbf{AnalysisLattice}(const TString\& file\textunderscore input, const TString\& file\textunderscore output) 
-			\begin{itemize}
-			\item[] Parametric Cnstructor\\
-			  Sets input and output files.
-			\end{itemize}
-			
-		\item[] RUN FUNCTION			
-			
-			\item[] void \textbf{run}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-	
-		\item[] DRAW FUNCTIONS
-		
-			\item[]	TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
-                             cuint\& x\textunderscore axis,
-                             cuint\& y\textunderscore axis)
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
+  \begin{tabular}{lll}
+    const TString               & \textbf{file\textunderscore in}      & input root file name    \\
+    const TString               & \textbf{file\textunderscore out}      & output root file name  \\
+    % bisogna decidere se togliere o meno questo data member se fittiamo il lattice
+    static double       & \textbf{TempCritic}   & critic temperature                                            \\
+  \end{tabular}
 
-			\item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
-                             cuint\& x\textunderscore axis,
-                             cuint\& y\textunderscore axis)		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] TGraphErrors ${}^*$ \textbf{draw}(
-                             cuint\& x\textunderscore axis,
-                             cuint\& y\textunderscore axis)		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}		
+\item[] PUBLIC MEMBER FUNCTIONS \\
+  \begin{itemize}
+  \item[] CONSTRUCTOR \\
 
-                           
-		\item[] FIT FUNCTIONS \\
-				
-			\item[] static double \textbf{analiticX}(double $*$ x, double $*$ par)	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] static double \textbf{analiticM}(double $*$ x, double $*$ par)			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{findTcritic}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{fitLattice}( bool mean,
-                            				  cuint\& x\textunderscore axis,
-                            				  cuint\& y\textunderscore axis,
-                            				  double Tc,
-                            				  double fit\textunderscore temp\textunderscore min,
-                            				  double fit\textunderscore temp\textunderscore max,
-                           					  int lat\textunderscore number
-				                            );		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-\newpage
-			
-		\item[]	GETTERS AND SETTERS \\
-	
-			\item[] static double \textbf{getTempCritic}()		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] static void \textbf{setTempCritic}(const double\& \textunderscore TempCritic);		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] TString \textbf{getFileIn}() const;
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] TString \textbf{getFileOut}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}	
-			
-			\item[]  void \textbf{setFileIn}(const TString\& file\textunderscore input)		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setFileOut}(const TString\& file\textunderscore out)				 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-	\end{itemize}
+  \item[] \textbf{AnalysisLattice}(const TString\& file\textunderscore input, const TString\& file\textunderscore output)
+    \begin{itemize}
+    \item[] Parametric Cnstructor\\
+      Sets input and output files.
+    \end{itemize}
 
-	
-      \end{itemize}
+  \item[] RUN FUNCTION
 
-      \lstinputlisting[language=cpp, caption={Caption}]
-      {../test/relationMacro.C}
+  \item[] void \textbf{run}()
+    \begin{itemize}
+    \item[] Performs the analysis of the previous simulation.\\
+      Recreates output file.
+    \end{itemize}
+
+  \item[] DRAW FUNCTIONS
+
+  \item[]       TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] TGraphErrors ${}^*$ \textbf{draw}(
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[] 
+    \end{itemize}
+
+
+  \item[] FIT FUNCTIONS \\
+
+  \item[] static double \textbf{analiticX}(double $*$ x, double $*$ par)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] static double \textbf{analiticM}(double $*$ x, double $*$ par)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] void \textbf{findTcritic}()
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] void \textbf{fitLattice}( bool mean,
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis,
+    double Tc,
+    double fit\textunderscore temp\textunderscore min,
+    double fit\textunderscore temp\textunderscore max,
+    int lat\textunderscore number
+    );
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+    \newpage
+
+  \item[]       GETTERS AND SETTERS \\
+
+  \item[] static double \textbf{getTempCritic}()
+    \begin{itemize}
+    \item[] Get critic temperature.
+    \end{itemize}
+
+  \item[] static void \textbf{setTempCritic}(const double\& \textunderscore TempCritic);
+    \begin{itemize}
+    \item[] Set critic temperature.
+    \end{itemize}
+
+  \item[] TString \textbf{getFileIn}() const;
+    \begin{itemize}
+    \item[] Get input file name.
+    \end{itemize}
+
+  \item[] TString \textbf{getFileOut}() const
+    \begin{itemize}
+    \item[] Get output file name.
+    \end{itemize}
+
+  \item[]  void \textbf{setFileIn}(const TString\& file\textunderscore input)
+    \begin{itemize}
+    \item[] Set input file name.
+    \end{itemize}
+
+  \item[] void \textbf{setFileOut}(const TString\& file\textunderscore out)
+    \begin{itemize}
+    \item[] Set output file name.
+    \end{itemize}
+
+  \end{itemize}
+\end{itemize}
+
+\lstinputlisting[language=cpp, caption={Caption}]
+{../test/relationMacro.C}
+
