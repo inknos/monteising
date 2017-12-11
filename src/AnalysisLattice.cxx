@@ -8,13 +8,12 @@
 #include "TBranch.h"
 #include "TMath.h"
 #include "TH1D.h"
-#include "TCanvas.h"
+#include "TLegend.h"
 
 #include <string>
 #include <vector>
 
 #include <iostream>
-using namespace std;
 
 //setting TempCritic
 double AnalysisLattice::TempCritic = 2.27;
@@ -348,82 +347,121 @@ TGraphErrors * AnalysisLattice::drawLattice(cuint& lattice_number,
   Block * block_mean = 0;
   Block * block_std = 0;
 
+  TString title;
+  TString xtitle;
+  TString ytitle;
+
   for(uint t = 0; t < tempstep; t++){
 
     TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree -> SetBranchAddress(TString("Lattice_mean_") + TString(std::to_string(lattice_number).c_str()), &block_mean );
     tree -> SetBranchAddress(TString("Lattice_std_") + TString(std::to_string(lattice_number).c_str()), &block_std);
     tree -> GetEntry(0);
-
-    switch(x_axis) {
-    case 1:{
-      x[t]  = block_mean -> E;
-      dx[t] = block_std  -> E;
-      break;
-    }
-    case 2:{
-      x[t]  = block_mean -> T;
-      dx[t] = block_std  -> T;
-      break;
-    }
-    case 3:{
-      x[t]  = block_mean -> M;
-      dx[t] = block_std  -> M;
-      break;
-    }
-    case 4:{
-      x[t]  = block_mean -> S;
-      dx[t] = block_std  -> S;
-      break;
-    }
-    case 5:{
-      x[t]  = block_mean -> X;
-      dx[t] = block_std  -> X;
-      break;
-    }
-    default:{
-      x[t]  = block_mean -> T;
-      dx[t] = block_std  -> T;
-      std::cout << "Falling to default for x axis (Temperature)\n" << std::flush;
-      break;
-    }
-    }
+    
     switch(y_axis){
     case 1:{
       y[t]  = block_mean -> E;
       dy[t] = block_std  -> E;
+      ytitle = TString("Energy (J)");
+      title  = TString("Energy on ");
       break;
     }
     case 2:{
       y[t]  = block_mean -> T;
       dy[t] = block_std  -> T;
+      ytitle = TString("Temperature (#frac{J}{k_{B}})");
+      title  = TString("Temperature on ");
       break;
     }
     case 3:{
+      //abs ? y[t]  = TMath::Abs( block_mean -> M ) : y[t] = block_mean -> M;
       y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
+      ytitle = TString("Magnetization per Site (#mu)");
+      title  = TString("Magnetization per Site on ");
       break;
     }
     case 4:{
       y[t]  = block_mean -> S;
       dy[t] = block_std  -> S;
+      ytitle = TString("Energy per Site (J)");
+      title  = TString("Energy per Site on ");
       break;
     }
     case 5:{
       y[t]  = block_mean -> X;
       dy[t] = block_std  -> X;
+      ytitle = TString("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
+      title  = TString("Magnetic Susceptibility on ");
       break;
     }
     default:{
       y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
       std::cout << "Falling to default for y axis (Magnetization)\n" << std::flush;
+      ytitle = TString("Magnetization per Site (#mu)");
+      title  = TString("Magnetization per Site on ");
       break;
     }
     }
+    switch(x_axis) {
+    case 1:{
+      //abs ? TMath::Abs( x[t] = block_mean -> E ) : x[t]  = block_mean -> E;
+      x[t]  = block_mean -> E;
+      dx[t] = block_std  -> E;
+      xtitle = TString("Energy (J)");
+      title += TString("Energy");
+      break;
+    }
+    case 2:{
+      x[t]  = block_mean -> T;
+      dx[t] = block_std  -> T;
+      xtitle = TString("Temperature (#frac{J}{k_{B}})");
+      title += TString("Temperature");
+      break;
+    }
+    case 3:{
+      x[t]  = block_mean -> M;
+      dx[t] = block_std  -> M;
+      xtitle = TString("Magnetization (#mu)");
+      title += TString("Magnetization");
+      break;
+    }
+    case 4:{
+      x[t]  = block_mean -> S;
+      dx[t] = block_std  -> S;
+      xtitle = TString("Energy per Site (J)");
+      title += TString("Energy per Site");
+      break;
+    }
+    case 5:{
+      x[t]  = block_mean -> X;
+      dx[t] = block_std  -> X;
+      xtitle = TString("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
+      title += TString("Magnetic Susceptibility");
+      break;
+    }
+    default:{
+      x[t]  = block_mean -> T;
+      dx[t] = block_std  -> T;
+      xtitle = TString("Temperature (#frac{J}{k_{B}})");
+      title += TString("Temperature on ");
+      std::cout << "Falling to default for x axis (Temperature)\n" << std::flush;
+      break;
+    }
+    }
+    //cout << "y[" << t << "] " << y[t] << endl << flush;
+    //cout << "\t" << "\t" << "dy[" << t << "] " << dy[t] << endl << flush;
   }
 
+  title += TString(" of Lattice ") + std::to_string(lattice_number).c_str();
+
   TGraphErrors * graph = new TGraphErrors(tempstep, x, y, dx, dy);
+  graph -> SetTitle(title);
+  graph -> GetXaxis() -> SetTitle(xtitle);
+  graph -> GetYaxis() -> SetTitle(ytitle);
+  graph -> SetMarkerStyle(22);
+  graph -> SetMarkerColor(kBlue + 3);
   //graph->Draw();
 
   delete[] x;
@@ -492,79 +530,107 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
   Block * block_mean = 0;
   Block * block_std = 0;
 
+  TString title;
+  TString xtitle;
+  TString ytitle;
+
   for(uint t = 0; t < tempstep; t++){
 
     TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree -> SetBranchAddress(TString("Lattice_ml_") + TString(std::to_string(t).c_str()), &block_mean );
     tree -> SetBranchAddress(TString("Lattice_ml_std_") + TString(std::to_string(t).c_str()), &block_std);
     tree -> GetEntry(0);
-
-    switch(x_axis) {
-    case 1:{
-      //abs ? TMath::Abs( x[t] = block_mean -> E ) : x[t]  = block_mean -> E;
-      x[t]  = block_mean -> E;
-      dx[t] = block_std  -> E;
-      break;
-    }
-    case 2:{
-      x[t]  = block_mean -> T;
-      dx[t] = block_std  -> T;
-      break;
-    }
-    case 3:{
-      x[t]  = block_mean -> M;
-      dx[t] = block_std  -> M;
-      break;
-    }
-    case 4:{
-      x[t]  = block_mean -> S;
-      dx[t] = block_std  -> S;
-      break;
-    }
-    case 5:{
-      x[t]  = block_mean -> X;
-      dx[t] = block_std  -> X;
-      break;
-    }
-    default:{
-      x[t]  = block_mean -> T;
-      dx[t] = block_std  -> T;
-      std::cout << "Falling to default for x axis (Temperature)\n" << std::flush;
-      break;
-    }
-    }
+    xtitle = "";
+    ytitle = "";
     switch(y_axis){
     case 1:{
       y[t]  = block_mean -> E;
       dy[t] = block_std  -> E;
+      ytitle = TString("Energy (J)");
+      title = TString("Energy on ");
       break;
     }
     case 2:{
       y[t]  = block_mean -> T;
       dy[t] = block_std  -> T;
+      ytitle = TString("Temperature (#frac{J}{k_{B}})");
+      title = TString("Temperature on ");
       break;
     }
     case 3:{
       //abs ? y[t]  = TMath::Abs( block_mean -> M ) : y[t] = block_mean -> M;
       y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
-
+      ytitle = TString("Magnetization per Site (#mu)");
+      title = TString("Magnetization per Site on ");
       break;
     }
     case 4:{
       y[t]  = block_mean -> S;
       dy[t] = block_std  -> S;
+      ytitle = TString("Energy per Site (J)");
+      title = TString("Energy per Site on ");
       break;
     }
     case 5:{
       y[t]  = block_mean -> X;
       dy[t] = block_std  -> X;
+      ytitle = TString("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
+      title = TString("Magnetic Susceptibility on ");
       break;
     }
     default:{
       y[t]  = block_mean -> M;
       dy[t] = block_std  -> M;
       std::cout << "Falling to default for y axis (Magnetization)\n" << std::flush;
+      ytitle = TString("Magnetization per Site (#mu)");
+      title = TString("Magnetization per Site on ");
+      break;
+    }
+    }
+    switch(x_axis) {
+    case 1:{
+      //abs ? TMath::Abs( x[t] = block_mean -> E ) : x[t]  = block_mean -> E;
+      x[t]  = block_mean -> E;
+      dx[t] = block_std  -> E;
+      xtitle = TString("Energy (J)");
+      title += TString("Energy");
+      break;
+    }
+    case 2:{
+      x[t]  = block_mean -> T;
+      dx[t] = block_std  -> T;
+      xtitle = TString("Temperature (#frac{J}{k_{B}})");
+      title += TString("Temperature");
+      break;
+    }
+    case 3:{
+      x[t]  = block_mean -> M;
+      dx[t] = block_std  -> M;
+      xtitle = TString("Magnetization (#mu)");
+      title += TString("Magnetization");
+      break;
+    }
+    case 4:{
+      x[t]  = block_mean -> S;
+      dx[t] = block_std  -> S;
+      xtitle = TString("Energy per Site (J)");
+      title += TString("Energy per Site");
+      break;
+    }
+    case 5:{
+      x[t]  = block_mean -> X;
+      dx[t] = block_std  -> X;
+      xtitle = TString("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
+      title += TString("Magnetic Susceptibility");
+      break;
+    }
+    default:{
+      x[t]  = block_mean -> T;
+      dx[t] = block_std  -> T;
+      xtitle = TString("Temperature (#frac{J}{k_{B}})");
+      title += TString("Temperature on ");
+      std::cout << "Falling to default for x axis (Temperature)\n" << std::flush;
       break;
     }
     }
@@ -573,10 +639,16 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
     //cout << "\t" << "\t" << "dy[" << t << "] " << dy[t] << endl << flush;
   }
 
+  title += TString(": Mean On All Lattices");
 
   TGraphErrors * graph = new TGraphErrors(tempstep, x, y, dx, dy);
+  graph -> SetTitle(title);
+  graph -> GetXaxis() -> SetTitle(xtitle);
+  graph -> GetYaxis() -> SetTitle(ytitle);
+  graph -> SetMarkerStyle(22);
+  graph -> SetMarkerColor(kBlue + 3);
   //graph->Draw();
-
+  
   delete[] x;
   delete[] y;
   delete[] dx;
@@ -631,20 +703,26 @@ void AnalysisLattice::fitLattice( bool mean,
 
   findTcritic();
 
-
   TF1 * f;
   if(y_axis == 3){
     f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 3);
     f -> SetParameters(TempCritic, 0.12, 1.1);
     f -> SetParNames("T critic", "exp critic", "coeff");
+    g -> SetTitle("Temperature/Magnetization Fit");
+    g -> GetYaxis() -> SetTitle("Magnetization per Site (#mu)");
   }
   if(y_axis == 5){
     f = new TF1("f" , AnalysisLattice::analiticX , fit_temp_min , fit_temp_max , 3);
     f -> SetParameters(TempCritic, 1.175, 6e-6);
     f -> SetParNames("T critic", "exp critic", "coeff");
+    g -> SetTitle("Temperature/Magnetic Susceptibility Fit");
+    g -> GetYaxis() -> SetTitle("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
   }
-  g ->Fit(f , "R");
-  g -> Draw("ALP*");
+  g -> SetMarkerStyle(22);
+  g -> SetMarkerColor(kBlue + 3);
+  g -> GetXaxis() -> SetTitle("Temperature (#frac{J}{k_{B}})");
+  g -> Fit(f , "R");
+  g -> Draw("ALP");
 }
 
 /*
@@ -731,7 +809,6 @@ void AnalysisLattice::findTcritic(){
 
 void AnalysisLattice::evalBinning(const uint& nb){
   static INFO info;
-
   TFile f(file_in, "read");
   TTree * info_tree = (TTree*) f.Get("info");
   TBranch * info_branch = info_tree -> GetBranch("Info");
@@ -746,16 +823,13 @@ void AnalysisLattice::evalBinning(const uint& nb){
   uint iter      = info._iter;
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
-
   uint num_bin = nb;
   uint dim_before_bin = iter + 1;
   uint dim_after_bin = (uint) ( dim_before_bin / TMath::Power((int)2, (int)0) ) ;
-
   std::vector<double> Eb ( dim_before_bin, 0. );
   std::vector<double> Ea ( dim_after_bin,  0. );
   std::vector<double> E  ( num_bin, 0. );
   std::vector<double> dE ( num_bin, 0. );
-
   std::vector<double> bin_vec (num_bin, 0.);
   std::vector<double> bin_v (num_bin, 0.);
   Block * block = 0;
@@ -767,32 +841,28 @@ void AnalysisLattice::evalBinning(const uint& nb){
     tree -> GetEntry(j);
     Eb[j] = block -> E;
   } // get data
-  
   for(uint b = 0; b < num_bin; b++) {
     bin_vec[b] = TMath::Power((int)2, (int)b);
     bin_v[b] = b;
-    std::cout << bin_vec[b] << std::endl;
     dim_after_bin = (uint) ( dim_before_bin / (int) bin_vec[b] ) ;
-
     Ea = std::vector<double>( dim_after_bin,  0. );
     Ea = binN(b, Eb);
-
     for(uint j = 0; j < dim_after_bin; j++){
       E[b] += Ea[j];
     }
-
     E[b] /= (dim_after_bin);
     for(uint j = 0; j < dim_after_bin; j++){
-      //std::cout << "j " << j << std::endl << std::flush;
       dE[b] += ( E[b] - Ea[j] ) * ( E[b] - Ea[j] );
     }
-
     dE[b] = TMath::Sqrt( dE[b] / ( dim_after_bin ) );
-    //std::cout << dE[b] << std::endl;
   }
-  //TCanvas * c1;
-  //c1 -> SetLogy();
+  std::reverse(bin_v.begin(), bin_v.end());
   TGraph * gr = new TGraph(num_bin, bin_v.data(), dE.data());
-  gr -> Draw("ALP*");
-  
+  gr -> SetMarkerStyle(33);
+  gr -> SetMarkerSize(2);
+  gr -> SetMarkerColor(kBlue + 3);
+  gr -> SetTitle("Energy Std. Dev. of Lattice_0 at T_50 over Binning");
+  gr->GetXaxis()->SetTitle("Bin Folding");
+  gr->GetYaxis()->SetTitle("Energy Std. Dev.");
+  gr -> Draw("ALP");
 }

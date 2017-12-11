@@ -136,9 +136,9 @@ void SimulationLattice::run(){
             << "! " << iter << " iter. collecting data  \t!\n"
             << "! from " << tempmin << " to " << tempmax << " in " << tempstep << "steps\t\t!\n"
             << R"(!                                       !
-?=======================================?)" 
+?=======================================?)"
            << endl;
-  
+
   TDatime datime;
   unsigned int datime_t = datime.Get();
   const char * file_t = file;
@@ -163,7 +163,7 @@ void SimulationLattice::run(){
   f.Write();
   tree -> Delete();
   Block * block = new Block[dim_vector];
-  
+
   int    * E_tmp = new int[dim_vector];
   double * M_tmp = new double[dim_vector];
   double * S_tmp = new double[dim_vector];
@@ -194,12 +194,12 @@ void SimulationLattice::run(){
   //for(uint i = 0; i < tempstep; i++){
   //  cout << "temp_array is : " << temp_array[i] << endl << flush;
   //}
-  
+
   for(uint t = 0; t < tempstep; t++) {
     TString treeName(TString("T_") + TString(std::to_string( t ).c_str() ));
     TString treeTitle(TString("TemperatureTree_") + TString(std::to_string( t ).c_str() ));
     TTree * tree = new TTree(treeName, treeTitle);
-    
+
     setT(temp_array[t]);
 
     for(uint i = 0; i < dim_vector; i++) {
@@ -209,7 +209,7 @@ void SimulationLattice::run(){
       M_tmp[i] = lattice_vector[i].magnetization();
       S_tmp[i] = ( (double) E_tmp[i])/ lattice_vector[i].getNumSpin();
       T_tmp[i] = Lattice::getT();
-   
+
       block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, I0);
     }
     tree -> Fill();
@@ -235,6 +235,7 @@ void SimulationLattice::run(){
   delete[] S_tmp;
   delete[] T_tmp;
   delete[] data;
+  delete[] block;
   
   f.Write();
   f.Close();

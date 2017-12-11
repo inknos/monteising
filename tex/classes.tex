@@ -1,5 +1,7 @@
 
-\section*{Classes}
+\begin{flushright}
+•
+\end{flushright}\section*{Classes}
 	
 \subsection*{Lattice}
 
@@ -111,8 +113,7 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 			\item[] Lattice\& \textbf{operator=}(const Lattice\& obj)		 
 			\begin{itemize}
 				\item[] Assignment operator \\
-						Deallocates memory with destructor  
-						and allocates in the same position a new Lattice applying copy constructor of obj 				\end{itemize}
+			\end{itemize}
 			
 			\item[] friend std::ostream\& \textbf{operator$<<$}(std::ostream\& out, const Lattice\& lat) 	
 			\begin{itemize}
@@ -125,6 +126,8 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 				\item[] Taking \textsf{lat1} and \textsf{lat2} as references to Lattice objects \\
 						\textsf{lat1 == lat2} returns true if \textsf{lat1} and \textsf{lat2} have same data members
 			\end{itemize}
+			
+\newpage			
 			
 		\item[] 
 		GETTERS AND SETTERS \\
@@ -209,7 +212,7 @@ The computation of the spin coordinates is explained in the Model Section.
 			\item[] \textbf{DrawLattice}()		 
 			\begin{itemize}
 				\item[] Default Constructor \\
-						Creates lattice with Lattice Standard Constructor					
+						Creates lattice with Lattice Default Constructor					
 						
 			\end{itemize}
 			
@@ -367,23 +370,23 @@ For each temperature :
 			
 			\item[] SimulationLattice\& \textbf{operator=}(const SimulationLattice\& obj)		 
 			\begin{itemize}
-				\item[] Assignment Operator
+				\item[] Assignment Operator \\
 			\end{itemize}
 		
 		\item[] DESTRUCTOR \\
 		
 			\item[] \textbf{$\sim$ SimulationLattice}	 
 			\begin{itemize}
-				\item[] Frees up memory allocated by \textbf{lattice\textunderscore vector} 
+				\item[] Frees up memory allocated by \textbf{lattice\textunderscore vector}  \\
 			\end{itemize}
 			
-		\item[] RUN \\
+		\item[] RUN FUNCTION \\
 			
 			\item[] void \textbf{run}() const		 
 			\begin{itemize}
-				\item[] Performs the simulation 
+				\item[] Performs the simulation \\  
 			\end{itemize}
-					
+						
 		
 		\item[] GETTERS AND SETTERS \\
  			
@@ -401,11 +404,23 @@ For each temperature :
 	
 \end{itemize}
 
+\newpage
 
 \subsection*{AnalysisLattice}
 
+AnalysisLattice performs an analysis on raw data collected on a simulation input-file \\ 
+The analysis creates an output-file which stores : 
 \begin{itemize}
+	\item[] mean and standard deviation of physical quantities for each Lattice and temperature of the
+	 		simulation.
+	\item[] mean and standard deviation performed over the Lattices for each temperature of the simulation 	 		
+	 		 
+\end{itemize}
+Once the output file is created, the physical functions can be plotted into a graph \\
+The curves of Magnetization and Susceptibility vs Temperature can be fitted in order to estimate the Critical Temperature and Exponenents of the phase transition.
 
+
+\begin{itemize}
 
 \item[] PRIVATE DATA MEMBERS \\
 
@@ -422,8 +437,8 @@ For each temperature :
 
   \item[] \textbf{AnalysisLattice}(const TString\& file\textunderscore input, const TString\& file\textunderscore output)
     \begin{itemize}
-    \item[] Parametric Cnstructor\\
-      Sets input and output files.
+    \item[] Parametric Constructor\\
+      Sets input and output file names
     \end{itemize}
 
   \item[] RUN FUNCTION
@@ -431,16 +446,17 @@ For each temperature :
   \item[] void \textbf{run}()
     \begin{itemize}
     \item[] Performs the analysis of the previous simulation.\\
-      Recreates output file.
+      Recreates output file
     \end{itemize}
 
   \item[] DRAW FUNCTIONS
 
-  \item[]       TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
+  \item[] TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
     cuint\& x\textunderscore axis,
     cuint\& y\textunderscore axis)
     \begin{itemize}
-    \item[]
+    \item[] returns a TGraphErrors of x and y which take value from 0 to 5 \\
+    		0-1-2-3-4-5   
     \end{itemize}
 
   \item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
@@ -457,6 +473,7 @@ For each temperature :
     \item[] 
     \end{itemize}
 
+\newpage
 
   \item[] FIT FUNCTIONS \\
 
@@ -487,7 +504,6 @@ For each temperature :
     \item[]
     \end{itemize}
 
-    \newpage
 
   \item[]       GETTERS AND SETTERS \\
 
@@ -523,6 +539,8 @@ For each temperature :
 
   \end{itemize}
 \end{itemize}
+
+\newpage
 
 \lstinputlisting[language=cpp, caption={Caption}]
 {../test/relationMacro.C}
