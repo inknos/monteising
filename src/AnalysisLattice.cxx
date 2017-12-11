@@ -792,7 +792,13 @@ void AnalysisLattice::evalBinning(const uint& nb){
   }
   //TCanvas * c1;
   //c1 -> SetLogy();
+  std::reverse(bin_v.begin(), bin_v.end());
   TGraph * gr = new TGraph(num_bin, bin_v.data(), dE.data());
-  gr -> Draw("ALP*");
-  
+  gr -> SetMarkerStyle(33);
+  gr -> SetMarkerSize(2);
+  gr -> SetMarkerColor(kBlue + 3);
+  gr -> SetTitle("Energy Std. Dev. of Lattice_0 at T_50 over Binning");
+  gr->GetXaxis()->SetTitle("Bin Folding");
+  gr->GetYaxis()->SetTitle("Energy Std. Dev.");
+  gr -> Draw("ALP");
 }
