@@ -14,7 +14,6 @@
 #include <vector>
 
 #include <iostream>
-using namespace std;
 
 //setting TempCritic
 double AnalysisLattice::TempCritic = 2.27;
