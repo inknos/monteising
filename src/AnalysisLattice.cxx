@@ -587,17 +587,16 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
 
 ////FITTING
 double AnalysisLattice::analiticX(double * x, double * par){
-  return par[2]*TMath::Power( TMath::Abs( x[0]/par[0] - 1) , -par[1] );
+  return par[2]*TMath::Power( TMath::Abs( (x[0] - par[0])/par[0]) , -par[1] );
 }
 
 double AnalysisLattice::analiticM(double * x , double * par ){
-  return par[2]*TMath::Power( TMath::Abs( x[0]/par[0] - 1) , par[1] );
+  return par[2]*TMath::Power( TMath::Abs( (x[0] - par[0])/par[0]) , par[1] );
 }
 
 void AnalysisLattice::fitLattice( bool mean,
                                   cuint& x_axis,
                                   cuint& y_axis,
-                                  double Tc = 2.27 ,
                                   double fit_temp_min = 1.5 ,
                                   double fit_temp_max = 3.0 ,
                                   int lat_number = 0
@@ -635,12 +634,16 @@ void AnalysisLattice::fitLattice( bool mean,
   TF1 * f;
   if(y_axis == 3){
     f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 3);
+    f -> SetParameters(TempCritic, 0.12, 1.1);
+    f -> SetParNames("T critic", "exp critic", "coeff");
   }
   if(y_axis == 5){
     f = new TF1("f" , AnalysisLattice::analiticX , fit_temp_min , fit_temp_max , 3);
+    f -> SetParameters(TempCritic, 1.175, 6e-6);
+    f -> SetParNames("T critic", "exp critic", "coeff");
   }
   g ->Fit(f , "R");
-  g -> Draw();
+  g -> Draw("ALP*");
 }
 
 /*
