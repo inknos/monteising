@@ -1,6 +1,6 @@
 /*
  * This macro explains how to perform a complete simulation
- * using th libraries. 
+ * using the libraries. 
  *
  */
 
