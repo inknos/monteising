@@ -176,7 +176,7 @@ void SimulationLattice::run(){
     temp_array.push_back( 0.);
   }
   double tc = 2.27 + gRandom -> Gaus(0, 0.1);
-  double vc = 1;
+  double vc = 0.5;
   for(uint t = 0; t < tempstep / 4; t++){
     temp_array[ t * 4 + 0 ] =  tempmin + ( tc - vc - tempmin ) * ( (double) t / ((double)tempstep / 4) );
     temp_array[ t * 4 + 1 ] =  tc - vc + vc  * ( (double) t / ((double)tempstep / 4) );
