@@ -307,7 +307,7 @@ All Lattices have same edge length and same dimension
 For each temperature :  
 \begin{itemize}
 	\item[] each Lattice is submitted to \textbf{I0} cooling iterations in order to reach thermal equilibrium. \\ In this step data are not collected
-	\item[] each Lattice is submitted to \textbf{iter} cooling steps   \\
+	\item[] each Lattice is submitted to \textbf{iter} cooling iterations,   \\
 	 		during each iteration measures of temperature, energy, magnetization and susceptibility are 				collected. 
 \end{itemize} 
  
@@ -325,13 +325,14 @@ For each temperature :
   		const TString  	& \textbf{file} & root file name in which data are collected \\
   		
   		uint & \textbf{I0} & number of iterations not collecting data \\
-		uint 		& \textbf{iter} & number of iterations not collecting data     			  \\
+		uint 		& \textbf{iter} & number of iterations collecting data \\
   										
-  		double 	& \textbf{tempmin}        & blabla 	 \\
-  		double 	& \textbf{tempmax}        & blabla 	 \\
-  		uint 	& \textbf{tempstep}       & blabla	 \\
-  		
+  		double 	& \textbf{tempmin}        & minimum range's temperature  \\
+  		double 	& \textbf{tempmax}        & maximum range's temperature	  \\
+  		uint 	& \textbf{tempstep}       & number of temperatures in the range \\
+   		
 	\end{tabular}
+	\item[] \textbf{n.b.} : \textbf{tempstep} should be a multiple of 4 for implementation reasons \\ 
 
 	\item[] PUBLIC MEMBER FUNCTIONS \\ 
 	\begin{itemize}
@@ -344,137 +345,57 @@ For each temperature :
 			
 			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector)		 
 			\begin{itemize}
-				\item[] 
+				\item[] 3-Parameters Constructor \\
+						The other data members can be assigned with the setter methods
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Full Parameter Constructor
 			\end{itemize}
 
 			\item[] \textbf{SimulationLattice}(const Lattice\& \textunderscore lat , const uint\& \textunderscore dim\textunderscore vector, const TString\& \textunderscore file, const uint\& \textunderscore i0, const uint\& \textunderscore iter, const double\& \textunderscore tempmin, const double\& \textunderscore tempmax, const uint\& \textunderscore tempstep)			 
 			\begin{itemize}
-				\item[] 
+				\item[] Constructor based on a Lattice  \\
+						Sets \textbf{N} and \textbf{dim} as those of lat    
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const SimulationLattice\& obj)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Copy Constructor
 			\end{itemize}
 			
 			\item[] SimulationLattice\& \textbf{operator=}(const SimulationLattice\& obj)		 
 			\begin{itemize}
-				\item[] 
+				\item[] Assignment Operator
 			\end{itemize}
 		
 		\item[] DESTRUCTOR \\
 		
 			\item[] \textbf{$\sim$ SimulationLattice}	 
 			\begin{itemize}
-				\item[] 
-			\end{itemize}		
-		
-		\item[] GETTERS AND SETTERS \\
- 			
- 			\item[] Lattice \textbf{getLattice}(const uint\& i)		 
-			\begin{itemize}
-				\item[] 
+				\item[] Frees up memory allocated by \textbf{lattice\textunderscore vector} 
 			\end{itemize}
-			
-			\item[]  uint \textbf{getN}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]  uint \textbf{getDim}() const	 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]  uint \textbf{getDimVector}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] TString \textbf{getFile}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]	uint \textbf{getIter}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] uint \textbf{getI0}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] double \textbf{getTempMin}() const		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}	
-			
-			\item[] double \textbf{getTempMax}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] double \textbf{getTempStep}() const			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			%\item[] static uint \texbf{getT}()	 
-			%\begin{itemize}
-			%	\item[] 
-			%\end{itemize}
-			
-			\item[] void \textbf{setFile}(const TString\& \textunderscore file ) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[]	void \textbf{setIter}(const uint\& \textunderscore iter) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setI0}(const uint\& \textunderscore i0) 	 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setTempMin}(const double\& \textunderscore tempmin) 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}	
-			
-			\item[] void \textbf{setTempMax}(const double\& \textunderscore tempmax)			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			\item[] void \textbf{setTempStep}(const uint\& \textunderscore tempstep) 			 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-			
-			%\item[] void \texbf{setT}(const double \& \textunderscore T)	 
-			%\begin{itemize}
-			%	\item[] 
-			%\end{itemize}
-			
-
 			
 		\item[] RUN \\
 			
-			\item[] void \textbf{printLatticeCSV}(const TString\& name) const		 
+			\item[] void \textbf{run}() const		 
 			\begin{itemize}
-				\item[] 
+				\item[] Performs the simulation 
 			\end{itemize}
-			
+					
+		
+		\item[] GETTERS AND SETTERS \\
+ 			
+ 			\item[] Getters methods are defined for all the Private Data Members except for \textbf{lattice\textunderscore vector}, but its entries can be obtained with : 
+ 			  
+ 			\item[] Lattice \textbf{getLattice}(const uint\& i)		 
+			\begin{itemize}
+				\item[] returns \textbf{lattice\textunderscore vector}[i]  
+			\end{itemize}
+ 					
+ 			\item[] Setters methods are defined for all the Private Data Members except for \textbf{lattice\textunderscore vector} \textbf{N}, \textbf{dim} and \textbf{dim\textunderscore vector}   
+ 			 		
 	\end{itemize}
 
 	
