@@ -89,7 +89,7 @@ class AnalysisLattice {
 
   void setFileOut(const TString& file_output);
 
-  void evalBinning();
+  void evalBinning(cuint& nb);
 
 };
 

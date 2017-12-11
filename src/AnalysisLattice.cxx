@@ -729,7 +729,7 @@ void AnalysisLattice::findTcritic(){
   delete[] Susc;
 }
 
-void AnalysisLattice::evalBinning(){
+void AnalysisLattice::evalBinning(const uint& nb){
   static INFO info;
 
   TFile f(file_in, "read");
@@ -747,7 +747,7 @@ void AnalysisLattice::evalBinning(){
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
 
-  uint num_bin = 10;
+  uint num_bin = nb;
   uint dim_before_bin = iter + 1;
   uint dim_after_bin = (uint) ( dim_before_bin / TMath::Power((int)2, (int)0) ) ;
 
