@@ -25,7 +25,6 @@
 \usepackage{eurosym}
 \usepackage{adjustbox}
 
-
 % included by Nicola for correct highlighting of C++ code
 \usepackage{listings}
 \usepackage{xcolor}
@@ -709,76 +708,84 @@ The computation of the spin coordinates is explained in the Model Section.
 \end{itemize}
 
 
-
-
-
-
-
-
-
-
-
-
-
-\subsection*{SimulationLattice}
+\subsection*{AnalysisLattice}
 
 \begin{itemize}
 
 	\item[] PRIVATE DATA MEMBERS \\ 
 	
 	\begin{tabular}{lll}
-		const uint 		& \textbf{dim}      & dimension										  \\
-  		const uint 		& \textbf{N}        & number of spins along one edge				   \\
-  		const uint 		& \textbf{num\textunderscore spin} & total number of spins : $N^{dim}$  \\
-  		bool ${}^*$  	& \textbf{lattice}  & lattice array										 \\
-  		static double 	& \textbf{T}        & temperature  										  \\
+		const TString 		& \textbf{file\textunderscore in}      & input root file name	 \\
+		const TString 		& \textbf{file\textunderscore out}      & output root file name	 \\		
+		%bisogna decidere se togliere o meno questo data member se fittiamo il lattice  		
+  		static double 	& \textbf{TempCritic}   & critic temperature  						\\
 	\end{tabular}
 
 	\item[] PUBLIC MEMBER FUNCTIONS \\ 
 	\begin{itemize}
-		\item[] CONSTRUCTORS \\
+		\item[] CONSTRUCTOR \\
 
-			\item[] 		 
+			\item[] \textbf{AnalysisLattice}(const TString\& file\textunderscore input, const TString\& file\textunderscore output) 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
 			
-			\item[] 		 
+		\item[] RUN FUNCTION			
+			
+			\item[] void \textbf{run}()		 
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+	
+		\item[] DRAW FUNCTIONS
+		
+			\item[]	TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
+                             cuint\& x\textunderscore axis,
+                             cuint\& y\textunderscore axis)
+			\begin{itemize}
+				\item[] 
+			\end{itemize}
+
+			\item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
+                             cuint\& x\textunderscore axis,
+                             cuint\& y\textunderscore axis)		 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
 			
-			\item[] 		 
-			\begin{itemize}
-				\item[] 
-			\end{itemize}
-		
-		
-		\item[] DESTRUCTOR \\
-
-			\item[] 		 
+			\item[] TGraphErrors ${}^*$ \textbf{draw}(
+                             cuint\& x\textunderscore axis,
+                             cuint\& y\textunderscore axis)		 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}		
-		
-		\item[] PHYSICAL AND NUMERICAL FUNCTIONS \\
-		
-			\item[] 		 
+
+                           
+		\item[] FIT FUNCTIONS \\
+				
+			\item[] static double \textbf{analiticX}(double $*$ x, double $*$ par)	 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
 			
-			\item[] 		 
+			\item[] static double \textbf{analiticM}(double $*$ x, double $*$ par)			 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
 			
-			\item[] 		 
+			\item[] void \textbf{findTcritic}()		 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
 			
-			\item[] 		 
+			\item[] void \textbf{fitLattice}( bool mean,
+                            				  cuint\& x\textunderscore axis,
+                            				  cuint\& y\textunderscore axis,
+                            				  double Tc,
+                            				double fit\textunderscore temp\textunderscore min,
+                            double fit\textunderscore temp\textunderscore max,
+                            int lat\textunderscore number
+                          );		 
 			\begin{itemize}
 				\item[] 
 			\end{itemize}
