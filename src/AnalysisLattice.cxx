@@ -8,6 +8,7 @@
 #include "TBranch.h"
 #include "TMath.h"
 #include "TH1D.h"
+#include "TCanvas.h"
 
 #include <string>
 #include <vector>
@@ -600,7 +601,7 @@ void AnalysisLattice::fitLattice( bool mean,
                                   double fit_temp_min = 1.5 ,
                                   double fit_temp_max = 3.0 ,
                                   int lat_number = 0
-                                ) {
+                                  ) {
   static INFO info;
   TFile ifile(file_out, "read");
   TTree * info_tree = (TTree*) ifile.Get("info");
@@ -629,8 +630,8 @@ void AnalysisLattice::fitLattice( bool mean,
   }
 
   findTcritic();
-  
-  
+
+
   TF1 * f;
   if(y_axis == 3){
     f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 3);
@@ -647,7 +648,7 @@ void AnalysisLattice::fitLattice( bool mean,
 }
 
 /*
-void AnalysisLattice::plotAnalitic(){
+  void AnalysisLattice::plotAnalitic(){
   TF1 *fteo = new TF1("fteo", analiticM ,0.5,2.4,1);
   fteo->SetLineColor(kRed);
   double zeropam = 0.;
@@ -655,7 +656,7 @@ void AnalysisLattice::plotAnalitic(){
   fteo->SetParameters(alpha , zeropam);
   //fteo->SetParNames("normalizzazione","coefficiente");
   fteo->Draw();
-}
+  }
 */
 
 std::vector<double> AnalysisLattice::bin(const std::vector<double> & vec){
@@ -681,7 +682,7 @@ std::vector<double> AnalysisLattice::binN(cuint& num_bin, const std::vector<doub
 
 void AnalysisLattice::findTcritic(){
   static INFO info;
-  
+
   TFile f(file_out, "read");
   TTree * info_tree = (TTree*) f.Get("info");
   TBranch * info_branch = info_tree -> GetBranch("Info");
@@ -697,37 +698,101 @@ void AnalysisLattice::findTcritic(){
   uint tempstep  = info._tempstep;
   uint datime    = info._datime_t;
   double Tcritic;
-  
+
   double* Temp  = new double[tempstep];
   double* Susc  = new double[tempstep];
-  
+
   Block * block_mean = 0;
-  
+
   double SuscMax = 0.;
   int tMax = 0;
-  
+
   for(uint t = 0; t < tempstep; t++){
-    
+
     TTree * tree = (TTree*) f.Get(TString("T_") + TString(std::to_string(t).c_str() ) );
     tree -> SetBranchAddress(TString("Lattice_ml_") + TString(std::to_string(t).c_str()), &block_mean );
     tree -> GetEntry(0);
-    
+
     Temp[t] = block_mean -> T;
     Susc[t] = block_mean -> X;
-    
+
     if(Susc[t] > SuscMax){
       SuscMax = Susc[t];
       tMax = t;
     }
-    
+
   }
   cout << "TempCritic is : " << Temp[tMax] << endl;
   setTempCritic(Temp[tMax]);
-  
+
   delete[] Temp;
   delete[] Susc;
 }
 
+void AnalysisLattice::evalBinning(){
+  static INFO info;
 
+  TFile f(file_in, "read");
+  TTree * info_tree = (TTree*) f.Get("info");
+  TBranch * info_branch = info_tree -> GetBranch("Info");
+  info_branch -> SetAddress(&info._tempmin);
+  info_tree -> GetEvent(0);
+  double tempmin = info._tempmin;
+  double tempmax = info._tempmax;
+  uint N         = info._N;
+  uint dim       = info._dim;
+  uint dim_vector= info._dim_vector;
+  uint I0        = info._I0;
+  uint iter      = info._iter;
+  uint tempstep  = info._tempstep;
+  uint datime    = info._datime_t;
 
+  uint num_bin = 10;
+  uint dim_before_bin = iter + 1;
+  uint dim_after_bin = (uint) ( dim_before_bin / TMath::Power((int)2, (int)0) ) ;
 
+  std::vector<double> Eb ( dim_before_bin, 0. );
+  std::vector<double> Ea ( dim_after_bin,  0. );
+  std::vector<double> E  ( num_bin, 0. );
+  std::vector<double> dE ( num_bin, 0. );
+
+  std::vector<double> bin_vec (num_bin, 0.);
+  std::vector<double> bin_v (num_bin, 0.);
+  Block * block = 0;
+  TString treeName(TString("T_") + TString(std::to_string(50).c_str() ) );
+  TTree * tree = (TTree*) f.Get(treeName);
+  TString branchName(TString("Lattice_") + std::to_string(0).c_str() );
+  tree -> SetBranchAddress(branchName, &block);
+  for(uint j = 0; j < dim_before_bin; j++) {
+    tree -> GetEntry(j);
+    Eb[j] = block -> E;
+  } // get data
+  
+  for(uint b = 0; b < num_bin; b++) {
+    bin_vec[b] = TMath::Power((int)2, (int)b);
+    bin_v[b] = b;
+    std::cout << bin_vec[b] << std::endl;
+    dim_after_bin = (uint) ( dim_before_bin / (int) bin_vec[b] ) ;
+
+    Ea = std::vector<double>( dim_after_bin,  0. );
+    Ea = binN(b, Eb);
+
+    for(uint j = 0; j < dim_after_bin; j++){
+      E[b] += Ea[j];
+    }
+
+    E[b] /= (dim_after_bin);
+    for(uint j = 0; j < dim_after_bin; j++){
+      //std::cout << "j " << j << std::endl << std::flush;
+      dE[b] += ( E[b] - Ea[j] ) * ( E[b] - Ea[j] );
+    }
+
+    dE[b] = TMath::Sqrt( dE[b] / ( dim_after_bin ) );
+    //std::cout << dE[b] << std::endl;
+  }
+  //TCanvas * c1;
+  //c1 -> SetLogy();
+  TGraph * gr = new TGraph(num_bin, bin_v.data(), dE.data());
+  gr -> Draw("ALP*");
+  
+}
