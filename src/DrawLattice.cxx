@@ -4,6 +4,7 @@
 #include "TGraph.h"
 #include "TGraph2D.h"
 #include "TMultiGraph.h"
+#include "TLegend.h"
 
 #include "DrawLattice.h"
 
@@ -16,10 +17,6 @@
 #define MARKER_SIZE_3D 0.6
 
 ClassImp(DrawLattice)
-
-/* Public Functions */
-
-/* CONSTRUCTORS */
 
 //Default
 DrawLattice::DrawLattice() : 
@@ -131,6 +128,7 @@ void DrawLattice::draw2D(){
   
   mg->Add(g0);
   mg->Add(g1);
+  mg->SetTitle("2D Ising lattice");
   mg->Draw("AP");
 }
 
