@@ -175,7 +175,14 @@ void SimulationLattice::run(){
   for(uint i = 0; i < tempstep; i++){
     temp_array.push_back( 0.);
   }
-  double tc = 2.27 + gRandom -> Gaus(0, 0.1);
+  
+  double tc;
+  if(dim==2){
+    tc = 2.27 + gRandom -> Gaus(0, 0.1);
+  }
+  if(dim==3){
+    tc = 4. + gRandom -> Gaus(0, 0.1);
+  }
   double vc = 0.5;
   for(uint t = 0; t < tempstep / 4; t++){
     temp_array[ t * 4 + 0 ] =  tempmin + ( tc - vc - tempmin ) * ( (double) t / ((double)tempstep / 4) );
@@ -231,4 +238,8 @@ void SimulationLattice::run(){
   
   f.Write();
   f.Close();
+  
+  std::cout << R"(?=======================================?
+!                 end                   !
+?=======================================?)" << std::endl;
 }

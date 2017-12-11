@@ -135,7 +135,7 @@ In practice we cannot compute the partition function, moreover an algorithm that
 The Boltzmann's factor as probability of choosing a configuration gives a great improvement for the simulation. In this way we are not sampling all the configuration space but a selected and uniform distributed microstates collection. This approach is called \textit{importance sampling} and it allows us to calculate physical quantities as the average number over the extracted configuration:
 \begin{equation}
   \langle E \rangle_N = \dfrac{1}{N} \sum_{i=1}^{N}{E(q_i)}
-\end{equation} This intuition can be proved under ergodic hypothesis: in fact we can consider an evolving Ising system in which there is a spin flip at each time step. The temporal collection of microstates is a Markov chain with a transition probability ($W$) that leads the system to the equilibrium probability in the $t \rightarrow \infty$ limit. Indeed the ratio of the transition probability is:
+\end{equation} This intuition can be proved under ergodic hypothesis: in fact we can consider an evolving Ising system in which there is a spin flip at each time step. The temporal collection of microstates is a Markov chain with a transition probability ($W$) that leads the system to the unique equilibrium probability in the $t \rightarrow \infty$ limit. Indeed the ratio of the transition probability is:
 $$ \dfrac{W(q \rightarrow q')}{W(q' \rightarrow q)} = \dfrac{P_{eq}(q')}{P_{eq}(q)}= \exp \lbrace \beta [E(q) - E(q')] \rbrace $$
 Where $q$ and $q'$ are respectively the configuration before the spin-flip and after. This implies the equivalence between importance sampling and random extraction. The arbitrary choose on $W(q \rightarrow q')$ determines the particular algorithm; for the Metropolis-Hastings algorithm:
 
@@ -314,7 +314,7 @@ This section wants to summarize the simulation results. Under this purpose we un
 \end{itemize}
 
 
-The binning method can construct an uncorrelated set of measures starting from a correlated one. We divide a set of $N$ ordered configurations in $N/2$ groups (each one with two elements), we calculate the mean for each couple and we iterate this process until the eighth level of binning.
+The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation throw this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
 
 \newpage
 \section{Conclusions}
