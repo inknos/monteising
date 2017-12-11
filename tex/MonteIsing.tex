@@ -111,7 +111,7 @@ The Ising model is a physical-mathematical model characterized by a lattice of l
 Where $J$ is the energy interaction term and we sum over the neighbours.
 \\
 The system has  a macroscopic equilibrium state (macrostate) described by statistical quantities: number of spins $N$, lattice volume $V$, energy $E$, magnetization $M$. According to the Statistical Mechanics theory we consider the thermodynamic limit, i.e. $N, V \rightarrow \infty$ and $N/V = cost$ in order to have negligible fluctuations on energy and magnetisation: $(\Delta E)^2 / \langle E \rangle = O  (1/ \sqrt{N}) $.
-From a theoretical point of view we consider an ensemble of lattices, each one with a particular configuration of spins (microstate) that corresponds to the same macrostate; we underlying that all microstates are equiprobable. The configuration space is described through the Hamiltonian formalism indeed, under ergodic hypothesis, the system visits all microstates. Moreover stationary hypothesis implies the existence of an equilibrium state in which  the probability distribution of the microstates satisfies the Liouville theorem. These hypotheses bring respectively to the following statements:
+From a theoretical point of view we consider an ensemble of lattices, each one with a particular configuration of spins (microstate) that corresponds to the same macrostate; we underlying that all microstates are independent and equiprobable. The configuration space is described through the Hamiltonian formalism indeed, under ergodic hypothesis, the system visits all microstates. Moreover stationary hypothesis implies the existence of an equilibrium state in which  the probability distribution of the microstates satisfies the Liouville theorem. These hypotheses bring respectively to the following statements:
 
 \begin{enumerate}
 \item In the $t \rightarrow \infty$ limit: the average (over all the ensemble) of a physical quantity is equal to the temporal average of that quantity.
@@ -268,8 +268,6 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 \input{classes.tex}
 
 
-
-
 % for SVG
 % inkscape -D -z --file=Schema_classi.svg --export-pdf=Schemaclassi.pdf --export-latex
 % \begin{figure}
@@ -301,10 +299,22 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 
 
 
+
 % -----------------------------PAG 7----------------------------------%
 
 \newpage
 \section{Results}
+This section wants to summarize the simulation results. Under this purpose we underline two main effects:
+
+\begin{itemize}
+\item Finite size and finite volume of the lattice imply magnetization and energy fluctuations; periodic conditions reduce this phenomena. Moreover finite size leads to no residual magnetization: this effect is out of the temperature's range studied.
+
+\item Importance sampling algorithms can produce correlated configurations corresponding to different steps of the simulation. This phenomena is in contrast with theoretical hypothesis of microstates independence and can be correctly treated throw binning technique. 
+
+\end{itemize}
+
+
+The binning method can construct an uncorrelated set of measures starting from a correlated one. We divide a set of $N$ ordered configurations in $N/2$ groups (each one with two elements), we calculate the mean for each couple and we iterate this process until the eighth level of binning.
 
 \newpage
 \section{Conclusions}
