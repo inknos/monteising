@@ -8,7 +8,7 @@
 #include "TBranch.h"
 #include "TMath.h"
 #include "TH1D.h"
-#include "TCanvas.h"
+#include "TLegend.h"
 
 #include <string>
 #include <vector>
@@ -649,7 +649,7 @@ TGraphErrors * AnalysisLattice::drawLatticeMean(cuint& x_axis,
   graph -> SetMarkerStyle(22);
   graph -> SetMarkerColor(kBlue + 3);
   //graph->Draw();
-
+  
   delete[] x;
   delete[] y;
   delete[] dx;
