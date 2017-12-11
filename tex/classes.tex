@@ -406,6 +406,7 @@ For each temperature :
 
 \begin{itemize}
 
+<<<<<<< HEAD
 	\item[] PRIVATE DATA MEMBERS \\ 
 	
 	\begin{tabular}{lll}
@@ -522,3 +523,124 @@ For each temperature :
 
 	
 \end{itemize}
+=======
+\item[] PRIVATE DATA MEMBERS \\
+
+  \begin{tabular}{lll}
+    const TString               & \textbf{file\textunderscore in}      & input root file name    \\
+    const TString               & \textbf{file\textunderscore out}      & output root file name  \\
+    % bisogna decidere se togliere o meno questo data member se fittiamo il lattice
+    static double       & \textbf{TempCritic}   & critic temperature                                            \\
+  \end{tabular}
+
+\item[] PUBLIC MEMBER FUNCTIONS \\
+  \begin{itemize}
+  \item[] CONSTRUCTOR \\
+
+  \item[] \textbf{AnalysisLattice}(const TString\& file\textunderscore input, const TString\& file\textunderscore output)
+    \begin{itemize}
+    \item[] Parametric Cnstructor\\
+      Sets input and output files.
+    \end{itemize}
+
+  \item[] RUN FUNCTION
+
+  \item[] void \textbf{run}()
+    \begin{itemize}
+    \item[] Performs the analysis of the previous simulation.\\
+      Recreates output file.
+    \end{itemize}
+
+  \item[] DRAW FUNCTIONS
+
+  \item[]       TGraphErrors ${}^*$ \textbf{drawLattice}(cuint\& lattice\textunderscore number,
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] TGraphErrors ${}^*$ \textbf{draw}(
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis)
+    \begin{itemize}
+    \item[] 
+    \end{itemize}
+
+
+  \item[] FIT FUNCTIONS \\
+
+  \item[] static double \textbf{analiticX}(double $*$ x, double $*$ par)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] static double \textbf{analiticM}(double $*$ x, double $*$ par)
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] void \textbf{findTcritic}()
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+  \item[] void \textbf{fitLattice}( bool mean,
+    cuint\& x\textunderscore axis,
+    cuint\& y\textunderscore axis,
+    double Tc,
+    double fit\textunderscore temp\textunderscore min,
+    double fit\textunderscore temp\textunderscore max,
+    int lat\textunderscore number
+    );
+    \begin{itemize}
+    \item[]
+    \end{itemize}
+
+    \newpage
+
+  \item[]       GETTERS AND SETTERS \\
+
+  \item[] static double \textbf{getTempCritic}()
+    \begin{itemize}
+    \item[] Get critic temperature.
+    \end{itemize}
+
+  \item[] static void \textbf{setTempCritic}(const double\& \textunderscore TempCritic);
+    \begin{itemize}
+    \item[] Set critic temperature.
+    \end{itemize}
+
+  \item[] TString \textbf{getFileIn}() const;
+    \begin{itemize}
+    \item[] Get input file name.
+    \end{itemize}
+
+  \item[] TString \textbf{getFileOut}() const
+    \begin{itemize}
+    \item[] Get output file name.
+    \end{itemize}
+
+  \item[]  void \textbf{setFileIn}(const TString\& file\textunderscore input)
+    \begin{itemize}
+    \item[] Set input file name.
+    \end{itemize}
+
+  \item[] void \textbf{setFileOut}(const TString\& file\textunderscore out)
+    \begin{itemize}
+    \item[] Set output file name.
+    \end{itemize}
+
+  \end{itemize}
+\end{itemize}
+
+\lstinputlisting[language=cpp, caption={Caption}]
+{../test/relationMacro.C}
+>>>>>>> 9d208e5ec1ef20021b54c320eb3dd7275d04b0a7
