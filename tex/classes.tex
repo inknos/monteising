@@ -301,18 +301,28 @@ The computation of the spin coordinates is explained in the Model Section.
 
 \subsection*{SimulationLattice}
 
+Simulation Lattice permits to run a simulation and collect data during runtime.
+The simulation is performed on a set of Lattice objects over a range of temperatures \\
+All Lattices have same edge length and same dimension
+For each temperature :  
+\begin{itemize}
+	\item[] each Lattice is submitted to \textbf{I0} cooling iterations in order to reach thermal equilibrium. \\ In this step data are not collected
+	\item[] each Lattice is submitted to \textbf{iter} cooling steps   \\
+	 		during each iteration measures of temperature, energy, magnetization and susceptibility are 				collected. 
+\end{itemize} 
+ 
 \begin{itemize}
 
 	\item[] PRIVATE DATA MEMBERS \\ 
 	
 	\begin{tabular}{lll}
-		Lattice ${}^*$  	& \textbf{lattice\textunderscore vector}  & blabla	\\
+		Lattice ${}^*$  	& \textbf{lattice\textunderscore vector}  & vector storing a Lattice for each entry\\
 			
-		const uint 		& \textbf{N}        & blabla			  \\
-		const uint 		& \textbf{dim}      & blabla			  \\
-		const uint 		& \textbf{dim\textunderscore vector}    & blabla \\
+		const uint 		& \textbf{N}        & edge length of each Lattice \\
+		const uint 		& \textbf{dim}      & dimension of each Lattice		\\
+		const uint 		& \textbf{dim\textunderscore vector}    & dimension of \textbf{lattice\textunderscore vector} \\
 		
-  		const TString  	& \textbf{file} & blabla  \\
+  		const TString  	& \textbf{file} & root file name in which datas are collected \\
   		
   		uint 		& \textbf{iter}        & blabla			  \\
 		uint 		& \textbf{I0}      	   & blabla			  \\
@@ -329,7 +339,7 @@ The computation of the spin coordinates is explained in the Model Section.
 
 			\item[] \textbf{SimulationLattice}()	 
 			\begin{itemize}
-				\item[] 
+				\item[] Default Constructor
 			\end{itemize}
 			
 			\item[] \textbf{SimulationLattice}(const uint\& \textunderscore N, const uint\& \textunderscore dim, const uint\& \textunderscore dim\textunderscore vector)		 
