@@ -314,6 +314,9 @@ This section wants to summarize the simulation results. Under this purpose we un
 \end{itemize}
 
 
+\subparagraph*{Calibrating the model}
+
+
 The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation throw this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
 
 \newpage
@@ -353,15 +356,12 @@ Increasing the fixed cost parameters we saw that expenses grew, but the model st
 \\
 In conclusion this underlines the robustness of the proposed solution both in economical and user's engagement terms, moreover the model held interesting results also in extreme cases.
 
-\subsection*{Further development}
-The model could be extended by considering:
-\begin{itemize}
-\item improved economic model;
-\item GIS map of the city of Turin;
-\item daily data for a real time calculation.
-\end{itemize}
+\subsection*{Performance}
+\begin{figure}[h!]
+  \centering
+   \includegraphics{img/Andamenti_performance.pdf} 
+  \caption{Time scaling for different data member initialization}
+
+\end{figure}
+
 \end{document}
-\grid
-\grid
-\grid
-\grid
