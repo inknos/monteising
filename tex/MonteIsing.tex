@@ -164,24 +164,24 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 \subsection{Lattice Implementation}
 
-A D-dimensional Lattice with N spins along each edge is described by 
+A D-dimensional Lattice with N spins along each edge is described by:
 $$\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$$
-Let $i$ denote the index of array $\mathbf{L}$ ; $i = \{0,1,...,N^D -1\}$\\
-$L_i = \{0,1\}$ is a boolean entry representing down and up spin by convention \\
-Let $i$-$spin$ denote the spin represented by the $L_i$ boolean entry. \\
-The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the Lattice arrangement, which in our Model is the following:
+Let $i$ denote the index of array $\mathbf{L}$: $i = \{0,1,...,N^D -1\}$.\\
+$L_i = \{0,1\}$ is a boolean entry representing down and up spin by convention. \\
+Let $i$-spin denote the spin represented by the $L_i$ boolean entry. \\
+The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the Lattice arrangement, which in our model is the following:
 \begin{itemize}
 \item Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice, each edge starting from \textit{O} is aligned along one of the D positive directions.
 \item Unitary distance between each couple of adjacent spins.
 \item Spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
-\item[\textbf{N.B.}] This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range $\{0,1,…,N-1\}$. \\ \\
+\item[\textbf{n.b.}] This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range $\{0,1,…,N-1\}$. \\
 \end{itemize}
-index $i$ can be expressed as a power series of N with coefficients equal to the $a_j$ coordinates :
+Index $i$ can be expressed as a power series of N with coefficients $a_j$:
 
 \begin{equation}
 i = \sum_{j=1}^{D-1}a_jN^j
 \end{equation}
-The $a_j$ coordinates can then be computed from $i$ as :
+The $a_j$ coordinates can then be computed from $i$ as:
 \begin{equation}
 a_j = [i\%N^{j+1}]/N^j
 \end{equation}
@@ -192,38 +192,39 @@ a_j = [i\%N^{j+1}]/N^j
 \subsection{Energy Computation}
 
 The Lattice's energy is computed according to equation (1).
-The Lattice class provides a method wich returns the energy of the system. \\
-The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
-The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
-\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as :
+The Lattice class provides a method which returns the energy of the system. \\
+The implemented algorithm takes the lattice array $\mathbf{L}$ and performs two for loops:\\ 
+one over the system's dimension $d = (0,1,..,D-1)$ and the other over the index $i = (0,1,..,N^D-1)$. \\
+The key idea is that, given a fixed $i$-spin, along each dimension $d$, two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
+\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as:
 \begin{equation}
 H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}
 \end{equation}
 Performing $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
 For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
-$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes :
+$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes:
 
 \begin{equation}
 H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \oplus \ L_{i_{d_+}})
 \end{equation}
-$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\oplus$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
+$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $L_i$, the XOR bitwise operator $\oplus$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
 \vspace{0.1cm}
 From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates\\
 $\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
 The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
-only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice.
+only on the $d$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice. \\
 From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
 \begin{eqnarray*}
   i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j + [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
           &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
 \end{eqnarray*}
-\textbf{n.b.} : if $d = D-1$ the second term equals 0, so it's not computed by the algorithm
+\textbf{n.b.} : if $d = D-1$ the second term equals 0, so it is not computed by the algorithm
 \newpage
 
 
 \subsection{Metropolis Algorithm}
 
-At each step Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin.\\ 
+At each step Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin value.\\ 
 The number of possible $q'$ configurations equal to the total number of spins $N^D$ , $q'$ is chosen with uniform probability.
 \\Defining the ratio $a = P_{eq}(q')/P_{eq}(q)$ 
 \begin{enumerate}
