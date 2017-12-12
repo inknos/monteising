@@ -6,6 +6,7 @@
 #include "TString.h"
 #include "TGraphErrors.h"
 #include "TMultiGraph.h"
+#include "TGraph.h"
 
 #define ENERGY         1
 #define TEMPERATURE    2
@@ -89,7 +90,7 @@ class AnalysisLattice {
 
   void setFileOut(const TString& file_output);
 
-  void evalBinning(cuint& nb);
+  TGraph * evalBinning(cuint& nb);
 
 };
 

@@ -813,7 +813,7 @@ void AnalysisLattice::findTcritic(){
   delete[] Susc;
 }
 
-void AnalysisLattice::evalBinning(const uint& nb){
+TGraph * AnalysisLattice::evalBinning(const uint& nb){
   static INFO info;
   TFile f(file_in, "read");
   TTree * info_tree = (TTree*) f.Get("info");
@@ -870,5 +870,6 @@ void AnalysisLattice::evalBinning(const uint& nb){
   gr -> SetTitle("Energy Std. Dev. of Lattice_0 at T_50 over Binning");
   gr->GetXaxis()->SetTitle("Bin Folding");
   gr->GetYaxis()->SetTitle("Energy Std. Dev.");
-  gr -> Draw("ALP");
+  //gr -> Draw("ALP");
+  return gr;
 }
