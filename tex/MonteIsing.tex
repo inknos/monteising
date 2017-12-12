@@ -162,7 +162,7 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 \newpage
 
 
-\section*{Model }
+\section{Model}
 
 \subsection{Lattice Implementation}
 
@@ -176,16 +176,13 @@ The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin ca
 \item Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice, each edge starting from \textit{O} is aligned along one of the D positive directions.
 \item Unitary distance between each couple of adjacent spins.
 \item Spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
-\item[\textbf{N.B.}] This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range $\{0,1,…,N-1\}$. \\
+\item[\textbf{N.B.}] This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range $\{0,1,…,N-1\}$. \\ \\
 \end{itemize}
-
-% FIGURA caso 1 , 2 , 3 dimensionale
-
 index $i$ can be expressed as a power series of N with coefficients equal to the $a_j$ coordinates :
+
 \begin{equation}
 i = \sum_{j=1}^{D-1}a_jN^j
 \end{equation}
-
 The $a_j$ coordinates can then be computed from $i$ as :
 \begin{equation}
 a_j = [i\%N^{j+1}]/N^j
@@ -213,7 +210,7 @@ H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \oplus \ L_{i_{d_+}})
 \end{equation}
 $\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\oplus$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
 \vspace{0.1cm}
-From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates
+From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates\\
 $\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
 The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
 only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice.
@@ -241,8 +238,10 @@ The number of possible $q'$ configurations equal to the total number of spins $N
 \end{enumerate}
 That means $q'$ is always accepted when its probability is greater than $q$ , otherwise it is accepted with 
 probability $P_{eq}(q')/P_{eq}$.\\
+\\
 According to formula (3) $a = \exp \lbrace -\beta  \Delta E  \rbrace$ \\
 It' easy to observe that when $a \geq 1$ than $ \Delta E \leq 0 $. The latter inequality is taken as the  condition of point 1.  
+\\
 \\
 The Algorithm's single step is implemented as following :
 	
@@ -269,11 +268,13 @@ The Algorithm's single step is implemented as following :
  
 
 
+\newpage
 
-
+\section{Appendix}
 
 \input{classes.tex}
 
+\newpage
 
 \section{Code}
 This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
