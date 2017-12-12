@@ -239,12 +239,17 @@ The algorithm is implemented according to the following procedure :
 		\item[] Else $i$-spin is flipped with probability $\exp \lbrace -\beta \Delta E \rbrace $ ; ($k_b =1$)\\
 		
  	\end{itemize}
-	
-	
-
 \end{itemize}
 	
 \newpage
+
+\section{Data Collection}
+Data Storage can be a problem when dealing with a great amount of data.
+We used root data structures to work out the solution. Storing happens two times during a full simulation:
+after the ``raw'' collection and after the analysis.\\
+All the data are ordered, by temperature, in \texttt{TTree} and by lattice in \texttt{TBranch}. Eanch measurable quantity is a leaf of the branch.
+The names of each structures are easy for string comprehension: this way it's easy to read and process previously collected data.\\
+The way root saves data let the execution run flawessly even when processing several Giga Bytes of data. 
 
 \section{Code}
 This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
