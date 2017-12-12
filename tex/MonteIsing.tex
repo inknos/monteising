@@ -159,91 +159,90 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 \section{Model}
 
-\subsection*{Lattice Implementation}
+\subsection{Lattice Implementation}
 
 A D-dimensional cubic Lattice with N spins along each edge is decribed by the array :
 $$\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$$ 
-
 Let $i$ denote the index of the array,  $ i = \{0,1,...,N^D-1\}$  \\
-
-$L_i$ entry is a boolean variable, $L_i = \{0,1\}$ represents respectively spin-down and spin-up by convention \\
-  
+$L_i = \{0,1\}$ is a boolean representing respectively spin-down and spin-up by convention \\
 Let $i$-$spin$ denote the spin represented by $L_i$ entry. \\
+
+\subsection*{Coordinates Computation}
 The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index
 $i$ if a convention is set on the Lattice arrangement, which in our Model is the following:
 
 \begin{itemize}
 \item[] Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice,
 	    each edge starting from \textit{O} is aligned along one of the D positive directions.
-\item[] Unit distance between each couple of adjacent spins 
-\item[] Spins indexing starts from increasing first dimension’s coordinate, than second and so forth 
+\item[] Unitary distance between each couple of adjacent spins 
+\item[] Spins indexing starts from increasing first dimension’s coordinate, than second and so forth
+\item[\textbf{n.b.}] This rules imply that, given a specific spin, each coordinate $a_j$ has values in range $\{0,1,…,N1\}$.
 \end{itemize}
-
-\textbf{n.b.} This rules imply that, given a specific spin, each coordinate $a_j$ has values in range
-$\{0,1,…,N1\}$. Index $i$ can be expressed as a power series of $N$ with coefficients equal to the coordinates of the $i-spin$ \\
-
+Index $i$ can be expressed as a power series of $N$ with coefficients equal to the coordinates of the $i-spin$ \\ 
 $$ i = \sum_{j=1}^{D-1}a_jN^j $$ 
-
 Coordinates $a_j$ are computed according to :
 
 $$a_j = [i\%N^{j+1}]/N^j$$
-
+\textbf{\%} symbol denotes modular division. e.g. 7\%3=1
+\\
+\\
 Periodic boundary conditions are applied in order to reduce finite-scale effects.
 
 
 % -----------------------------PAG 6----------------------------------%
 
 \newpage
-\subsection*{Energy }
+\subsection{Energy Computation}
 
 Lattice's energy is given by equation (1). \\
-The algorithm implemented for energy computation takes array $\mathbf{L}$ and performs two for loops : one over the system's dimension $d = (0,1,..,D-1)$ and the other over index $i = (0,1,..,N^D-1)$. \\
+The algorithm for energy computation takes array $\mathbf{L}$ and performs two for loops : \\ one loop over the system's dimension $d = (0,1,..,D-1)$ and the other loop over index $i = (0,1,..,N^D-1)$. \\
 The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.\\
-So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So energy can be rewritten as :
+So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. \\ So energy can be rewritten as :
 
 $$H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}$$
-Performing first summation $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
+Performing $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
 For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
-$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes the summation :
+$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes :
 
-$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \hat{} \ L_{i_{d_+}})$$
-$\sigma_i\sigma_{i_{d_+}}$ is replaced by $L_i \ \hat{} \ L_{i_{d_+}}$ since spins are represented by boolean entries $L_i$. The XOR bitwise operator $ \hat{} $ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$ which can be $\pm1$. \\
-From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates
+$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \oplus \ L_{i_{d_+}})$$
+$\sigma_i\sigma_{i_{d_+}}$ is replaced by $L_i \ \oplus \ L_{i_{d_+}}$ since spins are represented by boolean entries $L_i$. \\ The XOR bitwise operator $ \oplus $ is applied on the binary couple 
+$(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$ which can be $\pm1$. \\
+From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates \\
 $\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
-The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$ only on the $d$-th entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice. \\
+The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$ only on the $d$-th entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d + 1)\%N$ since we are applying periodic boundary conditions on the Lattice. \\
 From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
 \begin{eqnarray*}
   i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j + [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
           &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
 \end{eqnarray*}
-
 \textbf{n.b.} if $d=D-1$ the second term is 0, so it's not computed by the algorithm.
 
 \newpage 
 
-\subsection*{Metropolis Algorithm}
+\subsection{Metropolis Algorithm}
 
-The Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin. The possible $N^D$ configurations are chosen with uniform probability. \\
-Each configuration has probability given by equation (3). \\
-Defining the ratio $a = p(q')/p(q)$ , $q'$ is accepted if $a \leq 1$, that is, \\ 
-if $q'$ has a greater probability than $q'$ is accepted. \\ 
-Otherwise if $ a \leq 1 $ then $q'$ is accepted with probability $a$.
-
+The Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin. \\ 
+The possible $N^D$ configurations are chosen with uniform probability. \\
+Defining the ratio $a = p(q')/p(q)$ , $q'$ is accepted if $a \leq 1$, that is, if $q'$ has a greater probability then $q'$ is accepted. \\ 
+Otherwise if $ a \leq 1 $ then $q'$ is accepted with probability $a$. \\ \\ 
+According to equation (3) the ratio $a$ is  $\exp \lbrace -\beta \Delta E \rbrace $ , so it's easy to observe that when $a \leq 1 $ than  $\Delta E \leq 0$. The latter is taken as the condition for accepting the configuration.  \\ \\
 The algorithm is implemented according to the following procedure :
 
-\begin{itemize}
-	\item[] A random integer number $i$ is extracted from $\{0,1,...,N^D-1\}$ with uniform probability
-	\item[] The energy variation $\Delta E$ resulting from flipping the $i$-spin of Lattice is computed     
-	\begin{itemize}
-		\item[] If $\Delta E \leq 0$ $i$-spin is flipped;\\
-		\item[] Else $i$-spin is flipped with probability $\exp \lbrace -\beta \Delta E \rbrace $ ; ($k_b =1$)\\
-		
- 	\end{itemize}
+\begin{enumerate}
+	\item Random integer $i$ is drawn from $\{0,1,...,N^D-1\}$ with uniform probability
+	\item Energy variation $\Delta E$ resulting from flipping the $i$-spin of Lattice is computed     
+	\begin{enumerate}
+		\item If $\Delta E \leq 0$ $i$-spin is flipped;\\
+		\item Else $i$-spin is flipped with probability $\exp \lbrace -\beta \Delta E \rbrace $ ; ($k_b 				  =1$)\\		
+	\end{enumerate}
 	
+\end{enumerate}
 	
 
-\end{itemize}
-	
+
+
+
+
 \newpage
 
 \section{Code}
