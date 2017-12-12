@@ -225,7 +225,7 @@ From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
 \subsection{Metropolis Algorithm}
 
 At each step Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin value.\\ 
-The number of possible $q'$ configurations equal to the total number of spins $N^D$ , $q'$ is chosen with uniform probability.
+The number of possible $q'$ configurations is equal to the total number of spins $N^D$; $q'$ is chosen with uniform probability.
 \\Defining the ratio $a = P_{eq}(q')/P_{eq}(q)$ 
 \begin{enumerate}
 	\item If $a \geq 1$ than $q'$ is accepted 
@@ -238,11 +238,10 @@ The number of possible $q'$ configurations equal to the total number of spins $N
 That means $q'$ is always accepted when its probability is greater than $q$ , otherwise it is accepted with 
 probability $P_{eq}(q')/P_{eq}$.\\
 \\
-According to formula (3) $a = \exp \lbrace -\beta  \Delta E  \rbrace$ \\
-It' easy to observe that when $a \geq 1$ than $ \Delta E \leq 0 $. The latter inequality is taken as the  condition of point 1.  
+According to formula (3) $a = \exp \lbrace -\beta  \Delta E  \rbrace$; it is easy to observe that when $a \geq 1$ than $ \Delta E \leq 0 $. The latter inequality is taken as the condition of point 1.  
 \\
 \\
-The Algorithm's single step is implemented as following :
+The Algorithm's single step is implemented as following:
 	
 \begin{enumerate}
 	
