@@ -305,7 +305,7 @@ This section wants to summarize the simulation results. Under this purpose we un
 \end{itemize}
 
 \subsubsection*{Calibrating the model}
-Simulations are done with $10^7$ steps for thermalization and more than $10^7$ steps with useful data. We varied the lattice size from 40x40 to 100x100 number of spins. Simulation time is really sensible to the number of temperature steps. We choose 100 steps of temperature from 0.5K to 3.5K centred around theoretical critical temperature (2.27K for 2D, 4K for 3D). (See Figure 12 in Appendix) 
+Simulations are done with $10^8$ steps for thermalization ($10^9$ for the 3D lattice) and more than $10^7$ steps with useful data. We varied the lattice size from 40x40 to 100x100 number of spins. Simulation time is really sensible to the number of temperature steps. We choose 100 steps of temperature from 0.5K to 3.5K centred around theoretical critical temperature (2.27K for 2D, 4K for 3D). (See Figure 12 in Appendix) 
 
 \begin{figure}[h!]
   \centering
@@ -322,7 +322,7 @@ Simulations are done with $10^7$ steps for thermalization and more than $10^7$ s
 \begin{figure}[h!]
   \centering
  
-  \caption{Scusceptibility-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+  \caption{Susceptibility-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
 \end{figure}
 
 \begin{figure}[h!]
@@ -334,19 +334,19 @@ Simulations are done with $10^7$ steps for thermalization and more than $10^7$ s
 \begin{figure}[h!]
   \centering
   
-  \caption{Energy-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+  \caption{Energy-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
  
-  \caption{Magnetization-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+  \caption{Magnetization-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
   
-  \caption{Susceptibility-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+  \caption{Susceptibility-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
 \end{figure}
 
 \begin{figure}[h!]
@@ -359,43 +359,42 @@ Simulations are done with $10^7$ steps for thermalization and more than $10^7$ s
 
 The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation through this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
 
+% -----------------------------PAG 8----------------------------------%
 \newpage
 \section{Conclusions}
-This work has analyzed a new solution for the LMP characterized by the delivery process carried out by citizens. As we shown in the first section, the today city complexity brought a proportional increase of the transportation costs in it; indeed the presented solution, based on the sharing economy, can be ecologically and economically sustainable. Citizen becomes active actors in the transportation process delivering packs all around the city. The Agent-Based Model has been realized with a scaled map in order to express the Turin's distances and adequate (from a computational point of view) parameters:
-\begin{center}
-  \begin{tabular}{c|c|c|c|c}
-    \hline
-    Numb. Packs & Numb. Users & Max Delivery Cost & Storage Box Cost & Users' Pay \\
-    \hline
-    \hline
-    1400 & 700 & 1.75 \euro{} & 0.2 \euro{}/two days & 1 \euro{}/km \\
-    \hline
-  \end{tabular}
-\end{center}
-The code has been written in NetLogo 6.0 and, thanks to the Behavior Search tool, brought the following results for parameters we need in order to minimize the expenses:
+Metropolis-Hastings algorithm has been implemented in Root (C++) in order to show phase transitions in the 2D and 3D Ising model. Simulation parameters are the following:
+
 \begin{center}
   \framebox[12cm]{%
     \begin{minipage}{100mm}
       \begin{itemize}
-      \item 10 Storages.
-      \item 304 Boxes in each storage.
-      \item Total expenses: 1440 \euro{}
+      \item number of spins for side: $40$-$60$-$80$-$100$ 
+      \item thermalization steps: $10^8$-$10^9$ 
+      \item data collection steps: $>10^7$ 
+      \item temperature measures: $25-100$ 
       \end{itemize}
     \end{minipage}}
 \end{center}
-Note that the storage's capacity is greater than the minimum required for an uniform distribution of 1400 packs in 10 storages. This shows how the complex system achieves a store optimization for minimizing the expense regarding random place of delivery.
-\bigskip
 
-The figure below shows that the curves of expenses and number of packs vs. time have almost an opposite trend; moreover on the right we see that the expenses for each pack decreases with time.
 
+
+We recall the theoretical critical temperature of the 2D Ising model with infinite size: 2.27K. The 3D Ising model does not have an analytical solution so we present a result in harmony with the results accepted by scientific community.
+\begin{center}
+  \begin{tabular}{c|c|c}
+ 	Model & Critical T & Critical Exp  \\
+    \hline    
+    \hline
+    2D & Numb. Users & Max Delivery Cost \\
+    \hline
+    \hline
+    3D & 700         & 1.75 \euro{}     \\
+    \hline
+  \end{tabular}
+\end{center}
+
+
+% -----------------------------PAG 9----------------------------------%
 \newpage
-Considering an high and a low number of users we saw that the convergence is faster in the first case and, as expected, less expensive. Note that at the end of the day (1600 ticks) in both cases all packs are delivered.
-
-
-Increasing the fixed cost parameters we saw that expenses grew, but the model still succeed in delivering all packs in a day (1600 ticks) with a cost for each pack that is lower than 1.75\euro{}.
-\\
-In conclusion this underlines the robustness of the proposed solution both in economical and user's engagement terms, moreover the model held interesting results also in extreme cases.
-
 \subsection*{Performance}
 \begin{figure}[h!]
   \centering
