@@ -24,7 +24,7 @@
 *.synctex.gz
 *.fdb_latexmk
 *.xml
-*.pdf
+tex/*.pdf
 *.fls
 *.bcf
 *.pyg

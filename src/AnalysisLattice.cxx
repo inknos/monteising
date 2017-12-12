@@ -704,12 +704,15 @@ void AnalysisLattice::fitLattice( bool mean,
   findTcritic();
 
   TF1 * f;
+  auto legend = new TLegend(0.1,0.7,0.48,0.9);
+  legend->SetHeader("Legend","C"); // option "C" allows to center the header
   if(y_axis == 3){
     f = new TF1("f" , AnalysisLattice::analiticM , fit_temp_min , fit_temp_max , 3);
     f -> SetParameters(TempCritic, 0.12, 1.1);
     f -> SetParNames("T critic", "exp critic", "coeff");
     g -> SetTitle("Temperature/Magnetization Fit");
     g -> GetYaxis() -> SetTitle("Magnetization per Site (#mu)");
+    legend -> AddEntry("f", "|T - T_{c}|^{#alpha}", "l");
   }
   if(y_axis == 5){
     f = new TF1("f" , AnalysisLattice::analiticX , fit_temp_min , fit_temp_max , 3);
@@ -717,12 +720,15 @@ void AnalysisLattice::fitLattice( bool mean,
     f -> SetParNames("T critic", "exp critic", "coeff");
     g -> SetTitle("Temperature/Magnetic Susceptibility Fit");
     g -> GetYaxis() -> SetTitle("Magnetic Susceptibility (#frac{#mu}{k_{B}})");
+    legend -> AddEntry("f", "|T - T_{c}|^{#alpha}", "l");
   }
   g -> SetMarkerStyle(22);
   g -> SetMarkerColor(kBlue + 3);
   g -> GetXaxis() -> SetTitle("Temperature (#frac{J}{k_{B}})");
   g -> Fit(f , "R");
   g -> Draw("ALP");
+  legend->AddEntry("g","Graph of Lattice","lep");
+  legend->Draw();
 }
 
 /*
