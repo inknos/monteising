@@ -69,7 +69,7 @@
   \\
   TANS Course A.A. 2017/2018 Prof. Massimo Masera
   \\
-  \textbf{Ising Model Simulation with Monte Carlo methods}
+  \textbf{Ising Model Simulation with MC methods}
 }
 
 \begin{document}
@@ -77,10 +77,8 @@
 \maketitle
 \bigskip
 \section*{Abstract}
-In this work is introduced the Last Mile problem and the Agent-Based modelling process.
-A solution for the Last Mile problem is proposed suggesting an active engagement of the population.
-Some estimation has been done in order to make the simulation suitable for representing the city of Turin and actual cost of the delivering process.
-Results show the robustness of the proposed solution both in economical and user's engagement terms, discussing also extreme situation.
+A computational solution for the Ising model is proposed using Metropolis-Hastings algorithm. Results show critical temperature for 2D and 3D models under periodical conditions. Different sizes and temperatures are studied in agreement with algorithm performances and sensibilities to the parameters. We plotted energy, susceptibility and magnetization vs temperature and we fitted it in order to find critical exponents.
+
 
 % -----------------------------PAG 1----------------------------------%
 \newpage
@@ -161,103 +159,7 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 
 % -----------------------------PAG 4----------------------------------%
-
 \newpage
-
-\section{Model}
-
-\subsection*{Lattice Implementation}
-
-A D-dimensional cubic Lattice with N spins along each edge is decribed by the array :
-$$\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$$ 
-
-Let $i$ denote the index of the array,  $ i = \{0,1,...,N^D-1\}$  \\
-
-$L_i$ entry is a boolean variable, $L_i = \{0,1\}$ represents respectively spin-down and spin-up by convention \\
-  
-Let $i$-$spin$ denote the spin represented by $L_i$ entry. \\
-The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index
-$i$ if a convention is set on the Lattice arrangement, which in our Model is the following:
-
-\begin{itemize}
-\item[] Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice,
-	    each edge starting from \textit{O} is aligned along one of the D positive directions.
-\item[] Unit distance between each couple of adjacent spins 
-\item[] Spins indexing starts from increasing first dimension’s coordinate, than second and so forth 
-\end{itemize}
-
-\textbf{n.b.} This rules imply that, given a specific spin, each coordinate $a_j$ has values in range
-$\{0,1,…,N1\}$. Index $i$ can be expressed as a power series of $N$ with coefficients equal to the coordinates of the $i-spin$ \\
-
-$$ i = \sum_{j=1}^{D-1}a_jN^j $$ 
-
-Coordinates $a_j$ are computed according to :
-
-$$a_j = [i\%N^{j+1}]/N^j$$
-
-Periodic boundary conditions are applied in order to reduce finite-scale effects.
-
-
-% -----------------------------PAG 6----------------------------------%
-
-\newpage
-\subsection*{Energy }
-
-Lattice's energy is given by equation (1). \\
-The algorithm implemented for energy computation takes array $\mathbf{L}$ and performs two for loops : one over the system's dimension $d = (0,1,..,D-1)$ and the other over index $i = (0,1,..,N^D-1)$. \\
-The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.\\
-So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So energy can be rewritten as :
-
-$$H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}$$
-Performing first summation $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
-For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
-$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes the summation :
-
-$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \hat{} \ L_{i_{d_+}})$$
-$\sigma_i\sigma_{i_{d_+}}$ is replaced by $L_i \ \hat{} \ L_{i_{d_+}}$ since spins are represented by boolean entries $L_i$. The XOR bitwise operator $ \hat{} $ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$ which can be $\pm1$. \\
-From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates
-$\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
-The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$ only on the $d$-th entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice. \\
-From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
-\begin{eqnarray*}
-  i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j + [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
-          &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
-\end{eqnarray*}
-
-\textbf{n.b.} if $d=D-1$ the second term is 0, so it's not computed by the algorithm.
-
-\newpage 
-
-\subsection*{Metropolis Algorithm}
-
-The Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin. The possible $N^D$ configurations are chosen with uniform probability. \\
-Each configuration has probability given by equation (3). \\
-Defining the ratio $a = p(q')/p(q)$ , $q'$ is accepted if $a \leq 1$, that is, \\ 
-if $q'$ has a greater probability than $q'$ is accepted. \\ 
-Otherwise if $ a \leq 1 $ then $q'$ is accepted with probability $a$.
-The algorithm is implemented according to the following procedure :
-\begin{itemize}
-	\item[] A random integer number $i$ is extracted from $\{0,1,...,N^D-1\}$ with uniform probability
-	\item[] The energy variation $\Delta E$ resulting from flipping the $i$-spin of Lattice is computed     
-	\begin{itemize}
-		\item[] If $\Delta E \leq 0$ $i$-spin is flipped;\\
-		\item[] Else $i$-spin is flipped with probability $\exp \lbrace -\beta \Delta E \rbrace $ ; ($k_b =1$)\\
-		
- 	\end{itemize}
-\end{itemize}
-	
-\subsection*{Data Collection}
-Data Storage can be a problem when dealing with a great amount of data.
-We used root data structures to work out the solution. Storing happens two times during a full simulation:
-after the ``raw'' collection and after the analysis.\\
-All the data are ordered, by temperature, in \texttt{TTree} and by lattice in \texttt{TBranch}. Eanch measurable quantity is a leaf of the branch.
-The names of each structures are easy for string comprehension: this way it's easy to read and process previously collected data.\\
-The way root saves data let the execution run flawessly even when processing several Giga Bytes of data. 
-
-\newpage
-
-\appendix
-
 \section{Code}
 This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
 
@@ -268,6 +170,105 @@ This section's aim is to introduce the reader to the C++ implementation of the m
 \end{figure}
 
 
+
+
+\subsection{Lattice Description}
+
+The “lattice” array of a D-dimensional cubic Lattice is $\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$.
+Let $i$ denote the index of the array, ranging from $0$ to $N^D-1$.\\
+Let $i$-$spin$ denote the spin represented by the $L_i$ boolean entry. \\
+The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the lattice arrangement, which in our model is the following:
+\begin{itemize}
+\item The origin \textit{O} of the D-dimensional space is chosen to be a spin-vertex of the cubic Lattice such that each edge starting from \textit{O} is aligned along one of the D positive directions of the space.
+\item The distance between each couple of adjacent spins is set to one.
+\item The spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
+\end{itemize}
+
+% FIGURA caso 1 , 2 , 3 dimensionale
+
+\textbf{N.B.} This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range
+$\{0,1,…,N-1\}$. \\
+
+
+
+% -----------------------------PAG 5----------------------------------%
+\newpage
+
+
+\subsection*{Coordinates Computation}
+
+Cases from \textit{D=1} to \textit{D=3} are treated in order to understand and generalize the coordinates’ computation. \\
+Before starting, the division $/$ and modulo $\%$ operators are defined as follows : \\
+Given two integer numbers a and n , the operations a/n and a\%n return respectively the quotient and the remainder of the euclidean division of a by n. \\
+\textit{e.g.} : $6/3=2$ ; $9/4=2$ ; $6\%3=0$ ; $9\%4=1$ \\
+
+\vspace{0.1cm}
+\textbf{D=1} \\
+A 1-dimensional lattice is made by $N$ spins aligned along a single $x$ direction .
+In this case the index $i$ represents itself the $x$ coordinate of the spin.\\
+% image 1D
+
+\textbf{D=2} \\
+A 2-dimensional Lattice is a square made by $N^2$ spins.\\
+The index can be expressed as $i = a_0 + a_1N$. \\
+$a_1$ can be seen as the number of $N$-spin lines stacked starting from the quote $y=0$, this number is
+the $y$-cordinate itself while the number or remaining spin $a_0$ is the $x$-coordinate.
+$a_1$ is computed from $i$ divided by $N$ while $a_0$ is computed from $i$ modulo $N$.
+The $(x,y)$ coordinates of the $i$-spin are given by : $$(a_0,a_1)=(i\%N ; i/N)$$
+
+
+\textbf{D=3} \\
+A 3-dimensional Lattice is a cube made by $N^{3}$ spins. \\
+The index $i$ can be expressed as $i = a_0 + a_1N + a_2N^2$. \\
+$a_2$ can be seen as the number of $N^2$-spin squares stacked starting from the plane $z=0$, this number is
+the $z$ coordinate itself. $a_2$ is computed from $i/N$.
+Once we have $a_2$ the remaining $(x,y)$ coordinates can be computed from \\ $i\%N^2 = a_0 + a_1N$ as in \{D=2\} case .\\
+The $(x,y,z)$ coordinates of the $i$-spin are given by : $$(a_0,a_1,a_2)=\left( (i\%N^2)\%N , (i\%N^2)/N , i/N^2 \right)$$
+
+Generalizing to $D$ dimensions, index $i$ can be expressed as :$ i = \sum_{j=1}^{D-1}a_jN^j $ \\
+Its corresponding coordinates are computed starting from $j=D-1$ and establishing a recurrence relationship :
+$$\mathbf{a} = \left(a_0 = i\%N ,.., a_j = [i\%N^{j+1}]/N^j ,.., a_{D-2} = [i\% N^{D-1}]/N^{D-2} , a_{D-1} = i/N^{D-1}\right)$$
+
+% -----------------------------PAG 6----------------------------------%
+
+\newpage
+\subsection*{Lattice's energy }
+
+The Lattice's energy is computed according to equation (1).
+
+
+% J is a constant interaction term between each couple $<l,m>$ of spins .\\
+% The summation is performed over all possible couples $<l,m>$ of adjacent %spins.\\
+
+The Lattice class provides a method wich returns the energy of the system. \\
+The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
+The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
+\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as :
+
+$$H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}$$
+
+It's easy to observe that, performing the first summation $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
+For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
+$i_{d_+}$-spin so that the number of operation is halved. So the algorithm performs the summation :
+
+$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \hat{} \ L_{i_{d_+}})$$
+
+$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \hat{} \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\hat{}$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
+\vspace{0.1cm}
+From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates
+$\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
+The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
+only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice.
+
+From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
+\begin{eqnarray*}
+  i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
+          &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
+\end{eqnarray*}
+
+The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration.
+
+\newpage
 
 \input{classes.tex}
 
@@ -300,10 +301,11 @@ This section wants to summarize the simulation results. Under this purpose we un
 \begin{itemize}
 \item Finite size and finite volume of the lattice imply magnetization and energy fluctuations; periodic conditions reduce this phenomena. Moreover finite size leads to no residual magnetization: this effect is out of the temperature's range studied.
 
-\item Importance sampling algorithms can produce correlated configurations corresponding to different steps of the simulation. This phenomena is in contrast with theoretical hypothesis of microstates independence and can be correctly treated throw binning technique. 
-
+\item Importance sampling algorithms can produce correlated configurations corresponding to different steps of the simulation. This phenomena is in contrast with theoretical hypothesis of microstates independence and can be correctly treated through binning technique. 
 \end{itemize}
 
+\subsubsection*{Calibrating the model}
+Simulations are done with $10^7$ steps for thermalization and more than $10^7$ steps with useful data. We varied the lattice size from 40x40 to 100x100 number of spins. Simulation time is really sensible to the number of temperature steps. We choose 100 steps of temperature from 0.5K to 3.5K centred around theoretical critical temperature (2.27K for 2D, 4K for 3D). (See Figure 12 in Appendix) 
 
 \begin{figure}[h!]
   \centering
@@ -353,10 +355,9 @@ This section wants to summarize the simulation results. Under this purpose we un
   \caption{1,000,000,000 steps of cooling for the 3D Lattice with L=40}
 \end{figure}
 
-\subparagraph*{Calibrating the model}
 
 
-The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation throw this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
+The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation through this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
 
 \newpage
 \section{Conclusions}
@@ -398,7 +399,7 @@ In conclusion this underlines the robustness of the proposed solution both in ec
 \subsection*{Performance}
 \begin{figure}[h!]
   \centering
-   %\includegraphics{img/Andamenti_performance.pdf} 
+   \includegraphics[width=\columnwidth]{img/Andamenti_performance.pdf} 
   \caption{Time scaling for different data member initialization}
 
 \end{figure}
