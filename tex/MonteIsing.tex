@@ -25,6 +25,8 @@
 \usepackage{eurosym}
 \usepackage{adjustbox}
 
+\usepackage{subcaption}%used by Nicola for multiple image
+
 % included by Nicola for correct highlighting of C++ code
 \usepackage{listings}
 \usepackage{xcolor}
@@ -294,8 +296,14 @@ Simulations are done with $10^8$ steps for thermalization ($10^9$ for the 3D lat
 \end{figure}
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=\columnwidth]{img/2d/c1.pdf}
+  \begin{subfigure}{.5\columnwidth}
+    \centering
+    
+  \end{subfigure}
+  \begin{subfigure}{.5\columnwidth}
+    \centering
+    
+  \end{subfigure}
   \caption{10,000,000 steps of cooling for the 2D Lattice with L=100}
 \end{figure}
 
