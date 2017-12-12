@@ -77,15 +77,15 @@
 \maketitle
 \bigskip
 \section*{Abstract}
-A computational solution for the Ising model is proposed using Metropolis-Hastings algorithm. Results show critical temperature for 2D and 3D models under periodical conditions. Different sizes and temperatures are studied in agreement with algorithm performances and sensibilities to the parameters. We plotted energy, susceptibility and magnetization vs temperature and we fitted it in order to find critical exponent.
+A computational solution for the Ising model is proposed using Metropolis-Hastings algorithm. Results show critical temperature for 2D and 3D models under periodic boundary conditions. Different sizes and temperatures are studied in agreement with algorithm performances and sensibilities to the parameters. We plotted energy, susceptibility and magnetization vs temperature and we fitted it in order to find critical exponent.
 
 
 % -----------------------------PAG 1----------------------------------%
 \newpage
 \section*{Introduction}
-The Ising model is a well studied model in Statistical Mechanics which describes ferromagnetism phenomena. It is characterized by a microscopic configuration space based on D-dimensional lattice, that brings to macroscopic statistical quantities. Moreover it can easily generalize the concept of collective effects caused by binary valued points interacting in pairs; for this reason the Ising model became the core of the physics of complex systems. In the last decades computational methods have been applied to search a numerical solution for the 3D Ising model in order to  fill the lack of an analytical solution.
+The Ising model is a well studied model in Statistical Mechanics which describes ferromagnetic phenomena. It is characterized by a microscopic configuration space based on D-dimensional lattice, that brings to macroscopic statistical quantities. Moreover it can easily generalize the concept of collective effects caused by binary valued points interacting in pairs; for this reason the Ising model became the core of the physics of complex systems. In the last decades computational methods have been applied to search a numerical solution for the 3D Ising model in order to  fill the lack of an analytical solution.
 \\
-Alongside Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling based on the importance of a region determined a great step for the numerical solutions in general. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the ND-dimensional Ising model with Metropolis algorithm.
+Alongside Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling based on the importance of a region determined a great improvement for the numerical solutions in general. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the D-dimensional Ising model with Metropolis algorithm.
 
 
 \begin{figure}[h!]
@@ -109,7 +109,7 @@ The Ising model is a physical-mathematical model characterized by a lattice of l
 Where $J$ is the energy interaction term and we sum over the neighbours.
 \\
 The system has  a macroscopic equilibrium state (macrostate) described by statistical quantities: number of spins $N$, lattice volume $V$, energy $E$, magnetization $M$. According to the Statistical Mechanics theory we consider the thermodynamic limit, i.e. $N, V \rightarrow \infty$ and $N/V = cost$ in order to have negligible fluctuations on energy and magnetisation: $(\Delta E)^2 / \langle E \rangle = O  (1/ \sqrt{N}) $.
-From a theoretical point of view we consider an ensemble of lattices, each one with a particular configuration of spins (microstate) that corresponds to the same macrostate; we underlying that all microstates are independent and equiprobable. The configuration space is described through the Hamiltonian formalism indeed, under ergodic hypothesis, the system visits all microstates. Moreover stationary hypothesis implies the existence of an equilibrium state in which  the probability distribution of the microstates satisfies the Liouville theorem. These hypotheses bring respectively to the following statements:
+From a theoretical point of view we consider an ensemble of lattices, each one with a particular configuration of spins (microstate) that corresponds to the same macrostate; we point out that all microstates are independent and equiprobable. The configuration space is described through the Hamiltonian formalism indeed, under ergodic hypothesis, the system visits all microstates. Moreover stationary hypothesis implies the existence of at least an equilibrium state in which  the probability distribution of the microstates satisfies the Liouville theorem. These hypotheses bring respectively to the following statements:
 
 \begin{enumerate}
 \item In the $t \rightarrow \infty$ limit: the average (over all the ensemble) of a physical quantity is equal to the temporal average of that quantity.
@@ -119,13 +119,11 @@ From a theoretical point of view we consider an ensemble of lattices, each one w
   \end{equation}
   Where $q$ is the spin position on the lattice and $\beta$ is the product of the Boltzmann constant and the temperature $T$ of the system.
 \end{enumerate}
-
-
-In a finite case the Ising model system is characterized by magnetization and  energy fluctuations that brings us to consider it under canonical formalism. We define the partition function as follow: $Z = \sum_q exp [  -\beta H(q) ]$. The model simulation can be done through Monte Carlo method, i.e. we generate a pseudo-random chain of numbers in order to extract a microstate sample (from all the configuration space) distributed by the following equilibrium distribution of probability:
+In a finite case the Ising model system is characterized by magnetization and  energy fluctuations that brings us to consider it under canonical formalism. We define the partition function as follows: $Z = \sum_q exp [  -\beta H(q) ]$. The model simulation can be done through Monte Carlo method, i.e. we generate a pseudo-random chain of numbers in order to extract a microstate sample (from all the configuration space) distributed by the following equilibrium distribution of probability:
 \begin{equation}
   P_{eq}(q)=\exp \lbrace -\beta H(q)\rbrace /Z
 \end{equation}
-In practice we cannot compute the partition function, moreover an algorithm that search over all the phase space has not a great performance.
+In practice we cannot compute the partition function, moreover an algorithm that searches over all the phase space has not a great performance.
 
 
 % -----------------------------PAG 3----------------------------------%
@@ -142,7 +140,7 @@ Where $q$ and $q'$ are respectively the configuration before the spin-flip and a
 \begin{eqnarray}
 W(q \rightarrow q') = min \bigg \lbrace 1 , \dfrac{P_r(q')P_{eq}(q')}{P_r(q)P_{eq}(q)} \bigg \rbrace
 \end{eqnarray}
-Where $P_r(q)$ is the probability to be in the $q$ configuration; we consider symmetric probability: $P_r(q)=P_r(q')$. In this way the configuration $q'$ is more probable than $q$ if $P_{eq}(q')>P_{eq}(q)$ and the step transition could occurs with the following probabilities and conditions: 
+Where $P_r(q)$ is the probability to be in the $q$ configuration; we consider symmetric probability: $P_r(q)=P_r(q')$. In this way the configuration $q'$ is more probable than $q$ if $P_{eq}(q')>P_{eq}(q)$ and the step transition could occur with the following probabilities and conditions: 
 \[
 \begin{cases}
   W(q \rightarrow q')=1 &\quad \Delta E \leq 0 \\
@@ -152,7 +150,7 @@ Where $P_r(q)$ is the probability to be in the $q$ configuration; we consider sy
 \bigskip
 
 \subsection*{Phase transition in Ising model}
-Magnetization in Ising model shows phase transition at a certain temperature called $T_c$. This means that the logarithm of the partition function has critical point of the first order in this point and two different statistical descriptions concurrently exist at $T_c$. Indeed the magnetization curve has two different fits before this point and after, that corresponds to inner configuration of spins: random that corresponds to $\langle M \rangle = 0$ and ordered with $\langle M \rangle \rightarrow +1 / -1$.
+Magnetization in Ising model shows phase transition at a certain temperature called $T_c$. This means that the logarithm of the partition function has a critical point of the first order at this temperature and two different statistical descriptions concurrently exist at $T_c$. Indeed the magnetization curve has two different fits before this point and after, these fits correspond to inner configuration of spins: random for $\langle M \rangle = 0$ and ordered for $\langle M \rangle \rightarrow +1 / -1$.
 
 
 
@@ -160,122 +158,6 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 % -----------------------------PAG 4----------------------------------%
 \newpage
-
-
-\section{Model}
-
-\subsection{Lattice Implementation}
-
-A D-dimensional Lattice with N spins along each edge is described by 
-$$\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$$
-Let $i$ denote the index of array $\mathbf{L}$ ; $i = \{0,1,...,N^D -1\}$\\
-$L_i = \{0,1\}$ is a boolean entry resprenting down and up spin by convention \\
-Let $i$-$spin$ denote the spin represented by the $L_i$ boolean entry. \\
-The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the Lattice arrangement, which in our Model is the following:
-\begin{itemize}
-\item Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice, each edge starting from \textit{O} is aligned along one of the D positive directions.
-\item Unitary distance between each couple of adjacent spins.
-\item Spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
-\item[\textbf{N.B.}] This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range $\{0,1,…,N-1\}$. \\ \\
-\end{itemize}
-index $i$ can be expressed as a power series of N with coefficients equal to the $a_j$ coordinates :
-
-\begin{equation}
-i = \sum_{j=1}^{D-1}a_jN^j
-\end{equation}
-The $a_j$ coordinates can then be computed from $i$ as :
-\begin{equation}
-a_j = [i\%N^{j+1}]/N^j
-\end{equation}
-
-% -----------------------------PAG 6----------------------------------%
-
-\newpage
-\subsection{Energy Computation}
-
-The Lattice's energy is computed according to equation (1).
-The Lattice class provides a method wich returns the energy of the system. \\
-The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
-The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
-\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as :
-\begin{equation}
-H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}
-\end{equation}
-Performing $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
-For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
-$i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes :
-
-\begin{equation}
-H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \oplus \ L_{i_{d_+}})
-\end{equation}
-$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\oplus$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
-\vspace{0.1cm}
-From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates\\
-$\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
-The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
-only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice.
-From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
-\begin{eqnarray*}
-  i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j + [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
-          &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
-\end{eqnarray*}
-\textbf{n.b.} : if $d = D-1$ the second term equals 0, so it's not computed by the algorithm
-\newpage
-
-
-\subsection{Metropolis Algorithm}
-
-At each step Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin.\\ 
-The number of possible $q'$ configurations equal to the total number of spins $N^D$ , $q'$ is chosen with uniform probability.
-\\Defining the ratio $a = P_{eq}(q')/P_{eq}(q)$ 
-\begin{enumerate}
-	\item If $a \geq 1$ than $q'$ is accepted 
-	\item If $a < 1$ :
-		\begin{itemize}
-			\item[] $q'$ is accepted with probability $a$
-			\item[] if $q'$ is rejected (with probability $1-a$) configuration $q$ is kept
-		\end{itemize}				 
-\end{enumerate}
-That means $q'$ is always accepted when its probability is greater than $q$ , otherwise it is accepted with 
-probability $P_{eq}(q')/P_{eq}$.\\
-\\
-According to formula (3) $a = \exp \lbrace -\beta  \Delta E  \rbrace$ \\
-It' easy to observe that when $a \geq 1$ than $ \Delta E \leq 0 $. The latter inequality is taken as the  condition of point 1.  
-\\
-\\
-The Algorithm's single step is implemented as following :
-	
-\begin{enumerate}
-	
-	\item Random integer $i$ is extracted with uniform probability from $\{0,1,...,N^D -1\}$
-	\item The energy variation $ \Delta E $ resulting from flipping the $i-spin$ is computed		
-	\item If $\Delta E \leq 0 $ than the $i$-spin is flipped
-	\item If $\Delta E > 0 $ :
-		\begin{itemize}
-			\item[]  A random double number $u$ is extracted with uniform probability from $[0,1]$
-			\item[]	 if $u < \exp \lbrace -\beta  \Delta E  \rbrace $					
-			\begin{itemize}
-				\item[] $i$-spin is flipped 
-			\end{itemize}				 	 
-			\item[]	 if $u > \exp \lbrace -\beta  \Delta E  \rbrace $
-			\begin{itemize}
-				\item[] $i$-spin is not flipped 
-			\end{itemize}					
-		\end{itemize}				 
-\end{enumerate} 
-   
-
- 
-
-
-\newpage
-
-\section{Appendix}
-
-\input{classes.tex}
-
-\newpage
-
 \section{Code}
 This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
 
@@ -285,6 +167,108 @@ This section's aim is to introduce the reader to the C++ implementation of the m
   \caption{Class scheme}
 \end{figure}
 
+
+
+
+\subsection{Lattice Description}
+
+The “lattice” array of a D-dimensional cubic Lattice is $\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$.
+Let $i$ denote the index of the array, ranging from $0$ to $N^D-1$.\\
+Let $i$-$spin$ denote the spin represented by the $L_i$ boolean entry. \\
+The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the lattice arrangement, which in our model is the following:
+\begin{itemize}
+\item The origin \textit{O} of the D-dimensional space is chosen to be a spin-vertex of the cubic Lattice such that each edge starting from \textit{O} is aligned along one of the D positive directions of the space.
+\item The distance between each couple of adjacent spins is set to one.
+\item The spins are indexed starting from increasing the first dimension’s coordinate, than the second and so forth.
+\end{itemize}
+
+% FIGURA caso 1 , 2 , 3 dimensionale
+
+\textbf{N.B.} This rules imply that, given a specific spin, each coordinate $a_j$ takes values in range
+$\{0,1,…,N-1\}$. \\
+
+
+
+% -----------------------------PAG 5----------------------------------%
+\newpage
+
+
+\subsection*{Coordinates Computation}
+
+Cases from \textit{D=1} to \textit{D=3} are treated in order to understand and generalize the coordinates’ computation. \\
+Before starting, the division $/$ and modulo $\%$ operators are defined as follows : \\
+Given two integer numbers a and n , the operations a/n and a\%n return respectively the quotient and the remainder of the euclidean division of a by n. \\
+\textit{e.g.} : $6/3=2$ ; $9/4=2$ ; $6\%3=0$ ; $9\%4=1$ \\
+
+\vspace{0.1cm}
+\textbf{D=1} \\
+A 1-dimensional lattice is made by $N$ spins aligned along a single $x$ direction .
+In this case the index $i$ represents itself the $x$ coordinate of the spin.\\
+% image 1D
+
+\textbf{D=2} \\
+A 2-dimensional Lattice is a square made by $N^2$ spins.\\
+The index can be expressed as $i = a_0 + a_1N$. \\
+$a_1$ can be seen as the number of $N$-spin lines stacked starting from the quote $y=0$, this number is
+the $y$-cordinate itself while the number or remaining spin $a_0$ is the $x$-coordinate.
+$a_1$ is computed from $i$ divided by $N$ while $a_0$ is computed from $i$ modulo $N$.
+The $(x,y)$ coordinates of the $i$-spin are given by : $$(a_0,a_1)=(i\%N ; i/N)$$
+
+
+\textbf{D=3} \\
+A 3-dimensional Lattice is a cube made by $N^{3}$ spins. \\
+The index $i$ can be expressed as $i = a_0 + a_1N + a_2N^2$. \\
+$a_2$ can be seen as the number of $N^2$-spin squares stacked starting from the plane $z=0$, this number is
+the $z$ coordinate itself. $a_2$ is computed from $i/N$.
+Once we have $a_2$ the remaining $(x,y)$ coordinates can be computed from \\ $i\%N^2 = a_0 + a_1N$ as in \{D=2\} case .\\
+The $(x,y,z)$ coordinates of the $i$-spin are given by : $$(a_0,a_1,a_2)=\left( (i\%N^2)\%N , (i\%N^2)/N , i/N^2 \right)$$
+
+Generalizing to $D$ dimensions, index $i$ can be expressed as :$ i = \sum_{j=1}^{D-1}a_jN^j $ \\
+Its corresponding coordinates are computed starting from $j=D-1$ and establishing a recurrence relationship :
+$$\mathbf{a} = \left(a_0 = i\%N ,.., a_j = [i\%N^{j+1}]/N^j ,.., a_{D-2} = [i\% N^{D-1}]/N^{D-2} , a_{D-1} = i/N^{D-1}\right)$$
+
+% -----------------------------PAG 6----------------------------------%
+
+\newpage
+\subsection*{Lattice's energy }
+
+The Lattice's energy is computed according to equation (1).
+
+
+% J is a constant interaction term between each couple $<l,m>$ of spins .\\
+% The summation is performed over all possible couples $<l,m>$ of adjacent %spins.\\
+
+The Lattice class provides a method wich returns the energy of the system. \\
+The method's implemented algorithm takes the lattice array and performs two for loops, one over the system's dimension $d = (0,1,..,D-1)$ and the other over the lattice array's index $i = (0,1,..,N^D-1)$. \\
+The key idea is that, given a fixed $i$-spin, along each dimension $d$ two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
+\\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as :
+
+$$H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}$$
+
+It's easy to observe that, performing the first summation $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
+For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
+$i_{d_+}$-spin so that the number of operation is halved. So the algorithm performs the summation :
+
+$$H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \hat{} \ L_{i_{d_+}})$$
+
+$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \hat{} \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $\mathbf{L}$, the XOR bitwise operator $\hat{}$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
+\vspace{0.1cm}
+From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates
+$\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
+The vector $\mathbf{a^{d_+}}$ differs from $\mathbf{a}$
+only on the $d\deg$ entry $a^{d_+}_d$ which is the only one to be increased, this is computed as $(a_d+1)\%N$ since we are applying periodic boundary conditions on the Lattice.
+
+From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
+\begin{eqnarray*}
+  i_{d_+} &=& \left\{ \sum_{j = 0}^{d-1}a_jN^j  [(a_d + 1)\%N]N^d \right\} + \left\{ \sum_{j = d+1}^{D-1}a_jN^j \right\}  \\
+          &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
+\end{eqnarray*}
+
+The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{pow\textunderscore tmp2}, keeping a fixed index $i$ and performing the loop over d, these powers are assigned respectively to $N^d$ and $N^{d+1}$ in each iteration.
+
+\newpage
+
+\input{classes.tex}
 
 
 % for SVG
