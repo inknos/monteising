@@ -1,6 +1,6 @@
 
 \begin{flushright}
-•
+
 \end{flushright}\section*{Classes}
 	
 \subsection*{Lattice}
@@ -24,7 +24,7 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 	\\
 
 	\item[] 
-	PUBLIC MEMBER FUNCTIONS \\ 
+	PUBLIC MEMBER FUNCTIONS 
 	\begin{itemize}
 		\item[] CONSTRUCTORS \\
 
@@ -460,88 +460,88 @@ The curves of Magnetization and Susceptibility vs Temperature can be fitted in o
     cuint\& x\textunderscore axis,
     cuint\& y\textunderscore axis)
     \begin{itemize}
-    \item[] returns a TGraphErrors of x and y which take value from 0 to 5 \\
-    		0-1-2-3-4-5   
+    \item[] returns a TGraphErrors of x and y, integers representing physical qunatities\\
+    		See the following macro for define statements of x and y \\
+    		Usually x is TEMPERATURE while y could be ENERGY, MAGNETIZATION or SUSCEPTIBILITY \\
+    		The graph represent a single Simulation's Lattice identified by lattice\textunderscore number    
+    		
     \end{itemize}
+
+\newpage
 
   \item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
     cuint\& x\textunderscore axis,
     cuint\& y\textunderscore axis)
     \begin{itemize}
-    \item[]
+    \item[] Returns graph of x and y of physical quantities averaged over all Simulation's Lattices
     \end{itemize}
 
   \item[] TGraphErrors ${}^*$ \textbf{draw}(
     cuint\& x\textunderscore axis,
     cuint\& y\textunderscore axis)
     \begin{itemize}
-    \item[] 
+    \item[] draw a TMultiGraph containing the graphs for all Lattices obtained with the \textbf{drawLattice()} method 
     \end{itemize}
-
-\newpage
 
   \item[] FIT FUNCTIONS \\
 
   \item[] static double \textbf{analiticX}(double $*$ x, double $*$ par)
     \begin{itemize}
-    \item[]
+    \item[] function used for fitting SUSCEPTIBILITY \\
+    		has parameters : Critic Temperature , Critical Exponent and a proportional constant
     \end{itemize}
 
   \item[] static double \textbf{analiticM}(double $*$ x, double $*$ par)
     \begin{itemize}
-    \item[]
+    \item[] function used for fitting MAGNETIZATION \\
+    		has parameters : Critic Temperature , Critical Exponent and a proportional constant
     \end{itemize}
 
   \item[] void \textbf{findTcritic}()
     \begin{itemize}
-    \item[]
+    \item[] sets TempCritic to the temperature for which suscpetibility is maximum in the TGraphErrors returned by \textbf{drawLatticeMean}(TEMPERATURE,SUSCEPTIBILITY);
     \end{itemize}
 
   \item[] void \textbf{fitLattice}( bool mean,
     cuint\& x\textunderscore axis,
     cuint\& y\textunderscore axis,
-    double Tc,
     double fit\textunderscore temp\textunderscore min,
     double fit\textunderscore temp\textunderscore max,
     int lat\textunderscore number
     );
     \begin{itemize}
-    \item[]
+    \item[] Performs fit on MAGNETIZATION or SUSCEPTIBILITY vs TEMPERATURE graph\\
+			respectively with fit funcion analiticM or analiticX \\    
+    		if mean==true\\
+    		fits TGraphErrors returned by drawLatticeMean(x\textunderscore axis,y\textunderscore axis)\\
+    		if mean==false\\
+    		fits TGraphErrors returned by drawLattice(lat\textunderscore number,x\textunderscore axis,y					\textunderscore axis)\\
+    		The fit is performed in [temp\textunderscore min,temp\textunderscore max] range
     \end{itemize}
 
 
-  \item[]       GETTERS AND SETTERS \\
+  \item[] BIN FUNCTIONS \\
 
-  \item[] static double \textbf{getTempCritic}()
+  \item[] std::vector$<$double$>$ \textbf{bin}(const std::vector$<$double$>$\& vec)
     \begin{itemize}
-    \item[] Get critic temperature.
+    \item[] returns std::vector with half size of vec according to binning procedure
     \end{itemize}
-
-  \item[] static void \textbf{setTempCritic}(const double\& \textunderscore TempCritic);
+    
+  \item[] std::vector$<$double$>$ \textbf{binN}(cuint\& num\textunderscore bin, const std::vector$<$double$>$\& vec)
     \begin{itemize}
-    \item[] Set critic temperature.
+    \item[] returns std::vector from applying \textbf{bin} on vec num\textunderscore times 
     \end{itemize}
-
-  \item[] TString \textbf{getFileIn}() const;
-    \begin{itemize}
-    \item[] Get input file name.
+    
+  \item[] TGraph ${}^*$ evalBinning(cuint\& nb)
+	\begin{itemize}
+    \item[] returns a graph representig energy standard deviation versus bin level nb
     \end{itemize}
+    
+    
+  \item[] GETTERS AND SETTERS \\
 
-  \item[] TString \textbf{getFileOut}() const
-    \begin{itemize}
-    \item[] Get output file name.
-    \end{itemize}
-
-  \item[]  void \textbf{setFileIn}(const TString\& file\textunderscore input)
-    \begin{itemize}
-    \item[] Set input file name.
-    \end{itemize}
-
-  \item[] void \textbf{setFileOut}(const TString\& file\textunderscore out)
-    \begin{itemize}
-    \item[] Set output file name.
-    \end{itemize}
-
+  \item[] Getters and Setters are implemented for all the private Data Members 
+  
   \end{itemize}
 \end{itemize}
 
