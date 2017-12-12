@@ -14,7 +14,8 @@
 #define MARKER_STYLE_2D 21
 
 #define MARKER_STYLE_3D 20
-#define MARKER_SIZE_3D 0.6
+
+#define MARKER_SIZE_3D 0.01
 
 ClassImp(DrawLattice)
 
@@ -149,6 +150,7 @@ void DrawLattice::draw3D(){
       index++;
     }
   }
+  g0->SetTitle("3D Ising lattice");
   g0->SetMarkerStyle(MARKER_STYLE_3D);
   g0->SetMarkerSize(MARKER_SIZE_3D);
   g0->SetMarkerColor(COLOR_ZEROS);
@@ -166,6 +168,7 @@ void DrawLattice::draw3D(){
       index++;
     }
   }
+  g1->SetTitle("3D Ising lattice");
   g1->SetMarkerStyle(MARKER_STYLE_3D);
   g1->SetMarkerSize(MARKER_SIZE_3D);
   g1->SetMarkerColor(COLOR_ONES);

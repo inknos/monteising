@@ -133,17 +133,24 @@ In practice we cannot compute the partition function, moreover an algorithm that
 % -----------------------------PAG 3----------------------------------%
 \newpage
 The Boltzmann's factor as probability of choosing a configuration gives a great improvement for the simulation. In this way we are not sampling all the configuration space but a selected and uniform distributed microstates collection. This approach is called \textit{importance sampling} and it allows us to calculate physical quantities as the average number over the extracted configuration:
-\begin{equation}
+$$
   \langle E \rangle_N = \dfrac{1}{N} \sum_{i=1}^{N}{E(q_i)}
-\end{equation} This intuition can be proved under ergodic hypothesis: in fact we can consider an evolving Ising system in which there is a spin flip at each time step. The temporal collection of microstates is a Markov chain with a transition probability ($W$) that leads the system to the unique equilibrium probability in the $t \rightarrow \infty$ limit. Indeed the ratio of the transition probability is:
-$$ \dfrac{W(q \rightarrow q')}{W(q' \rightarrow q)} = \dfrac{P_{eq}(q')}{P_{eq}(q)}= \exp \lbrace \beta [E(q) - E(q')] \rbrace $$
+$$
+This intuition can be proved under ergodic hypothesis: in fact we can consider an evolving Ising system in which there is a spin flip at each time step. The temporal collection of microstates is a Markov chain with a transition probability ($W$) that leads the system to the unique equilibrium probability in the $t \rightarrow \infty$ limit. Indeed the ratio of the transition probability is:
+\begin{equation}
+\dfrac{W(q \rightarrow q')}{W(q' \rightarrow q)} = \dfrac{P_{eq}(q')}{P_{eq}(q)}= \exp \lbrace \beta [E(q) - E(q')] \rbrace 
+\end{equation}
 Where $q$ and $q'$ are respectively the configuration before the spin-flip and after. This implies the equivalence between importance sampling and random extraction. The arbitrary choose on $W(q \rightarrow q')$ determines the particular algorithm; for the Metropolis-Hastings algorithm:
-
 \begin{eqnarray}
-  W(q \rightarrow q')=1 \qquad \Delta E \leq 0 \\
-  W(q \rightarrow q')=\exp \lbrace -\beta \Delta E  \rbrace  \: \Delta E > 0
+W(q \rightarrow q') = min \bigg \lbrace 1 , \dfrac{P_r(q')P_{eq}(q')}{P_r(q)P_{eq}(q)} \bigg \rbrace
 \end{eqnarray}
-
+Where $P_r(q)$ is the probability to be in the $q$ configuration; we consider symmetric probability: $P_r(q)=P_r(q')$. In this way the configuration $q'$ is more probable than $q$ if $P_{eq}(q')>P_{eq}(q)$ and the step transition could occurs with the following probabilities and conditions: 
+\[
+\begin{cases}
+  W(q \rightarrow q')=1 &\quad \Delta E \leq 0 \\
+  W(q \rightarrow q')=\exp \lbrace -\beta  \Delta E  \rbrace  &\quad \Delta E > 0
+\end{cases}
+\]
 \bigskip
 
 \subsection*{Phase transition in Ising model}
@@ -287,19 +294,6 @@ The algorithm defines two powers \textsf{pow\textunderscore tmp1} and \textsf{po
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 % -----------------------------PAG 7----------------------------------%
 
 \newpage
@@ -313,6 +307,54 @@ This section wants to summarize the simulation results. Under this purpose we un
 
 \end{itemize}
 
+
+\begin{figure}[h!]
+  \centering
+  
+  \caption{Energy-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+
+  \caption{Magnetization-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+ 
+  \caption{Scusceptibility-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  
+  \caption{10,000,000 steps of cooling for the 2D Lattice with L=100}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  
+  \caption{Energy-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+ 
+  \caption{Magnetization-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  
+  \caption{Susceptibility-Temperature graph for 3D Lattices with I=40,000,000 and 52 steps of T}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+ 
+  \caption{1,000,000,000 steps of cooling for the 3D Lattice with L=40}
+\end{figure}
 
 \subparagraph*{Calibrating the model}
 
