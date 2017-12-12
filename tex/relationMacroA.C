@@ -1,8 +1,8 @@
-/*-----------------------------------------------------------------*
- *                                                                 *
- * This macro explains how to construct handle and draw a Lattice  *
- *                                                                 *                                                                *
- *-----------------------------------------------------------------*/
+/*----------------------------------------------------------------*
+ *                                                                *
+ * This macro explains how to construct handle and draw a Lattice *
+ *                                                                *                                                                
+ *----------------------------------------------------------------*/
 
 #include "Lattice.h" 
 #include "DrawLattice.h"
@@ -31,10 +31,10 @@
   double * data = new double[4];
   data = lat.coolingPar(); //perform a Metropolis step collecting data
   
-  cout << "T = " << data[0]   << " : temperature" << endl; 
-  cout << "dE = " << data[1]  << " : energy variation" << endl;
-  cout << " dM = " << data[2] << " : magnetization variation" << endl;
-  cout << " dS = " << data[3] << " : energy per site variation" << endl;
+  cout << "T =  " << data[0] << " : temperature" << endl; 
+  cout << "dE = " << data[1] << " : energy variation" << endl;
+  cout << "dM = " << data[2] << " : magnetization variation" << endl;
+  cout << "dS = " << data[3] << " : energy per site variation" << endl;
   delete[] data;  
   
   /*
@@ -47,8 +47,10 @@
    */
   
   
-  
-  
+ 
+ 
+ 
+ 
   
   const unsigned iter = 10000;
   lat.cooling(iter); // Perform 10000 Metropolis steps
