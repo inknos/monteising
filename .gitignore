@@ -109,5 +109,5 @@ img/*
 bin/*
 
 */.DS_Store
-
+.DS*
 
