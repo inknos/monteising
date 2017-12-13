@@ -87,7 +87,7 @@ A computational solution for the Ising model is proposed using Metropolis-Hastin
 \section*{Introduction}
 The Ising model is a well studied model in Statistical Mechanics which describes ferromagnetic phenomena. It is characterized by a microscopic configuration space based on D-dimensional lattice, that brings to macroscopic statistical quantities. Moreover it can easily generalize the concept of collective effects caused by binary valued points interacting in pairs; for this reason the Ising model became the core of the physics of complex systems. In the last decades computational methods have been applied to search a numerical solution for the 3D Ising model in order to  fill the lack of an analytical solution.
 \\
-Alongside Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling based on the importance of a region determined a great improvement for the numerical solutions in general. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the D-dimensional Ising model with Metropolis algorithm.
+Alongside Metropolis algorithm became the most popular method of important sampling in MC. The basic idea of a weighted sampling, based on the importance of a region, determined a great improvement for the numerical solutions in general. Under these premises we want to outline the purpose this work wants to pursuit: finding numerical solution of the D-dimensional Ising model with Metropolis algorithm.
 
 
 \begin{figure}[h!]
@@ -103,10 +103,10 @@ Alongside Metropolis algorithm became the most popular method of important sampl
 \newpage
 \section{Theory}
 \subsection{Ising model and importance sampling}
-The Ising model is a physical-mathematical model characterized by a lattice of local spins in the [-1;+1] domain. The correspondent energy is proportional to the quadratic interaction of near spins ($\sigma_i$):
+The Ising model is a physical-mathematical model characterized by a lattice of local spins in the {-1;+1} domain. The correspondent energy is proportional to the quadratic interaction of near spins ($\sigma_i$):
 
 \begin{equation}
-  H(q, \sigma) = \sum_{<l,m>}^{'} -J\sigma_i\sigma_j
+  H(q, \sigma) = \sum_{<i,j>}^{'} -J\sigma_i\sigma_j
 \end{equation}
 Where $J$ is the energy interaction term and we sum over the neighbours.
 \\
