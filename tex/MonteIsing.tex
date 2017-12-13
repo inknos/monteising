@@ -102,7 +102,7 @@ Alongside Metropolis algorithm became the most popular method of important sampl
 % -----------------------------PAG 2----------------------------------%
 \newpage
 \section{Theory}
-\subsection{Ising model and importance sampling}
+\subsection*{Ising model and importance sampling}
 The Ising model is a physical-mathematical model characterized by a lattice of local spins in the {-1;+1} domain. The correspondent energy is proportional to the quadratic interaction of near spins ($\sigma_i$):
 
 \begin{equation}
@@ -119,18 +119,18 @@ From a theoretical point of view we consider an ensemble of lattices, each one w
   \begin{equation}
     \rho (q, \sigma ) \propto \exp \lbrace- \beta H(q, \sigma ) \rbrace
   \end{equation}
-  Where $q$ is the spin position on the lattice and $\beta$ is the product of the Boltzmann constant and the temperature $T$ of the system.
+Where $q$ is the spin position on the lattice and $\beta$ is the product of the Boltzmann constant and the temperature $T$ of the system.
 \end{enumerate}
 In a finite case the Ising model system is characterized by magnetization and  energy fluctuations that brings us to consider it under canonical formalism. We define the partition function as follows: $Z = \sum_q exp [  -\beta H(q) ]$. The model simulation can be done through Monte Carlo method, i.e. we generate a pseudo-random chain of numbers in order to extract a microstate sample (from all the configuration space) distributed by the following equilibrium distribution of probability:
 \begin{equation}
   P_{eq}(q)=\exp \lbrace -\beta H(q)\rbrace /Z
 \end{equation}
-In practice we cannot compute the partition function, moreover an algorithm that searches over all the phase space has not a great performance.
-
-
+In practice we cannot compute the partition function, moreover an algorithm that searches over all the phase space has not a great performance.\\
+%
+%
 % -----------------------------PAG 3----------------------------------%
-\newpage
-The Boltzmann's factor as probability of choosing a configuration gives a great improvement for the simulation. In this way we are not sampling all the configuration space but a selected and uniform distributed microstates collection. This approach is called \textit{importance sampling} and it allows us to calculate physical quantities as the average number over the extracted configuration:
+%\newpage
+The Boltzmann's factor, as probability of choosing a configuration, gives a great improvement for the simulation. In this way we are not sampling all the configuration space but a selected and uniform distributed microstates collection. This approach is called \textit{importance sampling} and it allows us to calculate physical quantities as the average number over the extracted configuration:
 $$
   \langle E \rangle_N = \dfrac{1}{N} \sum_{i=1}^{N}{E(q_i)}
 $$
@@ -164,14 +164,14 @@ Magnetization in Ising model shows phase transition at a certain temperature cal
 
 \section{Model}
 
-\subsection{Lattice Implementation}
+\subsection*{Lattice Implementation}
 
 A D-dimensional Lattice with N spins along each edge is described by:
 $$\mathbf{L} = (L_0,L_1,..,L_{N^D-1})$$
 Let $i$ denote the index of array $\mathbf{L}$: $i = \{0,1,...,N^D -1\}$.\\
 $L_i = \{0,1\}$ is a boolean entry representing down and up spin by convention. \\
 Let $i$-spin denote the spin represented by the $L_i$ boolean entry. \\
-The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the Lattice arrangement, which in our model is the following:
+The cartesian coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ of the $i$-spin can be computed from index $i$ if a convention is set on the Lattice arrangement:
 \begin{itemize}
 \item Origin \textit{O} of the D-dimensional space is a spin-vertex of the cubic Lattice, each edge starting from \textit{O} is aligned along one of the D positive directions.
 \item Unitary distance between each couple of adjacent spins.
@@ -183,7 +183,7 @@ Index $i$ can be expressed as a power series of N with coefficients $a_j$:
 \begin{equation}
 i = \sum_{j=1}^{D-1}a_jN^j
 \end{equation}
-The $a_j$ coordinates can then be computed from $i$ as:
+The $a_j$ coordinates can then be computed from $i$ as\footnote{\% means module division, \backslash is an integer division.}:
 \begin{equation}
 a_j = [i\%N^{j+1}]/N^j
 \end{equation}
