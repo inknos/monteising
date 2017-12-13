@@ -44,12 +44,7 @@
    * that the step will not change lat state with a spinFlip
    * in that case dE=0 ; dM=0 ; dS=0;
    *
-   */
-  
-  
- 
- 
- 
+   */ 
  
   
   const unsigned iter = 10000;

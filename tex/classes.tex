@@ -1,20 +1,11 @@
-
-\begin{flushright}
-
-\end{flushright}
-\section*{Classes}
-	
+\section*{Classes}	
 \subsection*{Lattice}
-
 The Lattice class permits to construct a Lattice, compute its termodynamic quantities 
 and change its state with the Metropolis Algorithm. \\	  
 Computation details of functions such as \textbf{energy}() and \textbf{cooling}() are thoroughly explained in Model section. \\ 
-
 \begin{itemize}
-
 	\item[] 
 	PRIVATE DATA MEMBERS \\ 
-	
 	\begin{tabular}{lll}
 		const uint 		& \textbf{N}        & number of spins along one edge				  \\
 		const uint 		& \textbf{dim}      & dimension										   \\
@@ -23,7 +14,6 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
   		static double 	& \textbf{T}        & temperature  										  	  \\
 	\end{tabular}
 	\\
-
 	\item[] 
 	PUBLIC MEMBER FUNCTIONS 
 	\begin{itemize}
@@ -58,7 +48,7 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 				\item[] Frees up memory allocated by \textbf{lattice} \\
 			\end{itemize}		
 		
-\newpage 		
+%\newpage
 	
 		\item[] 
 		PHYSICAL AND NUMERICAL FUNCTIONS \\
@@ -128,7 +118,7 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 						\textsf{lat1 == lat2} returns true if \textsf{lat1} and \textsf{lat2} have same data members
 			\end{itemize}
 			
-\newpage			
+%\newpage			
 			
 		\item[] 
 		GETTERS AND SETTERS \\
@@ -170,7 +160,7 @@ Computation details of functions such as \textbf{energy}() and \textbf{cooling}(
 	
 \end{itemize}
 
-\newpage
+%\newpage
 
 \subsection*{DrawLattice}
 
@@ -238,7 +228,7 @@ The computation of the spin coordinates is explained in the Model Section.
 				}		 
 			\end{itemize}
 			
-\newpage
+%\newpage
 						
 		\item[] DRAW FUNCTION \\
 		
@@ -300,12 +290,10 @@ The computation of the spin coordinates is explained in the Model Section.
 	
 \end{itemize}
 
-\newpage
+%\newpage
 
-\lstinputlisting[language=cpp, caption={Caption}]
-{relationMacroA.C}
 
-\newpage
+%\newpage
 
 
 \subsection*{SimulationLattice}
@@ -410,7 +398,7 @@ For each temperature :
 	
 \end{itemize}
 
-\newpage
+%\newpage
 
 \subsection*{AnalysisLattice}
 
@@ -468,7 +456,7 @@ The curves of Magnetization and Susceptibility vs Temperature can be fitted in o
     		
     \end{itemize}
 
-\newpage
+%\newpage
 
   \item[] TGraphErrors ${}^*$ \textbf{drawLatticeMean}(
     cuint\& x\textunderscore axis,
@@ -547,7 +535,11 @@ The curves of Magnetization and Susceptibility vs Temperature can be fitted in o
 \end{itemize}
 
 \newpage
-
+\subsection*{Explaining macros}
+\subsubsection*{relationMacroA.C}
+\lstinputlisting[language=cpp, caption={Caption}]
+{relationMacroA.C}
+\subsubsection*{relationMacro.C}
 \lstinputlisting[language=cpp, caption={Caption}]
 {../test/relationMacro.C}
 
