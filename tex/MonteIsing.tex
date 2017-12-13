@@ -183,16 +183,16 @@ Index $i$ can be expressed as a power series of N with coefficients $a_j$:
 \begin{equation}
 i = \sum_{j=1}^{D-1}a_jN^j
 \end{equation}
-The $a_j$ coordinates can then be computed from $i$ as\footnote{\% means module division, \backslash is an integer division.}:
+The $a_j$ coordinates can then be computed from $i$ as\footnote{\% means module division, $/$is an integer division.}:
 \begin{equation}
 a_j = [i\%N^{j+1}]/N^j
 \end{equation}
-
+%
 % -----------------------------PAG 6----------------------------------%
-
-\newpage
-\subsection{Energy Computation}
-
+%
+%\newpage
+\subsection*{Energy Computation}
+%
 The Lattice's energy is computed according to equation (1).
 The Lattice class provides a method which returns the energy of the system. \\
 The implemented algorithm takes the lattice array $\mathbf{L}$ and performs two for loops:\\ 
@@ -200,16 +200,16 @@ one over the system's dimension $d = (0,1,..,D-1)$ and the other over the index 
 The key idea is that, given a fixed $i$-spin, along each dimension $d$, two neighbours $i_{d_\pm}$-spin are found on the increasing and decreasing d-coordinate respectively.
 \\So each single spin has $2D$ interacting neighbours in total, by summing up their energy interaction terms the contribute of the single spin to the total energy is obtained. So the energy can be rewritten as:
 \begin{equation}
-H = \frac{1}{2}\sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}\sum_{\pm}^{} -J\sigma_i\sigma_{i_{d_\pm}}
+H = -\frac{J}{2}\sum_{d=0}^{D-1}\sum_{i=0}^{N^d-1}\sum_{\pm}^{}\sigma_i\sigma_{i_{d_\pm}}
 \end{equation}
 Performing $\sum_{i}^{}$ , double countings of couples occur and a factor $1/2$ is required. \\
 For each fixed index $i$ ,the algorithm takes into account only the interaction term with the
 $i_{d_+}$-spin so that the number of operation is halved. So the algorithm computes:
 
 \begin{equation}
-H = \sum_{i=0}^{N^D-1}\sum_{d=0}^{D-1}-J(L_i \ \oplus \ L_{i_{d_+}})
+H = -J\sum_{d=0}^{D-1}\sum_{i=0}^{N^d-1}[[L_i \ \oplus \ L_{i_{d_+}}]]
 \end{equation}
-$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $L_i$, the XOR bitwise operator $\oplus$ is applied on couple $(L_i,L_{i_{d_+}})$ so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
+$\sigma_i\sigma_{i_{d_+}}$ has been replaced by $L_i \ \oplus \ L_{i_{d_+}}$ , the former can take values $\pm1$ wether the two spins are aligned or not. Since spins are represented by boolean entries of array $L_i$, the XOR bitwise operator $\oplus$ is applied on couple $[[L_i,L_{i_{d_+}}]]$, the quantity inside the double parentheses is evalued 1 if is true, -1 if false so that it returns the same value of $\sigma_i\sigma_{i_{d_+}}$. \\
 \vspace{0.1cm}
 From the $i$ index coordinates $\mathbf{a} = (a_0,a_1,..,a_{D-1})$ the $i_{d_+}$ index coordinates\\
 $\mathbf{a^{d_+}} = (a^{d_+}_0,a^{d_+}_1,..,a^{d_+}_{D-1})$ can be computed. \\
@@ -221,10 +221,10 @@ From this formulas we can express the $i_{d_+}$ index as the sum of two terms:
           &=& \left\{(i + N^d)\%N^{d+1} \right\}  +  \left\{ (i/N^{d+1})N^{d+1}  \right\}
 \end{eqnarray*}
 \textbf{n.b.} : if $d = D-1$ the second term equals 0, so it is not computed by the algorithm
-\newpage
-
-
-\subsection{Metropolis Algorithm}
+%\newpage
+%
+%
+\subsection*{Metropolis Algorithm}
 
 At each step Metropolis Algorithm proposes a Lattice configuration $q'$ which differs from the initial configuration $q$ only by one spin value.\\ 
 The number of possible $q'$ configurations is equal to the total number of spins $N^D$; $q'$ is chosen with uniform probability.
@@ -233,15 +233,13 @@ The number of possible $q'$ configurations is equal to the total number of spins
 	\item If $a \geq 1$ than $q'$ is accepted 
 	\item If $a < 1$ :
 		\begin{itemize}
-			\item[] $q'$ is accepted with probability $a$
-			\item[] if $q'$ is rejected (with probability $1-a$) configuration $q$ is kept
+			\item $q'$ is accepted with probability $a$
+			\item if $q'$ is rejected (with probability $1-a$) configuration $q$ is kept
 		\end{itemize}				 
 \end{enumerate}
 That means $q'$ is always accepted when its probability is greater than $q$ , otherwise it is accepted with 
 probability $P_{eq}(q')/P_{eq}$.\\
-\\
 According to formula (3) $a = \exp \lbrace -\beta  \Delta E  \rbrace$; it is easy to observe that when $a \geq 1$ than $ \Delta E \leq 0 $. The latter inequality is taken as the condition of point 1.  
-\\
 \\
 The Algorithm's single step is implemented as following:
 	
@@ -264,41 +262,10 @@ The Algorithm's single step is implemented as following:
 		\end{itemize}				 
 \end{enumerate}
 % -----------------------------PAG 8----------------------------------% 
-\newpage
+%\newpage
 \section{Results}
 This section wants to summarize the simulation results. Under this purpose we point out two main effects:
-
-\begin{itemize}
-\item Finite size and finite volume of the lattice imply magnetization and energy fluctuations; periodic conditions reduce this phenomena. Moreover finite size leads to no residual magnetization: this effect is out of the temperature's range studied.
-
-\item Importance sampling algorithms can produce correlated configurations corresponding to different steps of the simulation. This phenomena is in contrast with theoretical hypothesis of microstates independence and can be correctly treated through binning technique. 
-\end{itemize}
-
-\subsubsection*{Calibrating the model}
-Simulations are done with $10^8$ steps for thermalization ($10^9$ for the 3D lattice) and more than $10^7$ steps with useful data. We varied the lattice size from 40x40 to 100x100 number of spins. Simulation time is really sensible to the number of temperature steps. We choose 100 steps of temperature from 0.5K to 3.5K centered around theoretical critical temperature (2.27K for 2D, 4K for 3D). (See Figure 12 in Appendix) 
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\columnwidth]{img/2d/c1.pdf}
-  \caption{Energy-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
-  \label{fig:ET2D}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\columnwidth]{img/2d/c2.pdf}
-  \caption{Magnetization-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
-  \label{fig:MT2D}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\columnwidth]{img/2d/c3.pdf}
-  \caption{Susceptibility-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
-  \label{fig:XT2D}
-\end{figure}
-
-\begin{figure}[h!]
+\begin{figure}[htpb]
   \begin{subfigure}{.5\columnwidth}
     \centering
     \includegraphics[trim={2.5cm 1.7cm 2.5cm 1.5cm}, clip, width=\columnwidth]{img/2DnoCooling.pdf}
@@ -314,46 +281,64 @@ Simulations are done with $10^8$ steps for thermalization ($10^9$ for the 3D lat
   \caption{10,000,000 steps of cooling for the 2D Lattice with L=100}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{itemize}
+\item Finite size and finite volume of the lattice imply magnetization and energy fluctuations; periodic conditions reduce this phenomena. Moreover finite size leads to no residual magnetization: this effect is out of the temperature's range studied.
+
+\item Importance sampling algorithms can produce correlated configurations corresponding to different steps of the simulation. This phenomena is in contrast with theoretical hypothesis of microstates independence and can be correctly treated through binning technique. 
+\end{itemize}
+
+\subsubsection*{Calibrating the model}
+Simulations are done with $10^8$ steps for thermalization ($10^9$ for the 3D lattice) and more than $10^7$ steps with useful data. We varied the lattice size from 40x40 to 100x100 number of spins. Simulation time is really sensible to the number of temperature steps. We choose 100 steps of temperature from 0.5K to 3.5K centered around theoretical critical temperature (2.27K for 2D, 4K for 3D). (See Figure~\ref{fig:timescaling} in Appendix).\\
+The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation through this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph (see Figure~\ref{fig:binning}). 
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\columnwidth]{img/2d/c1.pdf}
+  \caption{Energy-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+  \label{fig:ET2D}
+\end{figure}
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\columnwidth]{img/2d/c2.pdf}
+  \caption{Magnetization-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+  \label{fig:MT2D}
+\end{figure}
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\columnwidth]{img/2d/c3.pdf}
+  \caption{Susceptibility-Temperature graph for 2D Lattices with I=10,000,000 and 100 steps of T}
+  \label{fig:XT2D}
+\end{figure}
+
+
+
+\begin{figure}[htpb]
   \centering
   \includegraphics[width=\columnwidth]{img/3d/c1.pdf}
   \caption{Energy-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
   \label{fig:ET3D}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[htpb]
   \centering
   \includegraphics[width=\columnwidth]{img/3d/c2.pdf}
   \caption{Magnetization-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
   \label{fig:MT3D}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[htpb]
   \centering
   \includegraphics[width=\columnwidth]{img/3d/c3.pdf}
   \caption{Susceptibility-Temperature graph for 3D Lattices with I=40,000,000 and 25 steps of T}
   \label{fig:XT3D}
 \end{figure}
 
-\begin{figure}[h!]
-  \includegraphics[trim={1cm 1cm 1cm 1cm}, clip, width=\columnwidth]{img/3Dcooling.pdf}
-  \caption{1,000,000,000 steps of cooling for the 3D Lattice with L=40}
-  \label{fig:3DC}
-\end{figure}
 
 
-
-The binning method can take into account the correlation between different configurations. Measures corresponding to different steps of the simulation can have a correct error valuation through this technique: we divide a set of $N$ ordered configurations in $N/2^n$ groups (each one with $n$ elements), we calculate the mean for each bin and we iterate this process until the desired level of binning; then we calculate the global mean and its error. In this way we correlate the measure at a particular level of binning (higher level $\rightarrow$ correlation length $<<$ size of the bins $\rightarrow$ lower correlation $\rightarrow$ higher error). We chose the eighth level of binning for which we found a plateau in the error-level graph. 
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\columnwidth]{img/binning.pdf}
-  \caption{Binning}
-  \label{fig:binning}
-\end{figure}
 
 % -----------------------------PAG 8----------------------------------%
-\newpage
+%\newpage
 \section{Conclusions}
 Metropolis-Hastings algorithm has been implemented in Root (C++) in order to show phase transitions in the 2D and 3D Ising model. Simulation parameters are the following:
 
@@ -368,6 +353,11 @@ Metropolis-Hastings algorithm has been implemented in Root (C++) in order to sho
       \end{itemize}
     \end{minipage}}
 \end{center}
+\begin{figure}[htpb]
+  \includegraphics[trim={1cm 1cm 1cm 1cm}, clip, width=\columnwidth]{img/3Dcooling.pdf}
+  \caption{1,000,000,000 steps of cooling for the 3D Lattice with L=40}
+  \label{fig:3DC}
+\end{figure}
 
 
 
@@ -385,17 +375,13 @@ We recall the theoretical critical temperature of the 2D Ising model with infini
   \end{tabular}
 \end{center}
 
-
- 
-
-
+\appendix
 \newpage
-
 \section{Appendix}
 \subsection*{Code}
 This section's aim is to introduce the reader to the C++ implementation of the model. The code is based on TObject class of Root and its scheme is the following:
 
-\begin{figure}[h!]
+\begin{figure}[htpb]
   \centering
   \includegraphics[scale=0.45]{img/Schema_classi.png}
   \caption{Class scheme}
@@ -404,42 +390,20 @@ This section's aim is to introduce the reader to the C++ implementation of the m
 
 \input{classes.tex}
 
-
-
-
-
-% for SVG
-% inkscape -D -z --file=Schema_classi.svg --export-pdf=Schemaclassi.pdf --export-latex
-% \begin{figure}
-%   \centering
-%   \def\svgwidth{\columnwidth}
-%   \input{img/Schemaclassi.pdf_tex}
-% \end{figure}
-% end svg
-
-
-
-
-
-
-
-
-
-
-
-% -----------------------------PAG 7----------------------------------%
-
-
-
-% -----------------------------PAG 9----------------------------------%
 \newpage
-\appendix
-\subsection*{Performance}
-\begin{figure}[h!]
+\subsection*{Performance and Binning}
+\begin{figure}[htpb]
   \centering
-   \includegraphics[width=\columnwidth]{img/Andamenti_performance.pdf} 
+  \includegraphics[width=\columnwidth]{img/Andamenti_performance.pdf} 
   \caption{Time scaling for different data member initialization}
+  \label{fig:timescaling}
+\end{figure}
 
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\columnwidth]{img/binning.pdf}
+  \caption{Binning}
+  \label{fig:binning}
 \end{figure}
 
 \end{document}
