@@ -108,6 +108,7 @@ img/*
 #ignore executables
 bin/*
 
-*/.DS_Store
-.DS*
+.DS_Store
 
+tex/*.pdf
+*.tar.gz
