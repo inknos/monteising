@@ -168,7 +168,7 @@ void SimulationLattice::run(){
   double * M_tmp = new double[dim_vector];
   double * S_tmp = new double[dim_vector];
   double * T_tmp = new double[dim_vector];
-  double* data = new double[4];
+  double* data = 0;
   double tempN = (tempmax - tempmin) / (tempstep - 1);
 
   std::vector<double> temp_array;
@@ -226,6 +226,7 @@ void SimulationLattice::run(){
         T_tmp[i] = data[0];
         if(data[2] < -1) cout << "ERROR" << endl << std::flush;
         block[i].setBlock(i, T_tmp[i], E_tmp[i], M_tmp[i], S_tmp[i], 0, j + 1);
+        delete[] data;
       }
       tree -> Fill();
     }
@@ -238,7 +239,7 @@ void SimulationLattice::run(){
   delete[] M_tmp;
   delete[] S_tmp;
   delete[] T_tmp;
-  delete[] data;
+  //delete[] data;
   delete[] block;
   
   f.Write();

@@ -17,8 +17,8 @@
   // simulation performed simultaneously on 5 lattices
   TString simulation_file("simulation_file.root");
   TString analysis_file("analysis_file.root");
-  unsigned int iter_pre_simulation(1000000);
-  unsigned int iter_for_simulation(500000);
+  unsigned int iter_pre_simulation(100000);
+  unsigned int iter_for_simulation(50000);
   double min_temperature(0.5);
   double max_temperature(3.5);
   double steps_of_temperature(30);
