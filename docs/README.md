@@ -13,13 +13,13 @@
 ## Run
 
 To run open `root` and run `.x compileMacro.C`. You can try
-the axamples loading with `.L`.
+the examples loading them with `.L`.
 
 ## Lattice Class
 
 The class can build a multi dimensional square lattice of spins.
 
-$$ H = - \sum_{\langle i, j\rangle}^{}J_{ij} \sigma_i \sigma_j - \mu \sum_{i=1}^{N} \sigma_i $$
+$$ H = - \sum_{\langle i, j\rangle}^{}J_{ij} \sigma_i \sigma_j $$
 
 $$ J_{ij} = 1 \text{ and } \mu = 1 $$
 
